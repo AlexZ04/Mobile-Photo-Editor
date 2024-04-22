@@ -1,1 +1,2 @@
-HIT's project
+# Mobile-Photo-Editor
+HITs project
