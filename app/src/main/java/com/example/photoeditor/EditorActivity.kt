@@ -37,6 +37,9 @@ class EditorActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
-        ColorFilters(bitmap);
+
+        val objectImage = ColorFilters(bitmap)
+        objectImage.negativeFilter()
+        mainImage.setImageBitmap(objectImage.bitmap)
     }
 }
