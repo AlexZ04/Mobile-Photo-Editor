@@ -12,7 +12,7 @@
         android:id="@+id/upload"
         android:layout_width="157dp"
         android:layout_height="68dp"
-        android:text="Button"
+        android:text="Окунуться с головой"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
