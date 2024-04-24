@@ -17,7 +17,7 @@ class ColorFilters(_bitmap: Bitmap) {
                 val g = Color.green(color)
                 val b = Color.blue(color)
 
-                this.bitmap.setPixel(x, y, Color.rgb(1 - r, 1 - g, 1 - b))
+                this.bitmap.setPixel(x, y, Color.rgb(255 - r, 255 - g, 255 - b))
             }
         }
     }

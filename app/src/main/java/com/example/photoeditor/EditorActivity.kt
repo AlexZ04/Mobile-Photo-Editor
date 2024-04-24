@@ -39,7 +39,7 @@ class EditorActivity : AppCompatActivity() {
         }
 
         val objectImage = ColorFilters(bitmap)
-        objectImage.blackWhiteFilter()
+        objectImage.negativeFilter()
         mainImage.setImageBitmap(objectImage.bitmap)
     }
 }
