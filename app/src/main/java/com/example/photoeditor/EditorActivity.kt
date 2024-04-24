@@ -1,7 +1,7 @@
 package com.example.photoeditor
 
 import android.content.Intent
-import android.net.Uri
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Button
@@ -16,6 +16,9 @@ class EditorActivity : AppCompatActivity() {
 
     private lateinit var mainImage: ImageView
     private lateinit var choosePickButton: Button
+    private lateinit var colorFilterButton: Button
+
+    private lateinit var newImageBitmap: Bitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +32,11 @@ class EditorActivity : AppCompatActivity() {
 
         mainImage = findViewById(R.id.mainImage)
         choosePickButton = findViewById(R.id.choosePickButton)
+        colorFilterButton = findViewById(R.id.colorFilterButton)
 
         val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, intent.data)
+        newImageBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
         mainImage.setImageBitmap(bitmap)
 
         choosePickButton.setOnClickListener{
@@ -38,8 +44,12 @@ class EditorActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val objectImage = ColorFilters(bitmap)
-        objectImage.negativeFilter()
-        mainImage.setImageBitmap(objectImage.bitmap)
+        colorFilterButton.setOnClickListener{
+            val objectImage = ColorFilters(newImageBitmap)
+            objectImage.negativeFilter()
+            newImageBitmap = objectImage.bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+            mainImage.setImageBitmap(newImageBitmap)
+        }
     }
 }
