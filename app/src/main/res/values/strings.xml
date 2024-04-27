@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">photoeditor</string>
+    <string name="angle_advise">Угол поворота </string>
+    <string name="rotation_confirm_button_text">Применить</string>
 </resources>
