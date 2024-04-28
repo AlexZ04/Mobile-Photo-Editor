@@ -16,13 +16,19 @@
         android:theme="@style/Theme.Photoeditor"
         tools:targetApi="31">
         <activity
+            android:name=".Filter.VectorEditor"
+            android:exported="false"
+            android:label="@string/title_activity_vector_editor"
+            android:theme="@style/Theme.Photoeditor"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".EditorActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

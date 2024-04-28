@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">photoeditor</string>
+    <string name="title_activity_vector_editor">VectorEditor</string>
 </resources>

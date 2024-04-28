@@ -15,12 +15,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.photoeditor.Filter.VectorEditor
 import java.net.URI
 
 class MainActivity : AppCompatActivity() {
 
     val REQUEST_CODE = 1
     private lateinit var button: Button
+    private lateinit var vectorEdit: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,28 +35,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         button = findViewById(R.id.upload)
+        vectorEdit = findViewById(R.id.vectorEditorId)
 
         button.setOnClickListener{
 
-//            if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S
-//                && ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED ||
-//                android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
-//                && ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED){
-//
-//                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//                startActivityForResult(intent, REQUEST_CODE)
-//            }
-//            else{
-//                if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S){
-//                    ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_MEDIA_IMAGES), REQUEST_CODE)
-//                }
-//                else{
-//                    ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE)
-//                }
-//            }
-
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(intent, REQUEST_CODE)
+        }
+
+        vectorEdit.setOnClickListener{
+
+            val intent = Intent(this, VectorEditor::class.java)
+            startActivity(intent)
         }
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
