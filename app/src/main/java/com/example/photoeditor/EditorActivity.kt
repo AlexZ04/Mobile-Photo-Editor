@@ -2,8 +2,10 @@ package com.example.photoeditor
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.photoeditor.Filter.ColorFilters
+import com.example.photoeditor.Retouch.Retouching
+import kotlin.math.roundToInt
 
 class EditorActivity : AppCompatActivity() {
 
@@ -51,5 +55,20 @@ class EditorActivity : AppCompatActivity() {
 
             mainImage.setImageBitmap(newImageBitmap)
         }
+        mainImage.setOnTouchListener { v, event ->
+            // Обработка события нажатия
+            if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN) {
+                val x = event.x.toInt()
+                val y = event.y.toInt()
+
+                val retouching = Retouching(newImageBitmap)
+                newImageBitmap = retouching.startRetouching(x, y, 30, 20)
+
+                    // Установка измененного изображения в ImageView
+                mainImage.setImageBitmap(newImageBitmap)
+            }
+            true
+        }
+
     }
 }
