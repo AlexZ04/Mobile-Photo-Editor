@@ -48,9 +48,7 @@ class VectorEditor : AppCompatActivity() {
 
         for (x in 0 until canvasBitmap.getWidth()) {
             for (y in 0 until canvasBitmap.getHeight()) {
-                val color = canvasBitmap.getPixel(x, y)
-
-                canvasBitmap.setPixel(x, y, Color.rgb(255, 255, 125))
+                canvasBitmap.setPixel(x, y, Color.rgb(0, 0, 0))
             }
         }
 
@@ -66,7 +64,31 @@ class VectorEditor : AppCompatActivity() {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        println(event)
+
+        val radius = 16
+
+        if (event != null && event.action == 0) {
+            if (event.y <= display.height - 100) {
+
+                for (i in -radius until radius) {
+                    for (j in -radius until radius) {
+
+                        if (j * j + i * i <= radius * radius && display.width > event.x.toInt() + i &&
+                            0 <= event.x.toInt() + i && 0 <= event.y.toInt() - 50 - radius + j &&
+                            event.y.toInt() - 50 - radius + j < display.height - 100) {
+                            this.canvasBitmap.setPixel(event.x.toInt() + i,
+                                event.y.toInt() - 50 - radius + j,
+                                Color.rgb(255, 255, 255))
+                        }
+
+                    }
+                }
+
+                this.canvas.setImageBitmap(this.canvasBitmap)
+            }
+
+        }
+
         return super.onTouchEvent(event)
     }
 
