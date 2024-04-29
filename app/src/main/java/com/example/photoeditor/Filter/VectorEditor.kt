@@ -22,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.example.photoeditor.MainActivity
 import com.example.photoeditor.R
+import kotlin.math.abs
 
 
 class VectorEditor : AppCompatActivity() {
@@ -30,6 +31,10 @@ class VectorEditor : AppCompatActivity() {
     private lateinit var display: Display
     private lateinit var canvasBitmap: Bitmap
     private lateinit var backButton: Button
+
+    private var listOfPoints = mutableListOf(-1 to -1)
+    private val pointRadius = 16
+    private val lineRadius = 4
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,12 +68,15 @@ class VectorEditor : AppCompatActivity() {
         }
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
+    override fun onTouchEvent(event: MotionEvent?): Boolean { // алгоритм Брезенхэма
 
-        val radius = 16
+        val radius = this.pointRadius
 
         if (event != null && event.action == 0) {
             if (event.y <= display.height - 100) {
+
+                listOfPoints = (listOfPoints + (event.x.toInt() to event.y.toInt() - 50 - radius))
+                        as MutableList<Pair<Int, Int>>
 
                 for (i in -radius until radius) {
                     for (j in -radius until radius) {
@@ -84,12 +92,64 @@ class VectorEditor : AppCompatActivity() {
                     }
                 }
 
+                if (listOfPoints.size > 2) {
+                    drawLine(listOfPoints[listOfPoints.size - 2].first, listOfPoints[listOfPoints.size - 2].second,
+                        listOfPoints[listOfPoints.size - 1].first, listOfPoints[listOfPoints.size - 1].second)
+                }
+
                 this.canvas.setImageBitmap(this.canvasBitmap)
             }
 
         }
 
         return super.onTouchEvent(event)
+    }
+
+    fun drawLine(firstX: Int, firstY: Int, secondX: Int, secondY: Int) {
+        val dx = abs(firstX - secondX)
+        val dy = abs(firstY - secondY)
+
+        val directX: Int
+        val directY: Int
+
+        var x1 = firstX
+        var y1 = firstY
+        var x2 = secondX
+        var y2 = secondY
+
+        directX = if (firstX > secondX) { -1 } else { 1 }
+
+        directY = if (firstY > secondY) { -1 } else { 1 }
+
+        var error = dx - dy
+
+        val radius = this.lineRadius
+
+        while (x1 != x2 || y1 != y2) {
+
+            for (i in -radius until radius) {
+                for (j in -radius until radius) {
+
+                    if (j * j + i * i <= radius * radius) {
+                        this.canvasBitmap.setPixel(x1 + i, y1 + j,
+                            Color.rgb(255, 255, 255))
+                    }
+
+                }
+            }
+
+            if (2 * error > -dy) {
+                error -= dy
+                x1 += directX
+            }
+
+            if (2 * error < dx) {
+                error += dx
+                y1 += directY
+            }
+        }
+
+        this.canvas.setImageBitmap(this.canvasBitmap)
     }
 
 
