@@ -73,7 +73,8 @@ class VectorEditor : AppCompatActivity() {
         val radius = this.pointRadius
 
         if (event != null && event.action == 0) {
-            if (event.y <= display.height - 100) {
+            if (event.y <= display.height - 100 - radius && event.y - radius >= 0 &&
+                event.x - radius >= 0 && event.x + radius < display.width) {
 
                 listOfPoints = (listOfPoints + (event.x.toInt() to event.y.toInt() - 50 - radius))
                         as MutableList<Pair<Int, Int>>
