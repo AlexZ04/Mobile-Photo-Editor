@@ -36,6 +36,8 @@ class VectorEditor : AppCompatActivity() {
     private val pointRadius = 16
     private val lineRadius = 4
 
+    private var isLineDrawing = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -93,15 +95,21 @@ class VectorEditor : AppCompatActivity() {
                     }
                 }
 
-                if (listOfPoints.size > 2) {
+                if (listOfPoints.size > 2 && !isLineDrawing) {
+                    isLineDrawing = true
                     drawLine(listOfPoints[listOfPoints.size - 2].first, listOfPoints[listOfPoints.size - 2].second,
                         listOfPoints[listOfPoints.size - 1].first, listOfPoints[listOfPoints.size - 1].second)
+
                 }
 
                 this.canvas.setImageBitmap(this.canvasBitmap)
+                Thread.sleep(100)
+                isLineDrawing = false
             }
 
         }
+
+//        Thread.sleep(2000)
 
         return super.onTouchEvent(event)
     }
@@ -110,17 +118,14 @@ class VectorEditor : AppCompatActivity() {
         val dx = abs(firstX - secondX)
         val dy = abs(firstY - secondY)
 
-        val directX: Int
-        val directY: Int
-
         var x1 = firstX
         var y1 = firstY
-        var x2 = secondX
-        var y2 = secondY
+        val x2 = secondX
+        val y2 = secondY
 
-        directX = if (firstX > secondX) { -1 } else { 1 }
+        val directX = if (firstX > secondX) { -1 } else { 1 }
 
-        directY = if (firstY > secondY) { -1 } else { 1 }
+        val directY = if (firstY > secondY) { -1 } else { 1 }
 
         var error = dx - dy
 
@@ -131,9 +136,13 @@ class VectorEditor : AppCompatActivity() {
             for (i in -radius until radius) {
                 for (j in -radius until radius) {
 
-                    if (j * j + i * i <= radius * radius) {
+                    if (j * j + i * i <= radius * radius
+                        && x1 + i >= 0 && x1 + i < canvasBitmap.width && y1 + j >= 0 &&
+                        y1 + j < canvasBitmap.height) {
+
                         this.canvasBitmap.setPixel(x1 + i, y1 + j,
                             Color.rgb(255, 255, 255))
+
                     }
 
                 }
@@ -150,7 +159,6 @@ class VectorEditor : AppCompatActivity() {
             }
         }
 
-        this.canvas.setImageBitmap(this.canvasBitmap)
     }
 
 
