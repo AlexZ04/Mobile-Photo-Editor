@@ -56,15 +56,18 @@ class EditorActivity : AppCompatActivity() {
             mainImage.setImageBitmap(newImageBitmap)
         }
         mainImage.setOnTouchListener { v, event ->
-            // Обработка события нажатия
             if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN) {
-                val x = event.x.toInt()
-                val y = event.y.toInt()
+                val imageView = v as ImageView
+                val drawable = imageView.drawable
+                val intrinsicWidth = drawable.intrinsicWidth
+                val intrinsicHeight = drawable.intrinsicHeight
 
+                val imageWidth = imageView.width
+                val imageHeight = imageView.height
+                val x = (event.x / imageWidth * intrinsicWidth).toInt()
+                val y = (event.y / imageHeight * intrinsicHeight).toInt()
                 val retouching = Retouching(newImageBitmap)
-                newImageBitmap = retouching.startRetouching(x, y, 30, 20)
-
-                    // Установка измененного изображения в ImageView
+                newImageBitmap = retouching.startRetouching(x, y, 500, 100)
                 mainImage.setImageBitmap(newImageBitmap)
             }
             true

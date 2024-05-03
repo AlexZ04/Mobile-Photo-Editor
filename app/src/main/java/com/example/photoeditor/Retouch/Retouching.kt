@@ -2,6 +2,7 @@ package com.example.photoeditor.Retouch
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import java.lang.Math.sqrt
 
 class Retouching (_bitmap: Bitmap){
     var bitmap = _bitmap.copy(Bitmap.Config.ARGB_8888, true)
@@ -35,10 +36,11 @@ class Retouching (_bitmap: Bitmap){
             for (j in (y - radius) until (y + radius)) {
                 if ((i - x) * (i - x) + (j - y) * (j - y) <= radius * radius &&
                     i >= 0 && i < bitmap.width && j >= 0 && j < bitmap.height) {
+                    val distance = sqrt(((i - x) * (i - x) + (j - y) * (j - y)).toDouble()).toInt()
                     val pixelColor = bitmap.getPixel(i, j)
-                    val newRed = applyRetouching(Color.red(pixelColor), averageRed, strength)
-                    val newGreen = applyRetouching(Color.green(pixelColor), averageGreen, strength)
-                    val newBlue = applyRetouching(Color.blue(pixelColor), averageBlue, strength)
+                    val newRed = applyRetouching(Color.red(pixelColor), averageRed, strength, distance, radius)
+                    val newGreen = applyRetouching(Color.green(pixelColor), averageGreen, strength, distance, radius)
+                    val newBlue = applyRetouching(Color.blue(pixelColor), averageBlue, strength, distance, radius)
                     bitmap.setPixel(i, j, Color.rgb(newRed, newGreen, newBlue))
                 }
             }
@@ -46,8 +48,9 @@ class Retouching (_bitmap: Bitmap){
         return bitmap
     }
 
-    private fun applyRetouching(colorValue: Int, averageValue: Int, strength: Int): Int {
-        val newColorValue = colorValue + (averageValue - colorValue) * strength / 100
-        return newColorValue
+    private fun applyRetouching(colorValue: Int, averageValue: Int, strength: Int, distance: Int, radius: Int): Int {
+        val adjustedStrength = strength * (1 - distance.toFloat() / radius.toFloat())
+        val newColorValue = colorValue + (averageValue - colorValue) * adjustedStrength / 100
+        return newColorValue.toInt()
     }
 }
