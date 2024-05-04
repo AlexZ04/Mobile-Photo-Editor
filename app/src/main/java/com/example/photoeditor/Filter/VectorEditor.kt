@@ -30,7 +30,7 @@ class VectorEditor : AppCompatActivity() {
 //    private lateinit var canvas : ImageView
     private lateinit var display: Display
 
-//    private lateinit var canvas : DrawView
+    private lateinit var canvas : DrawView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,18 +42,21 @@ class VectorEditor : AppCompatActivity() {
             insets
         }
 
-//        canvas = findViewById(R.id.canvasId)
 
         display = windowManager.getDefaultDisplay()
+        canvas = DrawView(this)
 
-        setContentView(DrawView(this))
+        setContentView(canvas)
 
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
-            if (event.x <= display.width / 6 && event.y <= display.height / 6) {
+            if (event.x <= 200 && event.y <= 200) {
                 returnToStart()
+            }
+            else if (event.y >= 2000 && event.action == 0) {
+                canvas.goAlg()
             }
         }
         return super.onTouchEvent(event)
@@ -78,6 +81,7 @@ internal class DrawView(context: Context?) : View(context) {
         paint.strokeWidth = 10F
 
         canvas.drawRect(rect, paint)
+        canvas.drawRect(Rect(0, 2000, 5000, 5000), paint)
 
         for (i in 1..<listOfPoints.size) {
             canvas.drawCircle(listOfPoints[i].first, listOfPoints[i].second, 16F, paint)
@@ -94,13 +98,17 @@ internal class DrawView(context: Context?) : View(context) {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
 
-            if (event.x > 200 || event.y > 200) {
+            if ((event.x > 200 || event.y > 200) && event.y < 2000) {
                 listOfPoints = (listOfPoints + (event.x to event.y)) as MutableList<Pair<Float, Float>>
                 invalidate()
             }
 
         }
         return super.onTouchEvent(event)
+    }
+
+    fun goAlg() {
+        println("go go go")
     }
 
 }
