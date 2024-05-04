@@ -29,14 +29,6 @@ class VectorEditor : AppCompatActivity() {
 
     private lateinit var canvas : ImageView
     private lateinit var display: Display
-    private lateinit var canvasBitmap: Bitmap
-    private lateinit var backButton: Button
-
-    private var listOfPoints = mutableListOf(-1 to -1)
-    private val pointRadius = 16
-    private val lineRadius = 4
-
-    private var isLineDrawing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,116 +43,10 @@ class VectorEditor : AppCompatActivity() {
         canvas = findViewById(R.id.canvasId)
 
         display = windowManager.getDefaultDisplay()
-        canvasBitmap = Bitmap.createBitmap(display.width, display.height - 150, Bitmap.Config.ARGB_8888)
 
-        for (x in 0 until canvasBitmap.getWidth()) {
-            for (y in 0 until canvasBitmap.getHeight()) {
-                canvasBitmap.setPixel(x, y, Color.rgb(0, 0, 0))
-            }
-        }
-
-        canvas.setImageBitmap(canvasBitmap)
-//        setContentView(DrawView(this));
-
-        backButton = findViewById(R.id.backButton)
-
-        backButton.setOnClickListener{
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
-    }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean { // алгоритм Брезенхэма
-
-        val radius = this.pointRadius
-
-        if (event != null && event.action == 0) {
-            if (event.y <= display.height - 100 - radius && event.y - radius >= 0 &&
-                event.x - radius >= 0 && event.x + radius < display.width) {
-
-                listOfPoints = (listOfPoints + (event.x.toInt() to event.y.toInt() - 50 - radius))
-                        as MutableList<Pair<Int, Int>>
-
-                for (i in -radius until radius) {
-                    for (j in -radius until radius) {
-
-                        if (j * j + i * i <= radius * radius && display.width > event.x.toInt() + i &&
-                            0 <= event.x.toInt() + i && 0 <= event.y.toInt() - 50 - radius + j &&
-                            event.y.toInt() - 50 - radius + j < display.height - 100) {
-                            this.canvasBitmap.setPixel(event.x.toInt() + i,
-                                event.y.toInt() - 50 - radius + j,
-                                Color.rgb(255, 255, 255))
-                        }
-
-                    }
-                }
-
-                if (listOfPoints.size > 2 && !isLineDrawing) {
-                    isLineDrawing = true
-                    drawLine(listOfPoints[listOfPoints.size - 2].first, listOfPoints[listOfPoints.size - 2].second,
-                        listOfPoints[listOfPoints.size - 1].first, listOfPoints[listOfPoints.size - 1].second)
-
-                }
-
-                this.canvas.setImageBitmap(this.canvasBitmap)
-                Thread.sleep(100)
-                isLineDrawing = false
-            }
-
-        }
-
-//        Thread.sleep(2000)
-
-        return super.onTouchEvent(event)
-    }
-
-    fun drawLine(firstX: Int, firstY: Int, secondX: Int, secondY: Int) {
-        val dx = abs(firstX - secondX)
-        val dy = abs(firstY - secondY)
-
-        var x1 = firstX
-        var y1 = firstY
-        val x2 = secondX
-        val y2 = secondY
-
-        val directX = if (firstX > secondX) { -1 } else { 1 }
-
-        val directY = if (firstY > secondY) { -1 } else { 1 }
-
-        var error = dx - dy
-
-        val radius = this.lineRadius
-
-        while (x1 != x2 || y1 != y2) {
-
-            for (i in -radius until radius) {
-                for (j in -radius until radius) {
-
-                    if (j * j + i * i <= radius * radius
-                        && x1 + i >= 0 && x1 + i < canvasBitmap.width && y1 + j >= 0 &&
-                        y1 + j < canvasBitmap.height) {
-
-                        this.canvasBitmap.setPixel(x1 + i, y1 + j,
-                            Color.rgb(255, 255, 255))
-
-                    }
-
-                }
-            }
-
-            if (2 * error > -dy) {
-                error -= dy
-                x1 += directX
-            }
-
-            if (2 * error < dx) {
-                error += dx
-                y1 += directY
-            }
-        }
+        setContentView(DrawView(this));
 
     }
-
 
     internal class DrawView(context: Context?) : View(context) {
 
@@ -172,8 +58,14 @@ class VectorEditor : AppCompatActivity() {
 
             canvas.drawColor(Color.BLACK)
             paint.setColor(Color.WHITE)
+            paint.strokeWidth = 10F
             for (i in 1..<listOfPoints.size) {
-                canvas.drawCircle(listOfPoints[i].first, listOfPoints[i].second, 10F, paint)
+                canvas.drawCircle(listOfPoints[i].first, listOfPoints[i].second, 16F, paint)
+            }
+
+            for (i in 2 until listOfPoints.size) {
+                canvas.drawLine(listOfPoints[i].first, listOfPoints[i].second,
+                    listOfPoints[i - 1].first, listOfPoints[i - 1].second, paint)
             }
 
         }
