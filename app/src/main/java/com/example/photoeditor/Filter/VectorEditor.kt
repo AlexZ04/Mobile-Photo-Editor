@@ -27,8 +27,10 @@ import kotlin.math.abs
 
 class VectorEditor : AppCompatActivity() {
 
-    private lateinit var canvas : ImageView
+//    private lateinit var canvas : ImageView
     private lateinit var display: Display
+
+//    private lateinit var canvas : DrawView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,47 +42,65 @@ class VectorEditor : AppCompatActivity() {
             insets
         }
 
-        canvas = findViewById(R.id.canvasId)
+//        canvas = findViewById(R.id.canvasId)
 
         display = windowManager.getDefaultDisplay()
 
-        setContentView(DrawView(this));
+        setContentView(DrawView(this))
 
     }
 
-    internal class DrawView(context: Context?) : View(context) {
-
-        private val paint = Paint()
-        private val rect = Rect()
-        private var listOfPoints = mutableListOf(-1F to -1F)
-
-        override fun onDraw(canvas: Canvas) {
-
-            canvas.drawColor(Color.BLACK)
-            paint.setColor(Color.WHITE)
-            paint.strokeWidth = 10F
-            for (i in 1..<listOfPoints.size) {
-                canvas.drawCircle(listOfPoints[i].first, listOfPoints[i].second, 16F, paint)
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event != null) {
+            if (event.x <= display.width / 6 && event.y <= display.height / 6) {
+                returnToStart()
             }
+        }
+        return super.onTouchEvent(event)
+    }
 
-            for (i in 2 until listOfPoints.size) {
-                canvas.drawLine(listOfPoints[i].first, listOfPoints[i].second,
-                    listOfPoints[i - 1].first, listOfPoints[i - 1].second, paint)
-            }
+    fun returnToStart() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
+}
 
+internal class DrawView(context: Context?) : View(context) {
+
+    private val paint = Paint()
+    private val rect = Rect(0, 0, 200, 200)
+    private var listOfPoints = mutableListOf(-1F to -1F)
+
+    override fun onDraw(canvas: Canvas) {
+
+        canvas.drawColor(Color.BLACK)
+        paint.setColor(Color.WHITE)
+        paint.strokeWidth = 10F
+
+        canvas.drawRect(rect, paint)
+
+        for (i in 1..<listOfPoints.size) {
+            canvas.drawCircle(listOfPoints[i].first, listOfPoints[i].second, 16F, paint)
         }
 
-        override fun onTouchEvent(event: MotionEvent?): Boolean {
-            if (event != null) {
-                val pair = event.x to event.y
+        for (i in 2 until listOfPoints.size) {
+            canvas.drawLine(listOfPoints[i].first, listOfPoints[i].second,
+                listOfPoints[i - 1].first, listOfPoints[i - 1].second, paint)
+        }
 
+    }
+
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event != null) {
+
+            if (event.x > 200 || event.y > 200) {
                 listOfPoints = (listOfPoints + (event.x to event.y)) as MutableList<Pair<Float, Float>>
                 invalidate()
             }
-            return super.onTouchEvent(event)
+
         }
-
+        return super.onTouchEvent(event)
     }
-
 
 }
