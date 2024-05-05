@@ -7,10 +7,10 @@ import kotlin.math.abs
 class ColorFilters(_bitmap: Bitmap) {
 //    val bitmap: Bitmap = _bitmap
     var bitmap = _bitmap.copy(Bitmap.Config.ARGB_8888, true)
-    fun negativeFilter() {
+    fun negativeFilter(fromX: Int = 0, fromY: Int = 0, toX: Int = this.bitmap.getWidth(), toY: Int = this.bitmap.getHeight()) {
 
-        for (x in 0 until this.bitmap.getWidth()) {
-            for (y in 0 until this.bitmap.getHeight()) {
+        for (x in fromX until toX) {
+            for (y in fromY until toY) {
                 val color = this.bitmap.getPixel(x, y)
 
                 val r = Color.red(color)
