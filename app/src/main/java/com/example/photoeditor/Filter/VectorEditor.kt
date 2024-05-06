@@ -133,7 +133,7 @@ internal class DrawView(context: Context?) : View(context) {
         splinePoints = (splinePoints + (listOfPoints[0].first to listOfPoints[0].second))
                 as MutableList<Pair<Float, Float>>
 
-        while (stepValue < 1) {
+        while (stepValue <= 1) {
 
             var newLinesPoints = mutableListOf <Pair<Float, Float>>()
             newLinesPoints.addAll(listOfPoints)
@@ -173,7 +173,7 @@ internal class DrawView(context: Context?) : View(context) {
 
             splinePoints = (splinePoints + (newPointX to newPointY)) as MutableList<Pair<Float, Float>>
 
-            stepValue += 0.05F
+            stepValue += 0.02F
         }
 
         invalidate()
