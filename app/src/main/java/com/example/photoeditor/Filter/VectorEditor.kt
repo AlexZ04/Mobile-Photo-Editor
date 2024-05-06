@@ -86,7 +86,7 @@ internal class DrawView(context: Context?) : View(context) {
         canvas.drawRect(Rect(0, 2000, 5000, 5000), paint)
 
         paint.setColor(Color.GREEN)
-        for (i in 2..<splinePoints.size) {
+        for (i in 1..<splinePoints.size) {
 //            canvas.drawCircle(splinePoints[i].first, splinePoints[i].second, 16F, paint)
             canvas.drawLine(splinePoints[i].first, splinePoints[i].second,
                 splinePoints[i - 1].first, splinePoints[i - 1].second, paint)
@@ -120,7 +120,8 @@ internal class DrawView(context: Context?) : View(context) {
     fun goAlg() { // Алгоритм «де Кастельжо»
         var stepValue = 0F
 
-        splinePoints = (mutableListOf(-1F to -1F) + (listOfPoints[1].first to listOfPoints[1].second))
+        splinePoints = mutableListOf <Pair<Float, Float>>()
+        splinePoints = (splinePoints + (listOfPoints[0].first to listOfPoints[0].second))
                 as MutableList<Pair<Float, Float>>
 
         while (stepValue < 1) {
@@ -146,6 +147,9 @@ internal class DrawView(context: Context?) : View(context) {
 
                 var newLinesPoints = mutableListOf <Pair<Float, Float>>()
                 newLinesPoints.addAll(listOfPoints)
+
+                var newTempList = mutableListOf <Pair<Float, Float>>()
+
                 while (newLinesPoints.size != 3) {
                     break
                 }
