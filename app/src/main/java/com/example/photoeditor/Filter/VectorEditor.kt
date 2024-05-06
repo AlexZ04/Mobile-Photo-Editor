@@ -72,8 +72,9 @@ internal class DrawView(context: Context?) : View(context) {
 
     private val paint = Paint()
     private val rect = Rect(0, 0, 200, 200)
-    private var listOfPoints = mutableListOf(-1F to -1F)
-    private var splinePoints = mutableListOf(-1F to -1F)
+//    private var listOfPoints = mutableListOf(-1F to -1F)
+    private var listOfPoints = mutableListOf <Pair<Float, Float>>()
+    private var splinePoints = mutableListOf <Pair<Float, Float>>()
 
     override fun onDraw(canvas: Canvas) {
 
@@ -92,11 +93,11 @@ internal class DrawView(context: Context?) : View(context) {
         }
 
         paint.setColor(Color.WHITE)
-        for (i in 1..<listOfPoints.size) {
+        for (i in 0..<listOfPoints.size) {
             canvas.drawCircle(listOfPoints[i].first, listOfPoints[i].second, 16F, paint)
         }
 
-        for (i in 2 until listOfPoints.size) {
+        for (i in 1 until listOfPoints.size) {
             canvas.drawLine(listOfPoints[i].first, listOfPoints[i].second,
                 listOfPoints[i - 1].first, listOfPoints[i - 1].second, paint)
         }
@@ -118,26 +119,40 @@ internal class DrawView(context: Context?) : View(context) {
 
     fun goAlg() { // Алгоритм «де Кастельжо»
         var stepValue = 0F
-        splinePoints = (splinePoints + (listOfPoints[1].first to listOfPoints[1].second))
+
+        splinePoints = (mutableListOf(-1F to -1F) + (listOfPoints[1].first to listOfPoints[1].second))
                 as MutableList<Pair<Float, Float>>
 
-        for (i in 0 until 21) {
-            stepValue = (i * 0.05).toFloat()
+        while (stepValue < 1) {
 
-            val firstPointX = listOfPoints[1].first +
-                    (listOfPoints[2].first - listOfPoints[1].first) * stepValue
-            val firstPointY = listOfPoints[1].second +
-                    (listOfPoints[2].second - listOfPoints[1].second) * stepValue
+            if (listOfPoints.size == 3) {
+                val firstPointX = listOfPoints[0].first +
+                        (listOfPoints[1].first - listOfPoints[0].first) * stepValue
+                val firstPointY = listOfPoints[0].second +
+                        (listOfPoints[1].second - listOfPoints[0].second) * stepValue
 
-            val secondPointX = listOfPoints[2].first +
-                    (listOfPoints[3].first - listOfPoints[2].first) * stepValue
-            val secondPointY = listOfPoints[2].second +
-                    (listOfPoints[3].second - listOfPoints[2].second) * stepValue
+                val secondPointX = listOfPoints[1].first +
+                        (listOfPoints[2].first - listOfPoints[1].first) * stepValue
+                val secondPointY = listOfPoints[1].second +
+                        (listOfPoints[2].second - listOfPoints[1].second) * stepValue
 
-            val newPointX = firstPointX + (secondPointX - firstPointX) * stepValue
-            val newPointY = firstPointY + (secondPointY - firstPointY) * stepValue
+                val newPointX = firstPointX + (secondPointX - firstPointX) * stepValue
+                val newPointY = firstPointY + (secondPointY - firstPointY) * stepValue
 
-            splinePoints = (splinePoints + (newPointX to newPointY)) as MutableList<Pair<Float, Float>>
+                splinePoints = (splinePoints + (newPointX to newPointY)) as MutableList<Pair<Float, Float>>
+            }
+
+            else {
+
+                var newLinesPoints = mutableListOf <Pair<Float, Float>>()
+                newLinesPoints.addAll(listOfPoints)
+                while (newLinesPoints.size != 3) {
+                    break
+                }
+
+            }
+
+            stepValue += 0.05F
         }
 
         invalidate()
