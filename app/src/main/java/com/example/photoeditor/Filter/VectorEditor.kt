@@ -85,21 +85,19 @@ internal class DrawView(context: Context?) : View(context) {
         canvas.drawRect(rect, paint)
         canvas.drawRect(Rect(0, 2000, 5000, 5000), paint)
 
-
-        paint.setColor(Color.WHITE)
-        for (i in 0..<listOfPoints.size) {
-            canvas.drawCircle(listOfPoints[i].first, listOfPoints[i].second, 16F, paint)
-        }
-
         paint.setColor(Color.GRAY)
         for (i in 1 until listOfPoints.size) {
             canvas.drawLine(listOfPoints[i].first, listOfPoints[i].second,
                 listOfPoints[i - 1].first, listOfPoints[i - 1].second, paint)
         }
 
+        paint.setColor(Color.WHITE)
+        for (i in 0..<listOfPoints.size) {
+            canvas.drawCircle(listOfPoints[i].first, listOfPoints[i].second, 16F, paint)
+        }
+
         paint.setColor(Color.GREEN)
         for (i in 1..<splinePoints.size) {
-//            canvas.drawCircle(splinePoints[i].first, splinePoints[i].second, 16F, paint)
             canvas.drawLine(splinePoints[i].first, splinePoints[i].second,
                 splinePoints[i - 1].first, splinePoints[i - 1].second, paint)
         }
@@ -126,6 +124,7 @@ internal class DrawView(context: Context?) : View(context) {
         if (listOfPoints.size == 2) {
             splinePoints = mutableListOf <Pair<Float, Float>>()
             splinePoints.addAll(listOfPoints)
+            invalidate()
             return
         }
 
