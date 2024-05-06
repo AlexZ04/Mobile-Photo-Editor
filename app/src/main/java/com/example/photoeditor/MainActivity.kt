@@ -16,6 +16,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.photoeditor.Cube.Cube
+import com.example.photoeditor.R.id.cubeButton
 import java.net.URI
 
 import org.opencv.android.OpenCVLoader;
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     val REQUEST_CODE = 1
     private lateinit var button: Button
+    private lateinit var cubeButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +43,19 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         button = findViewById(R.id.upload)
+        cubeButton = findViewById(R.id.cubeButton)
 
+        button.setOnClickListener{
+
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(intent, REQUEST_CODE)
+        }
+
+        cubeButton.setOnClickListener{
+
+            val intent = Intent(this, Cube::class.java)
+            startActivity(intent)
+        }
         button.setOnClickListener{
 
 //            if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S
