@@ -74,6 +74,7 @@ internal class DrawView(context: Context?) : View(context) {
     private val rect = Rect(0, 0, 200, 200)
 //    private var listOfPoints = mutableListOf(-1F to -1F)
     private var listOfPoints = mutableListOf <Pair<Float, Float>>()
+    private var tempListOfPoints = mutableListOf <Pair<Float, Float>>()
     private var splinePoints = mutableListOf <Pair<Float, Float>>()
 
     override fun onDraw(canvas: Canvas) {
@@ -90,16 +91,16 @@ internal class DrawView(context: Context?) : View(context) {
             canvas.drawLine(listOfPoints[i].first, listOfPoints[i].second,
                 listOfPoints[i - 1].first, listOfPoints[i - 1].second, paint)
         }
-
-        paint.setColor(Color.WHITE)
-        for (i in 0..<listOfPoints.size) {
-            canvas.drawCircle(listOfPoints[i].first, listOfPoints[i].second, 16F, paint)
-        }
-
+        
         paint.setColor(Color.GREEN)
         for (i in 1..<splinePoints.size) {
             canvas.drawLine(splinePoints[i].first, splinePoints[i].second,
                 splinePoints[i - 1].first, splinePoints[i - 1].second, paint)
+        }
+
+        paint.setColor(Color.WHITE)
+        for (i in 0..<listOfPoints.size) {
+            canvas.drawCircle(listOfPoints[i].first, listOfPoints[i].second, 16F, paint)
         }
 
     }
@@ -132,10 +133,35 @@ internal class DrawView(context: Context?) : View(context) {
         splinePoints = (splinePoints + (listOfPoints[0].first to listOfPoints[0].second))
                 as MutableList<Pair<Float, Float>>
 
+        tempListOfPoints = mutableListOf <Pair<Float, Float>>()
+//        tempListOfPoints.addAll(listOfPoints)
+
+        for (i in 1 until listOfPoints.size) {
+            tempListOfPoints.add(listOfPoints[i - 1].first to listOfPoints[i - 1].second)
+
+            var amountOfPoints = 2
+
+            while (amountOfPoints > 0) {
+                val newX = listOfPoints[i - 1].first + (listOfPoints[i].first -
+                        listOfPoints[i - 1].first) * (1 / amountOfPoints)
+                val newY = listOfPoints[i - 1].second + (listOfPoints[i].second -
+                        listOfPoints[i - 1].second) * (1 / amountOfPoints)
+
+                amountOfPoints--
+
+                tempListOfPoints.add(newX to newY)
+            }
+
+        }
+
+        tempListOfPoints.add(listOfPoints[listOfPoints.size - 1].first to
+                listOfPoints[listOfPoints.size - 1].second)
+
         while (stepValue <= 1) {
 
             var newLinesPoints = mutableListOf <Pair<Float, Float>>()
-            newLinesPoints.addAll(listOfPoints)
+//            newLinesPoints.addAll(listOfPoints)
+            newLinesPoints.addAll(tempListOfPoints)
 
             var newTempList = mutableListOf <Pair<Float, Float>>()
 
@@ -172,7 +198,7 @@ internal class DrawView(context: Context?) : View(context) {
 
             splinePoints = (splinePoints + (newPointX to newPointY)) as MutableList<Pair<Float, Float>>
 
-            stepValue += 0.02F
+            stepValue += 0.01F
         }
 
         invalidate()
