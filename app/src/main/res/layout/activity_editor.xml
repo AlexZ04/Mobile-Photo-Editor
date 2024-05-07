@@ -39,7 +39,7 @@
         android:layout_marginBottom="144dp"
         android:ems="10"
         android:hint="@string/angle_advise"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

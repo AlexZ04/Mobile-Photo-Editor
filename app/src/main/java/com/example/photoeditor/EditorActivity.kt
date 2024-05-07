@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.photoeditor.Translate.Resize
 import com.example.photoeditor.Translate.Rotate
 
 
@@ -41,17 +42,27 @@ class EditorActivity : AppCompatActivity() {
 
         var bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
 
-        val objectImage = Rotate(bitmap)
-
         val exif = ExifInterface(contentResolver.openInputStream(uri)!!)
         val orientation: Int =
             exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
 
         when (orientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> bitmap = objectImage.rotate(90.0)
-            ExifInterface.ORIENTATION_ROTATE_180 -> bitmap = objectImage.rotate(180.0)
-            ExifInterface.ORIENTATION_ROTATE_270 -> bitmap = objectImage.rotate(270.0)
+            ExifInterface.ORIENTATION_ROTATE_90 -> bitmap = Rotate.rotate(bitmap,90.0)
+            ExifInterface.ORIENTATION_ROTATE_180 -> bitmap = Rotate.rotate(bitmap,180.0)
+            ExifInterface.ORIENTATION_ROTATE_270 -> bitmap = Rotate.rotate(bitmap,270.0)
         }
+
+//        mainImage.setImageBitmap(bitmap)
+//
+//        choosePickButton.setOnClickListener{
+//            val intent = Intent(this, MainActivity::class.java)
+//            startActivity(intent)
+//        }
+//
+//        confirmButton.setOnClickListener{
+//
+//            mainImage.setImageBitmap(objectImage.rotate(-angleValueText.text.toString().toDouble()))
+//        }
 
         mainImage.setImageBitmap(bitmap)
 
@@ -62,7 +73,7 @@ class EditorActivity : AppCompatActivity() {
 
         confirmButton.setOnClickListener{
 
-            mainImage.setImageBitmap(objectImage.rotate(-angleValueText.text.toString().toDouble()))
+            mainImage.setImageBitmap(Resize.resize(bitmap, angleValueText.text.toString().toDouble()))
         }
     }
 }
