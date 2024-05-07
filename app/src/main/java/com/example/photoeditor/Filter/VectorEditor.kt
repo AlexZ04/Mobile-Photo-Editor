@@ -23,7 +23,7 @@ import androidx.fragment.app.Fragment
 import com.example.photoeditor.MainActivity
 import com.example.photoeditor.R
 import kotlin.math.abs
-
+import kotlin.properties.Delegates
 
 class VectorEditor : AppCompatActivity() {
 
@@ -46,16 +46,19 @@ class VectorEditor : AppCompatActivity() {
         display = windowManager.getDefaultDisplay()
         canvas = DrawView(this)
 
+        canvas.screenHeight = display.height
+        canvas.screenWidth = display.width
+
         setContentView(canvas)
 
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
-            if (event.x <= 200 && event.y <= 200) {
+            if (event.x <= display.width / 5 && event.y <= display.height / 10) {
                 returnToStart()
             }
-            else if (event.y >= 2000 && event.action == 0) {
+            else if (event.y >= display.height * 0.9 && event.action == 0) {
                 canvas.goAlg()
             }
         }
@@ -71,11 +74,15 @@ class VectorEditor : AppCompatActivity() {
 internal class DrawView(context: Context?) : View(context) {
 
     private val paint = Paint()
-    private val rect = Rect(0, 0, 200, 200)
-//    private var listOfPoints = mutableListOf(-1F to -1F)
+    private lateinit var rect : Rect
     private var listOfPoints = mutableListOf <Pair<Float, Float>>()
     private var tempListOfPoints = mutableListOf <Pair<Float, Float>>()
     private var splinePoints = mutableListOf <Pair<Float, Float>>()
+
+    var screenHeight by Delegates.notNull<Int>()
+    var screenWidth by Delegates.notNull<Int>()
+
+    var mode = 0 // 0 - обычный мод, 1 - удаление точек
 
     override fun onDraw(canvas: Canvas) {
 
@@ -83,8 +90,10 @@ internal class DrawView(context: Context?) : View(context) {
         paint.setColor(Color.WHITE)
         paint.strokeWidth = 10F
 
+        rect = Rect(0, 0, screenWidth / 5, screenHeight / 10)
+
         canvas.drawRect(rect, paint)
-        canvas.drawRect(Rect(0, 2000, 5000, 5000), paint)
+        canvas.drawRect(Rect(0, (screenHeight * 0.9).toInt(), screenWidth, screenHeight), paint)
 
         paint.setColor(Color.GRAY)
         for (i in 1 until listOfPoints.size) {
@@ -109,7 +118,8 @@ internal class DrawView(context: Context?) : View(context) {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
 
-            if ((event.x > 200 || event.y > 200) && event.y < 2000) {
+            if ((event.x > screenWidth / 5 || event.y > screenHeight / 10) &&
+                event.y < screenHeight * 0.9) {
                 listOfPoints = (listOfPoints + (event.x to event.y)) as MutableList<Pair<Float, Float>>
                 invalidate()
             }
@@ -203,5 +213,10 @@ internal class DrawView(context: Context?) : View(context) {
 
         invalidate()
     }
+
+    fun deletePoint() {
+
+    }
+
 
 }
