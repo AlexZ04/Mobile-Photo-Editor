@@ -154,7 +154,10 @@ internal class DrawView(context: Context?) : View(context) {
 
         mode = 2
 
-        if (listOfPoints.size < 2) return
+        if (listOfPoints.size < 2) {
+            splinePoints = mutableListOf <Pair<Float, Float>>()
+            return
+        }
         if (listOfPoints.size == 2) {
             splinePoints = mutableListOf <Pair<Float, Float>>()
             splinePoints.addAll(listOfPoints)
