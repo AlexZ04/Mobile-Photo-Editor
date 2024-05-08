@@ -218,5 +218,41 @@ internal class DrawView(context: Context?) : View(context) {
 
     }
 
+    fun isPointBetween(point: Pair<Float, Float>,
+                       firstPoint: Pair<Float, Float>, secondPoint: Pair<Float, Float>): Boolean {
+
+        val k: Float = if (secondPoint.first - firstPoint.first != 0F) {
+            (secondPoint.second - firstPoint.second) / (secondPoint.first - firstPoint.first)
+        } else {
+            0F
+        }
+
+        val b = secondPoint.second - k * secondPoint.first
+
+        if (point.first * k + b == point.second) {
+
+            if (firstPoint.first >= secondPoint.first) {
+                if (firstPoint.second >= secondPoint.second) {
+                    return (secondPoint.first <= point.first && point.first <= firstPoint.first) &&
+                            (secondPoint.second <= point.second && point.second <= firstPoint.second)
+                }
+                return (secondPoint.first <= point.first && point.first <= firstPoint.first) &&
+                        (secondPoint.second >= point.second && point.second >= firstPoint.second)
+            }
+
+            else {
+                if (firstPoint.second >= secondPoint.second) {
+                    return (secondPoint.first >= point.first && point.first >= firstPoint.first) &&
+                            (secondPoint.second <= point.second && point.second <= firstPoint.second)
+                }
+                return (secondPoint.first >= point.first && point.first >= firstPoint.first) &&
+                        (secondPoint.second >= point.second && point.second >= firstPoint.second)
+            }
+        }
+
+        return false
+
+    }
+
 
 }
