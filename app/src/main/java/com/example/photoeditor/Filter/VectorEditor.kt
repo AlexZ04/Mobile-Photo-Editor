@@ -1,9 +1,7 @@
 package com.example.photoeditor.Filter
 
-import android.R.attr.bitmap
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -13,17 +11,16 @@ import android.view.Display
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.ImageView
+import android.widget.RelativeLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.Fragment
 import com.example.photoeditor.MainActivity
 import com.example.photoeditor.R
 import kotlin.math.abs
 import kotlin.properties.Delegates
+
 
 class VectorEditor : AppCompatActivity() {
 
@@ -79,10 +76,12 @@ internal class DrawView(context: Context?) : View(context) {
     private var tempListOfPoints = mutableListOf <Pair<Float, Float>>()
     private var splinePoints = mutableListOf <Pair<Float, Float>>()
 
+    private var editSplinePoints = mutableListOf <Pair<Float, Float>>()
+
     var screenHeight by Delegates.notNull<Int>()
     var screenWidth by Delegates.notNull<Int>()
 
-    var mode = 0 // 0 - обычный мод, 1 - удаление точек
+    var mode = 0 // 0 - обычный мод, 1 - расставление точек на сплайнах, 2 - удаление точек
 
     override fun onDraw(canvas: Canvas) {
 
@@ -112,6 +111,11 @@ internal class DrawView(context: Context?) : View(context) {
             canvas.drawCircle(listOfPoints[i].first, listOfPoints[i].second, 16F, paint)
         }
 
+        paint.setColor(Color.RED)
+        for (i in 0..<editSplinePoints.size) {
+            canvas.drawCircle(editSplinePoints[i].first, editSplinePoints[i].second, 16F, paint)
+        }
+
     }
 
 
@@ -120,7 +124,24 @@ internal class DrawView(context: Context?) : View(context) {
 
             if ((event.x > screenWidth / 5 || event.y > screenHeight / 10) &&
                 event.y < screenHeight * 0.9) {
-                listOfPoints = (listOfPoints + (event.x to event.y)) as MutableList<Pair<Float, Float>>
+
+                if (mode == 0) {
+                    listOfPoints = (listOfPoints + (event.x to event.y))
+                            as MutableList<Pair<Float, Float>>
+                }
+                else if (mode == 1) {
+
+                    for (i in 1 until splinePoints.size) {
+                        if (!isPointBetween(event.x to event.y, splinePoints[i - 1],
+                                splinePoints[i])) {
+                            return super.onTouchEvent(event)
+                        }
+                    }
+                    editSplinePoints.add(event.x to event.y)
+                }
+                else if (mode == 2) {
+                    deletePoint(event.x to event.y)
+                }
                 invalidate()
             }
 
@@ -130,6 +151,8 @@ internal class DrawView(context: Context?) : View(context) {
 
     fun goAlg() { // Алгоритм «де Кастельжо»
         var stepValue = 0F
+
+        mode = 2
 
         if (listOfPoints.size < 2) return
         if (listOfPoints.size == 2) {
@@ -214,7 +237,17 @@ internal class DrawView(context: Context?) : View(context) {
         invalidate()
     }
 
-    fun deletePoint() {
+    fun deletePoint(point: Pair<Float, Float>) {
+        for (i in 0 until listOfPoints.size) {
+            if (abs(listOfPoints[i].first - point.first) < 16 &&
+                abs(listOfPoints[i].second - point.second) < 16) {
+
+                listOfPoints.removeAt(i)
+                goAlg()
+                invalidate()
+                return
+            }
+        }
 
     }
 
