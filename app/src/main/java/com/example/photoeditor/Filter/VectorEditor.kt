@@ -8,6 +8,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.Display
+import android.view.DragEvent
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
@@ -107,16 +108,26 @@ internal class DrawView(context: Context?) : View(context) {
 
         paint.setColor(Color.WHITE)
         for (i in 0..<listOfPoints.size) {
+            if (mode == 2) {
+                paint.setColor(Color.BLUE)
+                canvas.drawCircle(listOfPoints[i].first, listOfPoints[i].second, 25F, paint)
+                paint.setColor(Color.WHITE)
+            }
             canvas.drawCircle(listOfPoints[i].first, listOfPoints[i].second, 16F, paint)
         }
 
         paint.setColor(Color.RED)
         for (i in 0..<editSplinePoints.size) {
+            if (mode == 2) {
+                paint.setColor(Color.BLUE)
+                canvas.drawCircle(editSplinePoints[i].first, editSplinePoints[i].second, 25F, paint)
+                paint.setColor(Color.WHITE)
+            }
+
             canvas.drawCircle(editSplinePoints[i].first, editSplinePoints[i].second, 16F, paint)
         }
 
     }
-
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
@@ -240,8 +251,8 @@ internal class DrawView(context: Context?) : View(context) {
 
     fun deletePoint(point: Pair<Float, Float>) {
         for (i in 0 until listOfPoints.size) {
-            if (abs(listOfPoints[i].first - point.first) < 16 &&
-                abs(listOfPoints[i].second - point.second) < 16) {
+            if (abs(listOfPoints[i].first - point.first) < 25 &&
+                abs(listOfPoints[i].second - point.second) < 25) {
 
                 listOfPoints.removeAt(i)
                 goAlg()
