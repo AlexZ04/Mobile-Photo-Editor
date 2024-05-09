@@ -73,7 +73,6 @@ internal class DrawView(context: Context?) : View(context) {
     private val paint = Paint()
     private lateinit var rect : Rect
     private var listOfPoints = mutableListOf <Pair<Float, Float>>()
-    private var tempListOfPoints = mutableListOf <Pair<Float, Float>>()
     private var splinePoints = mutableListOf <Pair<Float, Float>>()
 
     private var editSplinePoints = mutableListOf <Pair<Float, Float>>()
@@ -129,16 +128,13 @@ internal class DrawView(context: Context?) : View(context) {
                     listOfPoints = (listOfPoints + (event.x to event.y))
                             as MutableList<Pair<Float, Float>>
                 }
+
                 else if (mode == 1) {
 
-                    for (i in 1 until splinePoints.size) {
-                        if (!isPointBetween(event.x to event.y, splinePoints[i - 1],
-                                splinePoints[i])) {
-                            return super.onTouchEvent(event)
-                        }
-                    }
-                    editSplinePoints.add(event.x to event.y)
+                    addSplineEditPoint(event.x to event.y)
+//                    editSplinePoints.add(event.x to event.y)
                 }
+
                 else if (mode == 2) {
                     deletePoint(event.x to event.y)
                 }
@@ -152,7 +148,7 @@ internal class DrawView(context: Context?) : View(context) {
     fun goAlg() { // Алгоритм «де Кастельжо»
         var stepValue = 0F
 
-        mode = 2
+        mode = 1
 
         if (listOfPoints.size < 2) {
             splinePoints = mutableListOf <Pair<Float, Float>>()
@@ -169,13 +165,15 @@ internal class DrawView(context: Context?) : View(context) {
         splinePoints = (splinePoints + (listOfPoints[0].first to listOfPoints[0].second))
                 as MutableList<Pair<Float, Float>>
 
-        tempListOfPoints = mutableListOf <Pair<Float, Float>>()
+        val tempListOfPoints = mutableListOf <Pair<Float, Float>>()
 //        tempListOfPoints.addAll(listOfPoints)
+
+        var amountOfPoints = 2
 
         for (i in 1 until listOfPoints.size) {
             tempListOfPoints.add(listOfPoints[i - 1].first to listOfPoints[i - 1].second)
 
-            var amountOfPoints = 2
+            amountOfPoints = 2
 
             while (amountOfPoints > 0) {
                 val newX = listOfPoints[i - 1].first + (listOfPoints[i].first -
@@ -252,43 +250,52 @@ internal class DrawView(context: Context?) : View(context) {
             }
         }
 
-    }
+        for (i in 0 until editSplinePoints.size) {
+            if (abs(editSplinePoints[i].first - point.first) < 16 &&
+                abs(editSplinePoints[i].second - point.second) < 16) {
 
-    fun isPointBetween(point: Pair<Float, Float>,
-                       firstPoint: Pair<Float, Float>, secondPoint: Pair<Float, Float>): Boolean {
-
-        val k: Float = if (secondPoint.first - firstPoint.first != 0F) {
-            (secondPoint.second - firstPoint.second) / (secondPoint.first - firstPoint.first)
-        } else {
-            0F
-        }
-
-        val b = secondPoint.second - k * secondPoint.first
-
-        if (point.first * k + b == point.second) {
-
-            if (firstPoint.first >= secondPoint.first) {
-                if (firstPoint.second >= secondPoint.second) {
-                    return (secondPoint.first <= point.first && point.first <= firstPoint.first) &&
-                            (secondPoint.second <= point.second && point.second <= firstPoint.second)
-                }
-                return (secondPoint.first <= point.first && point.first <= firstPoint.first) &&
-                        (secondPoint.second >= point.second && point.second >= firstPoint.second)
-            }
-
-            else {
-                if (firstPoint.second >= secondPoint.second) {
-                    return (secondPoint.first >= point.first && point.first >= firstPoint.first) &&
-                            (secondPoint.second <= point.second && point.second <= firstPoint.second)
-                }
-                return (secondPoint.first >= point.first && point.first >= firstPoint.first) &&
-                        (secondPoint.second >= point.second && point.second >= firstPoint.second)
+                editSplinePoints.removeAt(i)
+                goAlg()
+                invalidate()
+                return
             }
         }
 
-        return false
 
     }
 
+    fun addSplineEditPoint(point: Pair<Float, Float>) {
+        var amountOfPoints = 3
 
+        val tempSplinePoints = mutableListOf <Pair<Float, Float>>()
+
+        for (i in 1 until splinePoints.size) {
+            tempSplinePoints.add(splinePoints[i - 1].first to splinePoints[i - 1].second)
+
+            amountOfPoints = 3
+
+            while (amountOfPoints > 0) {
+                val newX = splinePoints[i - 1].first + (splinePoints[i].first -
+                        splinePoints[i - 1].first) * (1 / amountOfPoints)
+                val newY = splinePoints[i - 1].second + (splinePoints[i].second -
+                        splinePoints[i - 1].second) * (1 / amountOfPoints)
+
+                amountOfPoints--
+
+                tempSplinePoints.add(newX to newY)
+            }
+
+        }
+
+        for (i in 0 until tempSplinePoints.size) {
+
+            if (abs(tempSplinePoints[i].first - point.first) < 16 &&
+                abs(tempSplinePoints[i].second - point.second) < 16) {
+
+                editSplinePoints.add(tempSplinePoints[i].first to tempSplinePoints[i].second)
+                invalidate()
+                return
+            }
+        }
+    }
 }
