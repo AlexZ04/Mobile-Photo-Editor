@@ -57,6 +57,8 @@ class VectorEditor : AppCompatActivity() {
 
         if (event != null) {
 
+            currentPoint = event.x to event.y
+
             if (event.x <= display.width / 5 && event.y <= display.height / 10) {
                 returnToStart()
             }
@@ -64,14 +66,24 @@ class VectorEditor : AppCompatActivity() {
                 canvas.goAlg()
             }
             else if (canvas.mode == 1) {
-                if (event.action == 2 || event.action == 0) {
-                    currentPoint = event.x to event.y
+                println(event)
+                if (event.action == 0) {
+                    if (canvas.hasPoint(currentPoint)) {
+                        canvas.movePoint(currentPoint)
+                        canvas.foundPoint = true
+                    }
+                    else {
+                        canvas.foundPoint = false
+                    }
+                }
+                else if (event.action == 2 && canvas.foundPoint) {
                     if (canvas.hasPoint(currentPoint)) {
                         canvas.movePoint(currentPoint)
                     }
                 }
                 else {
                     canvas.movePoint(0F to 0F)
+                    canvas.foundPoint = false
                 }
 
             }
@@ -91,6 +103,8 @@ internal class DrawView(context: Context?) : View(context) {
     private lateinit var rect : Rect
     private var listOfPoints = mutableListOf <Pair<Float, Float>>()
     private var splinePoints = mutableListOf <Pair<Float, Float>>()
+
+    var foundPoint = false
 
     var editSplinePoint = 0F to 0F
 
