@@ -52,12 +52,28 @@ class VectorEditor : AppCompatActivity() {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        var currentPoint = 0F to 0F
+        var checkPoint = 0F to 0F
+
         if (event != null) {
+
             if (event.x <= display.width / 5 && event.y <= display.height / 10) {
                 returnToStart()
             }
             else if (event.y >= display.height * 0.9 && event.action == 0) {
                 canvas.goAlg()
+            }
+            else if (canvas.mode == 1) {
+                if (event.action == 2 || event.action == 0) {
+                    currentPoint = event.x to event.y
+                    if (canvas.hasPoint(currentPoint)) {
+                        canvas.movePoint(currentPoint)
+                    }
+                }
+                else {
+                    canvas.movePoint(0F to 0F)
+                }
+
             }
         }
         return super.onTouchEvent(event)
@@ -76,7 +92,7 @@ internal class DrawView(context: Context?) : View(context) {
     private var listOfPoints = mutableListOf <Pair<Float, Float>>()
     private var splinePoints = mutableListOf <Pair<Float, Float>>()
 
-    private var editSplinePoints = mutableListOf <Pair<Float, Float>>()
+    var editSplinePoint = 0F to 0F
 
     var screenHeight by Delegates.notNull<Int>()
     var screenWidth by Delegates.notNull<Int>()
@@ -117,14 +133,8 @@ internal class DrawView(context: Context?) : View(context) {
         }
 
         paint.setColor(Color.RED)
-        for (i in 0..<editSplinePoints.size) {
-            if (mode == 2) {
-                paint.setColor(Color.BLUE)
-                canvas.drawCircle(editSplinePoints[i].first, editSplinePoints[i].second, 25F, paint)
-                paint.setColor(Color.WHITE)
-            }
-
-            canvas.drawCircle(editSplinePoints[i].first, editSplinePoints[i].second, 16F, paint)
+        if (editSplinePoint != 0F to 0F) {
+            canvas.drawCircle(editSplinePoint.first, editSplinePoint.second, 25F, paint)
         }
 
     }
@@ -142,7 +152,7 @@ internal class DrawView(context: Context?) : View(context) {
 
                 else if (mode == 1) {
 
-                    addSplineEditPoint(event.x to event.y)
+//                    addSplineEditPoint(event.x to event.y)
 //                    editSplinePoints.add(event.x to event.y)
                 }
 
@@ -261,27 +271,20 @@ internal class DrawView(context: Context?) : View(context) {
             }
         }
 
-        for (i in 0 until editSplinePoints.size) {
-            if (abs(editSplinePoints[i].first - point.first) < 16 &&
-                abs(editSplinePoints[i].second - point.second) < 16) {
-
-                editSplinePoints.removeAt(i)
-                goAlg()
-                invalidate()
-                return
-            }
-        }
-
-
     }
 
-    fun addSplineEditPoint(point: Pair<Float, Float>) {
+    fun movePoint(newCoord: Pair<Float, Float>) {
+        editSplinePoint = newCoord
+        invalidate()
+    }
+
+    fun hasPoint(point: Pair<Float, Float>): Boolean {
         var amountOfPoints = 3
 
         val tempSplinePoints = mutableListOf <Pair<Float, Float>>()
 
         for (i in 1 until splinePoints.size) {
-            tempSplinePoints.add(splinePoints[i - 1].first to splinePoints[i - 1].second)
+            tempSplinePoints.add(splinePoints[i - 1])
 
             amountOfPoints = 3
 
@@ -298,15 +301,16 @@ internal class DrawView(context: Context?) : View(context) {
 
         }
 
+        tempSplinePoints.add(splinePoints[splinePoints.size - 1])
+
         for (i in 0 until tempSplinePoints.size) {
-
-            if (abs(tempSplinePoints[i].first - point.first) < 16 &&
-                abs(tempSplinePoints[i].second - point.second) < 16) {
-
-                editSplinePoints.add(tempSplinePoints[i].first to tempSplinePoints[i].second)
-                invalidate()
-                return
+            if (abs(point.first - tempSplinePoints[i].first) <= 25 &&
+                abs(point.second - tempSplinePoints[i].second) <= 25) {
+                return true
             }
         }
+
+        return false
     }
+
 }
