@@ -82,12 +82,14 @@ class VectorEditor : AppCompatActivity() {
                         canvas.addNewPointFromEdit(currentPoint)
                     }
                 }
-                else {
+                else if (canvas.foundPoint){
                     canvas.addNewPointFromEdit(0F to 0F)
                     canvas.movePoint(0F to 0F)
-                    canvas.goAlg()
                     canvas.newSplinePoint = 0F to 0F
                     canvas.foundPoint = false
+                    canvas.isCurrentPoint = false
+                    canvas.listOfRealPoints.add(currentPoint)
+                    canvas.goAlg()
                 }
 
             }
@@ -108,7 +110,7 @@ internal class DrawView(context: Context?) : View(context) {
     private var listOfPoints = mutableListOf <Pair<Float, Float>>()
     private var splinePoints = mutableListOf <Pair<Float, Float>>()
 
-    private var listOfRealPoints = mutableListOf <Pair<Float, Float>>()
+    var listOfRealPoints = mutableListOf <Pair<Float, Float>>()
 
     var foundPoint = false
 
@@ -117,6 +119,8 @@ internal class DrawView(context: Context?) : View(context) {
 
     var screenHeight by Delegates.notNull<Int>()
     var screenWidth by Delegates.notNull<Int>()
+
+    var isCurrentPoint = false
 
     var mode = 0 // 0 - добавление точек в кривую, 1 - расставление точек на сплайнах, 2 - удаление точек
 
@@ -198,13 +202,13 @@ internal class DrawView(context: Context?) : View(context) {
         }
         if (listOfRealPoints.size == 2) {
             splinePoints = mutableListOf <Pair<Float, Float>>()
-            splinePoints.addAll(listOfPoints)
+            splinePoints.addAll(listOfRealPoints)
             invalidate()
             return
         }
 
         splinePoints = mutableListOf <Pair<Float, Float>>()
-        splinePoints.add(listOfPoints[0].first to listOfPoints[0].second)
+        splinePoints.add(listOfRealPoints[0].first to listOfRealPoints[0].second)
 
         val tempListOfPoints = mutableListOf <Pair<Float, Float>>()
 
@@ -228,7 +232,7 @@ internal class DrawView(context: Context?) : View(context) {
 
         }
 
-        tempListOfPoints.add(listOfRealPoints[listOfPoints.size - 1].first to
+        tempListOfPoints.add(listOfRealPoints[listOfRealPoints.size - 1].first to
                 listOfRealPoints[listOfRealPoints.size - 1].second)
 
         if (newSplinePoint != 0F to 0F) {
@@ -238,7 +242,7 @@ internal class DrawView(context: Context?) : View(context) {
         while (stepValue <= 1) {
 
             var newLinesPoints = mutableListOf <Pair<Float, Float>>()
-//            newLinesPoints.addAll(listOfPoints)
+
             newLinesPoints.addAll(tempListOfPoints)
 
             var newTempList = mutableListOf <Pair<Float, Float>>()
@@ -339,10 +343,22 @@ internal class DrawView(context: Context?) : View(context) {
     }
 
     fun addNewPointFromEdit(point: Pair<Float, Float>) {
-        newSplinePoint = point
-        if (point != 0F to 0F) {
+        if (point == 0F to 0F) {
             goAlg()
+            return
         }
+        if (!isCurrentPoint) { // если рассматриваем текущую точку,
+            // то изменяем координаты новой точки, иначе - добавляем
+            isCurrentPoint = true
+//            newSplinePoint = point
+            listOfRealPoints.add(point)
+        }
+        else {
+//            listOfRealPoints.add(point)
+            listOfRealPoints[listOfRealPoints.size - 1] = point
+        }
+//        newSplinePoint = point
+        goAlg()
     }
 
 }
