@@ -84,12 +84,10 @@ class VectorEditor : AppCompatActivity() {
                     canvas.addNewPointFromEdit(currentPoint)
                 }
                 else if (canvas.foundPoint){
-                    canvas.addNewPointFromEdit(0F to 0F)
                     canvas.movePoint(0F to 0F)
-//                    canvas.newSplinePoint = 0F to 0F
                     canvas.foundPoint = false
                     canvas.isCurrentPoint = false
-                    canvas.goAlg()
+                    canvas.addNewPointFromEdit(0F to 0F)
                 }
 
             }
@@ -201,12 +199,6 @@ internal class DrawView(context: Context?) : View(context) {
             splinePoints = mutableListOf <Pair<Float, Float>>()
             return
         }
-//        if (listOfPoints.size == 2 && newAddedEditPoint == 0F to 0F) {
-//            splinePoints = mutableListOf <Pair<Float, Float>>()
-//            splinePoints.addAll(listOfPoints)
-//            invalidate()
-//            return
-//        }
 
         splinePoints = mutableListOf <Pair<Float, Float>>()
         splinePoints.add(listOfRealPoints[0].first to listOfRealPoints[0].second)
@@ -350,6 +342,7 @@ internal class DrawView(context: Context?) : View(context) {
     fun addNewPointFromEdit(point: Pair<Float, Float>) {
         if (point == 0F to 0F) {
             goAlg()
+            newAddedEditPoint = point
             return
         }
         if (!isCurrentPoint) { // если рассматриваем текущую точку,
