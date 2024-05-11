@@ -362,11 +362,13 @@ internal class DrawView(context: Context?) : View(context) {
     }
 
     private fun putPointIn(point: Pair<Float, Float>) {
-        var tempRealPoints = mutableListOf <Pair<Float, Float>>()
+        val tempRealPoints = mutableListOf <Pair<Float, Float>>()
+        val index = findPosition(point)
+
         for (i in 0 until listOfRealPoints.size) {
             tempRealPoints.add(listOfRealPoints[i])
 
-            if (i == 0) {
+            if (i == index) {
                 tempRealPoints.add(point)
             }
         }
@@ -374,6 +376,10 @@ internal class DrawView(context: Context?) : View(context) {
         listOfRealPoints = mutableListOf <Pair<Float, Float>>()
         listOfRealPoints.addAll(tempRealPoints)
 
+    }
+
+    private fun findPosition(point: Pair<Float, Float>): Int {
+        return 0
     }
 
 }
