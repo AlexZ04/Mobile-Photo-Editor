@@ -20,6 +20,8 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.photoeditor.MainActivity
 import com.example.photoeditor.R
 import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sqrt
 import kotlin.properties.Delegates
 
 
@@ -372,7 +374,41 @@ internal class DrawView(context: Context?) : View(context) {
     }
 
     private fun findPosition(point: Pair<Float, Float>): Int {
-        return 0
+
+        var index = 0
+        var minDist = 100000F
+        var sumDistToPoints = 100000F
+
+        var k : Float
+        var b : Float
+
+        var currentDist = 0F
+        var currentSumDist = 0F
+
+        for (i in 1 until listOfRealPoints.size) {
+
+            // здесь надо нахождение расстояние от точки до отрезка !!!
+
+            currentDist = 0F
+
+            currentSumDist = getDist(point, listOfRealPoints[i]) + getDist(point,
+                listOfRealPoints[i - 1])
+
+            if (currentDist < minDist || (currentDist == minDist && currentSumDist < sumDistToPoints)) {
+                minDist = currentDist
+                sumDistToPoints = currentSumDist
+                index = i - 1
+            }
+        }
+
+        println(currentDist)
+        return index
+    }
+
+    private fun getDist(firstPoint: Pair<Float, Float>, secondPoint: Pair<Float, Float>): Float {
+        return sqrt((firstPoint.first - secondPoint.first).pow(2) +
+                (firstPoint.second - secondPoint.second).pow(2))
+//        return 0F
     }
 
 }
