@@ -201,12 +201,12 @@ internal class DrawView(context: Context?) : View(context) {
             splinePoints = mutableListOf <Pair<Float, Float>>()
             return
         }
-        if (listOfRealPoints.size == 2) {
-            splinePoints = mutableListOf <Pair<Float, Float>>()
-            splinePoints.addAll(listOfRealPoints)
-            invalidate()
-            return
-        }
+//        if (listOfPoints.size == 2 && newAddedEditPoint == 0F to 0F) {
+//            splinePoints = mutableListOf <Pair<Float, Float>>()
+//            splinePoints.addAll(listOfPoints)
+//            invalidate()
+//            return
+//        }
 
         splinePoints = mutableListOf <Pair<Float, Float>>()
         splinePoints.add(listOfRealPoints[0].first to listOfRealPoints[0].second)
