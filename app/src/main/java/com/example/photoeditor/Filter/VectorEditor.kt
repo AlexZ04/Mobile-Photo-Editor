@@ -389,7 +389,7 @@ internal class DrawView(context: Context?) : View(context) {
 
             // здесь надо нахождение расстояние от точки до отрезка !!!
 
-            currentDist = 0F
+            currentDist = getDistFromPointToSegment(point, listOfRealPoints[i], listOfRealPoints[i - 1])
 
             currentSumDist = getDist(point, listOfRealPoints[i]) + getDist(point,
                 listOfRealPoints[i - 1])
@@ -409,6 +409,14 @@ internal class DrawView(context: Context?) : View(context) {
         return sqrt((firstPoint.first - secondPoint.first).pow(2) +
                 (firstPoint.second - secondPoint.second).pow(2))
 //        return 0F
+    }
+
+    private fun getDistFromPointToSegment(
+        point: Pair<Float, Float>, firstPoint: Pair<Float, Float>, secondPoint: Pair<Float, Float>)
+    : Float {
+
+
+        return 0F
     }
 
 }
