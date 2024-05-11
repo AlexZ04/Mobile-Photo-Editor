@@ -379,15 +379,10 @@ internal class DrawView(context: Context?) : View(context) {
         var minDist = 100000F
         var sumDistToPoints = 100000F
 
-        var k : Float
-        var b : Float
-
         var currentDist = 0F
         var currentSumDist = 0F
 
         for (i in 1 until listOfRealPoints.size) {
-
-            // здесь надо нахождение расстояние от точки до отрезка !!!
 
             currentDist = getDistFromPointToSegment(point, listOfRealPoints[i], listOfRealPoints[i - 1])
 
@@ -401,22 +396,51 @@ internal class DrawView(context: Context?) : View(context) {
             }
         }
 
-        println(currentDist)
         return index
     }
 
     private fun getDist(firstPoint: Pair<Float, Float>, secondPoint: Pair<Float, Float>): Float {
         return sqrt((firstPoint.first - secondPoint.first).pow(2) +
                 (firstPoint.second - secondPoint.second).pow(2))
-//        return 0F
     }
 
     private fun getDistFromPointToSegment(
         point: Pair<Float, Float>, firstPoint: Pair<Float, Float>, secondPoint: Pair<Float, Float>)
     : Float {
 
+        if (checkTriangle(point, firstPoint, secondPoint)) { // если тупоугольныый - ищем высоту
+            if (firstPoint.first - secondPoint.first == 0F) {
+                return getDist(point, firstPoint.second to point.second)
+            }
+            else if (firstPoint.second - secondPoint.second == 0F) {
+                return getDist(point, point.first to firstPoint.second)
+            }
+            else {
+                val deltaX = firstPoint.first - secondPoint.first
+                val deltaY = firstPoint.second - secondPoint.second
 
-        return 0F
+                val newY = (deltaX * (firstPoint.second * (deltaX / deltaY) - firstPoint.first + point.first) +
+                        deltaY * point.second) / ((deltaX * deltaX / deltaY) + deltaY)
+
+                val newX = (newY - firstPoint.second) * (deltaX / deltaY) + firstPoint.first
+
+                return getDist(point, newX to newY)
+            }
+        }
+        // иначе - возвращаем расстояние до одного из концов отрезка
+        return Math.min(getDist(point, firstPoint), getDist(point, secondPoint))
+    }
+
+    // проверяем, можно ли опустить высоту на отрезок
+    private fun checkTriangle(point: Pair<Float, Float>, firstPoint: Pair<Float, Float>,
+                              secondPoint: Pair<Float, Float>): Boolean {
+        val dist1 = getDist(point, firstPoint)
+        val dist2 = getDist(point, secondPoint)
+
+        val dist3 = getDist(firstPoint, secondPoint)
+
+        return !(dist3.pow(2) + dist1.pow(2) - dist2.pow(2) < 2 ||
+                dist3.pow(2) + dist2.pow(2) - dist3.pow(2) < 0)
     }
 
 }
