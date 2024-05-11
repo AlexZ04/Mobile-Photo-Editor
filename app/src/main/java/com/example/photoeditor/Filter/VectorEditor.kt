@@ -408,7 +408,8 @@ internal class DrawView(context: Context?) : View(context) {
         point: Pair<Float, Float>, firstPoint: Pair<Float, Float>, secondPoint: Pair<Float, Float>)
     : Float {
 
-        if (checkTriangle(point, firstPoint, secondPoint)) { // если тупоугольныый - ищем высоту
+        if (checkTriangle(point, firstPoint, secondPoint)) { // если можно опустить высоту -
+            // - ищем высоту
             if (firstPoint.first - secondPoint.first == 0F) {
                 return getDist(point, firstPoint.second to point.second)
             }
@@ -439,8 +440,8 @@ internal class DrawView(context: Context?) : View(context) {
 
         val dist3 = getDist(firstPoint, secondPoint)
 
-        return !(dist3.pow(2) + dist1.pow(2) - dist2.pow(2) < 2 ||
-                dist3.pow(2) + dist2.pow(2) - dist3.pow(2) < 0)
+        return !(dist3.pow(2) + dist1.pow(2) - dist2.pow(2) < 0 ||
+                dist3.pow(2) + dist2.pow(2) - dist1.pow(2) < 0)
     }
 
 }
