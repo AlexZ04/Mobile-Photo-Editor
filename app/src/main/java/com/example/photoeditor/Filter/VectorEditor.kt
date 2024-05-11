@@ -362,18 +362,18 @@ internal class DrawView(context: Context?) : View(context) {
     }
 
     private fun putPointIn(point: Pair<Float, Float>) {
-        var tempRealPoint = mutableListOf <Pair<Float, Float>>()
-        for (i in 0 until listOfPoints.size) {
-            tempRealPoint.add(listOfRealPoints[i])
+        var tempRealPoints = mutableListOf <Pair<Float, Float>>()
+        for (i in 0 until listOfRealPoints.size) {
+            tempRealPoints.add(listOfRealPoints[i])
 
             if (i == 0) {
-//                tempRealPoint.add(point)
+                tempRealPoints.add(point)
             }
         }
-        tempRealPoint.add(point)
+
         listOfRealPoints = mutableListOf <Pair<Float, Float>>()
-        listOfRealPoints.addAll(tempRealPoint)
-//        listOfRealPoints.add(point)
+        listOfRealPoints.addAll(tempRealPoints)
+
     }
 
 }
