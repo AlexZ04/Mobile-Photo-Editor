@@ -14,9 +14,11 @@ class Resize() {
             if(coef < 1){
                 return trilinearFiltering(bitmap, coef)
             }
-            else{
+            else if(coef > 1){
                 return bilinearFiltering(bitmap, coef)
             }
+
+            return bitmap
         }
 
          private fun bilinearFiltering(bitmap: Bitmap, coef: Double) : Bitmap {
