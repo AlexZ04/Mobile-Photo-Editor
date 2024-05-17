@@ -39,6 +39,57 @@ class ColorFilters(_bitmap: Bitmap) {
         }
     }
 
+    fun mozaik(pixels: Int) {
+
+        var color : Int
+
+        var midR = 0F
+        var midG = 0F
+        var midB = 0F
+
+        var pixelsUsed = 0
+
+        for (x in 0 until this.bitmap.width step pixels) {
+            for (y in 0 until this.bitmap.height step pixels) {
+                midR = 0F
+                midG = 0F
+                midB = 0F
+
+                pixelsUsed = 0
+
+                for (currentX in x until Math.min(x + pixels, this.bitmap.width)) {
+                    for (currentY in y until Math.min(y + pixels, this.bitmap.height)) {
+
+                        color = this.bitmap.getPixel(currentX, currentY)
+
+                        pixelsUsed++
+
+                        midR += Color.red(color)
+                        midG += Color.green(color)
+                        midB += Color.blue(color)
+                    }
+                }
+
+                midR /= (pixelsUsed)
+                midG /= (pixelsUsed)
+                midB /= (pixelsUsed)
+
+                println("$midR $midG $midB")
+
+                for (currentX in x until Math.min(x + pixels, this.bitmap.width)) {
+                    for (currentY in y until Math.min(y + pixels, this.bitmap.height)) {
+
+                        this.bitmap.setPixel(currentX, currentY, Color.rgb(midR, midG, midB))
+                    }
+                }
+
+//                break
+            }
+
+//            break
+        }
+    }
+
     fun balanceWhite() { // как будто он не так должен работать
 
         var r = 0
