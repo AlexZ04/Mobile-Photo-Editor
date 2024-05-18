@@ -46,7 +46,8 @@ class EditorActivity : AppCompatActivity() {
 
         colorFilterButton.setOnClickListener{
             val objectImage = ColorFilters(newImageBitmap)
-            objectImage.mozaik(8)
+//            objectImage.mozaik(8)
+            objectImage.contrast(100)
 //            objectImage.negativeFilter()
             newImageBitmap = objectImage.bitmap.copy(Bitmap.Config.ARGB_8888, true)
 

@@ -111,40 +111,84 @@ class ColorFilters(_bitmap: Bitmap) {
 
     }
 
-    fun balanceWhite() { // как будто он не так должен работать
+    fun getLAB(): Float {
+        var color: Int
 
-        var r = 0
-        var g = 0
-        var b = 0
+        var valueR = 0
+        var valueG = 0
+        var valueB = 0
 
-        for (x in 0 until this.bitmap.getWidth()) {
-            for (y in 0 until this.bitmap.getHeight()) {
-                val color = this.bitmap.getPixel(x, y)
+        var lAB = 0F
 
-                r += Color.red(color)
-                g += Color.green(color)
-                b += Color.blue(color)
+        for (x in 0 until this.bitmap.width) {
+            for (y in 0 until this.bitmap.height) {
+                color = this.bitmap.getPixel(x, y)
+
+                valueR = Color.red(color)
+                valueG = Color.green(color)
+                valueB = Color.blue(color)
+
+                lAB += (valueR * 0.299 + valueG * 0.587 + valueB * 0.114).toInt()
             }
         }
 
-        r /= (this.bitmap.getWidth() * this.bitmap.getHeight())
-        g /= (this.bitmap.getWidth() * this.bitmap.getHeight())
-        b /= (this.bitmap.getWidth() * this.bitmap.getHeight())
+        lAB /= (this.bitmap.width * this.bitmap.height)
 
-        println(r)
+        return lAB;
+    }
 
-        val newColor = (r + g + b) / 3
+    fun getColorsList(correction: Int): MutableList<Int> {
+        val lAB = getLAB().toInt()
 
-        for (x in 0 until this.bitmap.getWidth()) {
-            for (y in 0 until this.bitmap.getHeight()) {
-                val color = this.bitmap.getPixel(x, y)
+        val k = 1.0 + correction / 100.0
 
-                val newR = abs(Color.red(color) - newColor) / 2
-                val newG = abs(Color.green(color) - newColor) / 2
-                val newB = abs(Color.blue(color) - newColor) / 2
+        var delta : Int
+        var newVal : Int
+
+        val colors = mutableListOf <Int>()
+
+        for (i in 0 until 256) {
+            delta = i - lAB
+            newVal = (lAB + k * delta).toInt()
+
+            newVal = Math.max(0, Math.min(255, newVal))
+
+            colors.add(newVal)
+
+        }
+
+        return colors
+    }
+
+    fun contrast(correction: Int) {
+
+        var colors = getColorsList(correction)
+
+        var currentColor : Int
+
+        var curR : Int
+        var curG : Int
+        var curB : Int
+
+        var newR : Int
+        var newG : Int
+        var newB : Int
+
+        for (x in 0 until this.bitmap.width) {
+            for (y in 0 until this.bitmap.height) {
+                currentColor = this.bitmap.getPixel(x, y)
+
+                curR = Color.red(currentColor)
+                curG = Color.green(currentColor)
+                curB = Color.blue(currentColor)
+
+                newR = colors[curR]
+                newG = colors[curG]
+                newB = colors[curB]
 
                 this.bitmap.setPixel(x, y, Color.rgb(newR, newG, newB))
             }
         }
+
     }
 }
