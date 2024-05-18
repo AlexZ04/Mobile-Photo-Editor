@@ -2,6 +2,8 @@ package com.example.photoeditor.Filter
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import kotlin.math.abs
 
 class ColorFilters(_bitmap: Bitmap) {
@@ -43,23 +45,32 @@ class ColorFilters(_bitmap: Bitmap) {
 
         var color : Int
 
-        var midR = 0F
-        var midG = 0F
-        var midB = 0F
+        var midR : Float
+        var midG : Float
+        var midB : Float
 
         var pixelsUsed = 0
 
-        for (x in 0 until this.bitmap.width step pixels) {
-            for (y in 0 until this.bitmap.height step pixels) {
+        var x = 0
+        var y = 0
+
+        var currentX = 0
+        var currentY = 0
+
+        while (x < this.bitmap.width) {
+            y = 0
+            while (y < this.bitmap.height) {
                 midR = 0F
                 midG = 0F
                 midB = 0F
 
                 pixelsUsed = 0
 
-                for (currentX in x until Math.min(x + pixels, this.bitmap.width)) {
-                    for (currentY in y until Math.min(y + pixels, this.bitmap.height)) {
+                currentX = x
+                while (currentX < Math.min(x + pixels, this.bitmap.width)) {
+                    currentY = y
 
+                    while (currentY < Math.min(y + pixels, this.bitmap.height)) {
                         color = this.bitmap.getPixel(currentX, currentY)
 
                         pixelsUsed++
@@ -67,27 +78,37 @@ class ColorFilters(_bitmap: Bitmap) {
                         midR += Color.red(color)
                         midG += Color.green(color)
                         midB += Color.blue(color)
+
+                        currentY++
                     }
+
+                    currentX++
                 }
 
                 midR /= (pixelsUsed)
                 midG /= (pixelsUsed)
                 midB /= (pixelsUsed)
 
-                println("$midR $midG $midB")
+                currentX = x
+                while (currentX < Math.min(x + pixels, this.bitmap.width)) {
+                    currentY = y
 
-                for (currentX in x until Math.min(x + pixels, this.bitmap.width)) {
-                    for (currentY in y until Math.min(y + pixels, this.bitmap.height)) {
+                    while (currentY < Math.min(y + pixels, this.bitmap.height)) {
+                        this.bitmap.setPixel(currentX, currentY, Color.rgb(midR.toInt(),
+                            midG.toInt(), midB.toInt()))
 
-                        this.bitmap.setPixel(currentX, currentY, Color.rgb(midR, midG, midB))
+                        currentY++
                     }
+
+                    currentX++
                 }
 
-//                break
+                y += pixels
             }
 
-//            break
+            x += pixels
         }
+
     }
 
     fun balanceWhite() { // как будто он не так должен работать
