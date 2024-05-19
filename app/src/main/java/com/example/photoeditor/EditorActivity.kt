@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.photoeditor.Affine.AffineTransformations
+import com.example.photoeditor.Filter.ColorFilters
 import com.example.photoeditor.Translate.Resize
 import com.example.photoeditor.Translate.Rotate
 import kotlinx.coroutines.*
@@ -55,6 +56,9 @@ class EditorActivity : AppCompatActivity() {
 
     private lateinit var mainImage: ImageView
     private lateinit var choosePickButton: Button
+    private lateinit var colorFilterButton: Button
+
+    private lateinit var newImageBitmap: Bitmap
 
     private var currAlg: Int = 0
 
@@ -106,6 +110,7 @@ class EditorActivity : AppCompatActivity() {
 
         mainImage = findViewById(R.id.mainImage)
         choosePickButton = findViewById(R.id.choosePickButton)
+        colorFilterButton = findViewById(R.id.colorFilterButton)
 
         val views = arrayOf<Array<View>>(
 
@@ -115,7 +120,10 @@ class EditorActivity : AppCompatActivity() {
                 rotationAngleValueText
             ),
 
-            arrayOf<View>(),
+            arrayOf<View>(
+                mainImage,
+                colorFilterButton
+            ),
 
             arrayOf<View>(
                 mainImage,
@@ -288,6 +296,11 @@ class EditorActivity : AppCompatActivity() {
         confirmAffineButton.setOnClickListener{
 
             secondAffineImage.setImageBitmap(AffineTransformations.transform(bitmap, firstPoints, secondPoints))
+        }
+        colorFilterButton.setOnClickListener{
+
+            bitmap = ColorFilters.mozaik(bitmap, 20)
+            mainImage.setImageBitmap(bitmap)
         }
     }
 }

@@ -48,12 +48,6 @@ class AffineTransformations {
                 }
             }
 
-            Log.d("HUH", a.toString())
-            Log.d("HUH", b.toString())
-            Log.d("HUH", c.toString())
-            Log.d("HUH", d.toString())
-            Log.d("HUH", e.toString())
-            Log.d("HUH", f.toString())
             return newBitmap
         }
     }
