@@ -26,6 +26,10 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".Cube.Cube"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">

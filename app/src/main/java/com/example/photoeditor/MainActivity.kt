@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
@@ -16,13 +17,23 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.photoeditor.Filter.VectorEditor
+import com.example.photoeditor.Cube.Cube
+import com.example.photoeditor.R.id.cubeButton
 import java.net.URI
+//
+//import org.opencv.android.OpenCVLoader;
+//import org.opencv.android.Utils;
+//import org.opencv.core.CvType;
+//import org.opencv.core.Mat;
+//import org.opencv.core.Size;
+//import org.opencv.imgproc.Imgproc;
 
 class MainActivity : AppCompatActivity() {
 
     val REQUEST_CODE = 1
     private lateinit var button: Button
     private lateinit var vectorEdit: Button
+    private lateinit var cubeButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +47,37 @@ class MainActivity : AppCompatActivity() {
 
         button = findViewById(R.id.upload)
         vectorEdit = findViewById(R.id.vectorEditorId)
+        cubeButton = findViewById(R.id.cubeButton)
 
         button.setOnClickListener{
+
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(intent, REQUEST_CODE)
+        }
+
+        cubeButton.setOnClickListener{
+
+            val intent = Intent(this, Cube::class.java)
+            startActivity(intent)
+        }
+        button.setOnClickListener{
+
+//            if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S
+//                && ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED ||
+//                android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
+//                && ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED){
+//
+//                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//                startActivityForResult(intent, REQUEST_CODE)
+//            }
+//            else{
+//                if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S){
+//                    ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_MEDIA_IMAGES), REQUEST_CODE)
+//                }
+//                else{
+//                    ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE)
+//                }
+//            }
 
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(intent, REQUEST_CODE)

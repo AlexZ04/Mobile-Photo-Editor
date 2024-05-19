@@ -11,8 +11,8 @@ import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.MotionEvent
+import android.util.Log
 import android.view.View
 import android.view.View.OnTouchListener
 import android.widget.Button
@@ -24,6 +24,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.photoeditor.Affine.AffineTransformations
 import com.example.photoeditor.Filter.ColorFilters
+import com.example.photoeditor.Retouch.Retouching
+//import com.example.photoeditor.neuron.FaceDetector
+//
+//import org.opencv.android.OpenCVLoader;
+//import org.opencv.objdetect.CascadeClassifier
+//import java.io.File
+
 import com.example.photoeditor.Translate.Resize
 import com.example.photoeditor.Translate.Rotate
 import kotlinx.coroutines.*
@@ -57,6 +64,8 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var mainImage: ImageView
     private lateinit var choosePickButton: Button
     private lateinit var colorFilterButton: Button
+    private lateinit var faceDetectorConfirmButton: Button
+//    private lateinit var faceCascade: CascadeClassifier
 
     private lateinit var newImageBitmap: Bitmap
 
@@ -80,6 +89,7 @@ class EditorActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+//        OpenCVLoader.initDebug()
         setContentView(R.layout.activity_editor)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -111,6 +121,7 @@ class EditorActivity : AppCompatActivity() {
         mainImage = findViewById(R.id.mainImage)
         choosePickButton = findViewById(R.id.choosePickButton)
         colorFilterButton = findViewById(R.id.colorFilterButton)
+        faceDetectorConfirmButton = findViewById(R.id.faceDetectorConfirmButton)
 
         val views = arrayOf<Array<View>>(
 
@@ -130,8 +141,13 @@ class EditorActivity : AppCompatActivity() {
                 resizingConfirmButton,
                 resizingAngleValueText),
 
-            arrayOf<View>(),
-            arrayOf<View>(),
+            arrayOf<View>(
+                mainImage,
+                faceDetectorConfirmButton
+            ),
+            arrayOf<View>(
+                mainImage
+            ),
             arrayOf<View>(),
 
             arrayOf<View>(
@@ -302,5 +318,34 @@ class EditorActivity : AppCompatActivity() {
             bitmap = ColorFilters.mozaik(bitmap, 20)
             mainImage.setImageBitmap(bitmap)
         }
+
+//        faceDetectorConfirmButton.setOnClickListener{
+//            val inputStream = resources.openRawResource(R.raw.haarcascade_frontalface_default)
+//            val file = File(cacheDir, "haarcascade_frontalface_default.xml")
+//            inputStream.use { input -> file.outputStream().use { output -> input.copyTo(output) } }
+//            faceCascade = CascadeClassifier(file.absolutePath)
+//            val detector = FaceDetector()
+//            newImageBitmap = detector.processImage(faceCascade, newImageBitmap)
+//            mainImage.setImageBitmap(newImageBitmap)
+//        }
+
+        mainImage.setOnTouchListener { v, event ->
+            if (currAlg == 4 && (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN)) {
+                val imageView = v as ImageView
+                val drawable = imageView.drawable
+                val intrinsicWidth = drawable.intrinsicWidth
+                val intrinsicHeight = drawable.intrinsicHeight
+
+                val imageWidth = imageView.width
+                val imageHeight = imageView.height
+                val x = (event.x / imageWidth * intrinsicWidth).toInt()
+                val y = (event.y / imageHeight * intrinsicHeight).toInt()
+                val retouching = Retouching(bitmap)
+                bitmap = retouching.startRetouching(x, y, 50, 100)
+                mainImage.setImageBitmap(bitmap)
+            }
+            true
+        }
+
     }
 }
