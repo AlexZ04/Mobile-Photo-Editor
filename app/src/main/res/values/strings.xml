@@ -3,4 +3,5 @@
     <string name="angle_advise">Угол поворота </string>
     <string name="resize_advise">Коэффициент масштабирования </string>
     <string name="confirm_button_text">Применить</string>
+    <string name="title_activity_vector_editor">VectorEditor</string>
 </resources>
