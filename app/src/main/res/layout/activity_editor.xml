@@ -9,14 +9,155 @@
 
     <ImageView
         android:id="@+id/mainImage"
+        android:layout_width="377dp"
+        android:layout_height="383dp"
+        android:adjustViewBounds="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.25"
+        tools:srcCompat="@tools:sample/avatars"/>
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.93">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <Button
+                android:id="@+id/rotationButton"
+                android:layout_width="50dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/filtersButton"
+                android:layout_width="50dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/resizingButton"
+                android:layout_width="50dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/faceDetectorButton"
+                android:layout_width="50dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/retouchButton"
+                android:layout_width="50dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/unsharpMasking"
+                android:layout_width="50dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/affineButton"
+                android:layout_width="50dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <ImageView
+        android:id="@+id/affineFirst"
+        android:layout_width="162dp"
+        android:layout_height="383dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.25"
+        tools:srcCompat="@tools:sample/avatars"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/affineSecond"
+        android:layout_width="162dp"
+        android:layout_height="383dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.25"
+        tools:srcCompat="@tools:sample/avatars"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/firstAffineChangeButton"
+        android:layout_width="162dp"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.7"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/secondAffineChangeButton"
+        android:layout_width="162dp"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.7"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/confirmAffineButton"
+        android:layout_width="162dp"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.8"
+        android:visibility="invisible" />
+
+
+    <Button
+        android:id="@+id/colorFilterButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Color Filter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.25"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintVertical_bias="0.829"
+        android:visibility="invisible"/>
 
     <Button
         android:id="@+id/choosePickButton"
@@ -30,14 +171,58 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.023" />
 
-    <Button
-        android:id="@+id/colorFilterButton"
+    <EditText
+        android:id="@+id/rotationAngleInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Color Filter"
+        android:layout_marginBottom="144dp"
+        android:ems="10"
+        android:hint="@string/angle_advise"
+        android:inputType="numberSigned"
+        android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.144"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <Button
+        android:id="@+id/rotationConfirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/confirm_button_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.944"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.829" />
+        app:layout_constraintVertical_bias="0.793"/>
+
+    <EditText
+        android:id="@+id/resizingAngleInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="144dp"
+        android:ems="10"
+        android:hint="@string/resize_advise"
+        android:inputType="numberDecimal"
+        android:singleLine="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.144"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/resizingConfirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/confirm_button_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.944"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.793"
+        android:visibility="invisible"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
