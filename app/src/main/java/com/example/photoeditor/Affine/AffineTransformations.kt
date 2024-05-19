@@ -25,26 +25,6 @@ class AffineTransformations {
             val (newX2, newY2) = secondPoints[1]
             val (newX3, newY3) = secondPoints[2]
 
-//            Log.d("HUH", x1.toString())
-//            Log.d("HUH", y1.toString())
-//            Log.d("HUH", x2.toString())
-//            Log.d("HUH", y2.toString())
-//            Log.d("HUH", x3.toString())
-//            Log.d("HUH", y3.toString())
-//            Log.d("HUH", newX1.toString())
-//            Log.d("HUH", newY1.toString())
-//            Log.d("HUH", newX2.toString())
-//            Log.d("HUH", newY2.toString())
-//            Log.d("HUH", newX3.toString())
-//            Log.d("HUH", newY3.toString())
-//
-//            val (x1, y1) = arrayOf(0.0,0.0)
-//            val (x2, y2) = arrayOf(0.0,10.0)
-//            val (x3, y3) = arrayOf(10.0,0.0)
-//            val (newX1, newY1) = arrayOf(0.0,0.0)
-//            val (newX2, newY2) = arrayOf(0.0,10.0)
-//            val (newX3, newY3) = arrayOf(10.0,0.0)
-
             val b = if ((y1 - y2) * (x2 - x3) - (y2 - y3) * (x1 - x2) != 0.0f) ((newX1 - newX2) * (x2 - x3) - (newX2 - newX3) * (x1 - x2)) /
                     ((y1 - y2) * (x2 - x3) - (y2 - y3) * (x1 - x2)) else 0.0f
             val a = if (x1 - x2 != 0.0f) (newX1 - newX2 - b * (y1 - y2)) / (x1 - x2) else 1.0f

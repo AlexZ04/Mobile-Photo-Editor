@@ -25,6 +25,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.photoeditor.Affine.AffineTransformations
 import com.example.photoeditor.Translate.Resize
 import com.example.photoeditor.Translate.Rotate
+import kotlinx.coroutines.*
 
 
 class EditorActivity : AppCompatActivity() {
@@ -156,10 +157,13 @@ class EditorActivity : AppCompatActivity() {
         val orientation: Int =
             exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
 
-        when (orientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> bitmap = Rotate.rotate(bitmap,90.0)
-            ExifInterface.ORIENTATION_ROTATE_180 -> bitmap = Rotate.rotate(bitmap,180.0)
-            ExifInterface.ORIENTATION_ROTATE_270 -> bitmap = Rotate.rotate(bitmap,270.0)
+        GlobalScope.launch{
+            when (orientation) {
+
+                ExifInterface.ORIENTATION_ROTATE_90 -> bitmap = Rotate.rotate(bitmap,90.0)
+                ExifInterface.ORIENTATION_ROTATE_180 -> bitmap = Rotate.rotate(bitmap,180.0)
+                ExifInterface.ORIENTATION_ROTATE_270 -> bitmap = Rotate.rotate(bitmap,270.0)
+            }
         }
 
         mainImage.setImageBitmap(bitmap)
@@ -173,11 +177,16 @@ class EditorActivity : AppCompatActivity() {
 
         rotationConfirmButton.setOnClickListener{
 
-            val width = bitmap.width
-            val height = bitmap.height
-            bitmap = Rotate.rotate(bitmap, -rotationAngleValueText.text.toString().toDouble())
-            bitmap = Rotate.rerotate(bitmap, -rotationAngleValueText.text.toString().toDouble(), width, height)
-            mainImage.setImageBitmap(bitmap)
+            val rotation = GlobalScope.launch(Dispatchers.Main) {
+
+                val width = bitmap.width
+                val height = bitmap.height
+                bitmap = Rotate.rotate(bitmap, -rotationAngleValueText.text.toString().toDouble())
+                mainImage.setImageBitmap(bitmap)
+
+
+                mainImage.setImageBitmap(bitmap)
+            }
         }
 
         resizingConfirmButton.setOnClickListener{

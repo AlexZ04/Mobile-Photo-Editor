@@ -10,11 +10,14 @@ import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 class Rotate() {
     companion object{
 
-        fun rotate(bitmap: Bitmap, angle: Double) : Bitmap {
+        suspend fun rotate(bitmap: Bitmap, angle: Double) : Bitmap {
 
             fun getNewPos(x: Int, y: Int, angle: Double): IntArray {
 
@@ -44,15 +47,19 @@ class Rotate() {
             }
 
             val newBitmap = Bitmap.createBitmap(maxX - minX, maxY - minY, Bitmap.Config.ARGB_8888)
-            for (x in 0..<newBitmap.getWidth()) {
-                for (y in 0..<newBitmap.getHeight()) {
+            coroutineScope {
+                for (x in 0..<newBitmap.getWidth()) {
+                    launch{
+                        for (y in 0..<newBitmap.getHeight()) {
+                            val (newX, newY) = getNewPos(x + minX, y + minY, angleRad)
 
-                    val(newX, newY) = getNewPos(x + minX, y + minY, angleRad)
+                            val newColor = if (newX >= 0 && newX < bitmap.width
+                                && newY >= 0 && newY < bitmap.height
+                            ) bitmap.getColor(newX, newY) else Color.BLACK.toColor()
 
-                    val newColor = if(newX >= 0 && newX < bitmap.width
-                        && newY >= 0 && newY < bitmap.height) bitmap.getColor(newX, newY) else Color.BLACK.toColor()
-
-                    newBitmap.setPixel(x, y, newColor.toArgb())
+                            newBitmap.setPixel(x, y, newColor.toArgb())
+                        }
+                    }
                 }
             }
 
