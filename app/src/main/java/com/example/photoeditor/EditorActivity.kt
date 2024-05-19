@@ -1,6 +1,8 @@
 package com.example.photoeditor
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -9,7 +11,9 @@ import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.media.ExifInterface
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.MotionEvent
 import android.util.Log
@@ -34,6 +38,9 @@ import com.example.photoeditor.Retouch.Retouching
 import com.example.photoeditor.Translate.Resize
 import com.example.photoeditor.Translate.Rotate
 import kotlinx.coroutines.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 
 
 class EditorActivity : AppCompatActivity() {
@@ -63,6 +70,7 @@ class EditorActivity : AppCompatActivity() {
 
     private lateinit var mainImage: ImageView
     private lateinit var choosePickButton: Button
+    private lateinit var saveButton: Button
     private lateinit var colorFilterButton: Button
     private lateinit var faceDetectorConfirmButton: Button
 //    private lateinit var faceCascade: CascadeClassifier
@@ -70,6 +78,31 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var newImageBitmap: Bitmap
 
     private var currAlg: Int = 0
+
+    private fun saveMediaToStorage(bitmap: Bitmap) {
+        val filename = "${System.currentTimeMillis()}.jpg"
+        var fos: OutputStream? = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            contentResolver?.also { resolver ->
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                }
+                val imageUri: Uri? =
+                    resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                fos = imageUri?.let { resolver.openOutputStream(it) }
+            }
+        } else {
+            val imagesDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            val image = File(imagesDir, filename)
+            fos = FileOutputStream(image)
+        }
+        fos?.use {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+        }
+    }
 
     private fun changeVisibility(elems: Array<View>, isActive: Boolean){
 
@@ -120,6 +153,7 @@ class EditorActivity : AppCompatActivity() {
 
         mainImage = findViewById(R.id.mainImage)
         choosePickButton = findViewById(R.id.choosePickButton)
+        saveButton = findViewById(R.id.saveButton)
         colorFilterButton = findViewById(R.id.colorFilterButton)
         faceDetectorConfirmButton = findViewById(R.id.faceDetectorConfirmButton)
 
@@ -201,14 +235,9 @@ class EditorActivity : AppCompatActivity() {
 
         rotationConfirmButton.setOnClickListener{
 
-            val rotation = GlobalScope.launch(Dispatchers.Main) {
+            GlobalScope.launch(Dispatchers.Main) {
 
-                val width = bitmap.width
-                val height = bitmap.height
                 bitmap = Rotate.rotate(bitmap, -rotationAngleValueText.text.toString().toDouble())
-                mainImage.setImageBitmap(bitmap)
-
-
                 mainImage.setImageBitmap(bitmap)
             }
         }
@@ -347,5 +376,9 @@ class EditorActivity : AppCompatActivity() {
             true
         }
 
+        saveButton.setOnClickListener{
+
+            saveMediaToStorage(bitmap)
+        }
     }
 }
