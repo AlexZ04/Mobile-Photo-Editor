@@ -22,7 +22,7 @@
         android:id="@+id/cubeButton"
         android:layout_width="157dp"
         android:layout_height="68dp"
-        android:text="Кубик Бляха муха"
+        android:text="КУБАНЬ"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.937"

@@ -86,7 +86,7 @@ class EditorActivity : AppCompatActivity() {
                 val x = (event.x / imageWidth * intrinsicWidth).toInt()
                 val y = (event.y / imageHeight * intrinsicHeight).toInt()
                 val retouching = Retouching(newImageBitmap)
-                newImageBitmap = retouching.startRetouching(x, y, 500, 100)
+                newImageBitmap = retouching.startRetouching(x, y, 50, 100)
                 mainImage.setImageBitmap(newImageBitmap)
             }
             true
