@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.photoeditor.Filter.ColorFilters
+import com.example.photoeditor.Filter.UnsharpMask
 
 class EditorActivity : AppCompatActivity() {
 
@@ -45,8 +46,8 @@ class EditorActivity : AppCompatActivity() {
         }
 
         colorFilterButton.setOnClickListener{
-            val objectImage = ColorFilters(newImageBitmap)
-            objectImage.negativeFilter()
+            val objectImage = UnsharpMask(newImageBitmap)
+            objectImage.unsharpMaskAlg()
             newImageBitmap = objectImage.bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
             mainImage.setImageBitmap(newImageBitmap)
