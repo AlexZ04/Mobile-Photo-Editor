@@ -12,6 +12,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
@@ -21,6 +23,7 @@ import kotlin.io.path.Path
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 class Cube : AppCompatActivity() {
     private lateinit var choosePickButton: Button
@@ -131,56 +134,63 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
         intArrayOf(8, 9),
         intArrayOf(10, 11)
     )
+    private var previousX1 = 0f
+    private var previousY1 = 0f
+    private var previousX2 = 0f
+    private var previousY2 = 0f
+    private var isScaling = false
+    private val handler = Handler(Looper.getMainLooper())
+    private val delayAfterScaling = 700L
+    private val maxRotationAngle = 130f
+    val centerY = height / 2f
     override fun onTouchEvent(event: MotionEvent): Boolean {
         scaleDetector.onTouchEvent(event)
 
         if (event.pointerCount == 2) {
+            var rot = 1f;
             val finger1X = event.getX(0)
             val finger1Y = event.getY(0)
             val finger2X = event.getX(1)
             val finger2Y = event.getY(1)
-
-            var initialUpperFingerX = 0f
-            var initialUpperFingerY = 0f
-            var upperFingerMovingRight = false
+            if (event.getX(1) < event.getX(0)){
+                rot = -1f;
+            }
 
             when (event.actionMasked) {
-                MotionEvent.ACTION_DOWN -> {
-                    if (finger1Y < finger2Y) {
-                        initialUpperFingerX = finger1X
-                        initialUpperFingerY = finger1Y
-                    } else {
-                        initialUpperFingerX = finger2X
-                        initialUpperFingerY = finger2Y
-                    }
+                MotionEvent.ACTION_POINTER_DOWN -> {
+                    isScaling = true
+                    previousX1 = finger1X
+                    previousY1 = finger1Y
+                    previousX2 = finger2X
+                    previousY2 = finger2Y
+                }
+                MotionEvent.ACTION_POINTER_UP -> {
+                    handler.postDelayed({
+                        isScaling = false
+                    }, delayAfterScaling)
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    var deltaX = 0
-                    var deltaY = 0
-                    var currentUpperFingerX = event.getX(event.findPointerIndex(0))
-                    var currentUpperFingerY = event.getY(event.findPointerIndex(0))
-                    if (finger1Y < finger2Y) {
-                        currentUpperFingerX = event.getX(event.findPointerIndex(1))
-                        currentUpperFingerY = event.getY(event.findPointerIndex(1))
-                        deltaX = (finger1X - currentUpperFingerX).toInt()
-                        deltaY = (finger1Y - currentUpperFingerY).toInt()
-                    } else {
-                        currentUpperFingerX = event.getX(event.findPointerIndex(0))
-                        currentUpperFingerY = event.getY(event.findPointerIndex(0))
-                        deltaX = (finger2X - currentUpperFingerX).toInt()
-                        deltaY = (finger2Y - currentUpperFingerY).toInt()
+                    val currentX1 = finger1X
+                    val currentY1 = finger1Y
+                    val currentX2 = finger2X
+                    val currentY2 = finger2Y
+                    val bothFingersMoveInSameDirection =
+                        (previousX1 < centerY && previousX2 < centerY && currentX1 < centerY && currentX2 < centerY) ||
+                                (previousX1 > centerY && previousX2 > centerY && currentX1 > centerY && currentX2 > centerY)
+                    var angle = calculateRotationAngle(previousX1, previousY1, currentX1, currentY1,
+                        previousX2, previousY2, currentX2, currentY2)
+                    if (!bothFingersMoveInSameDirection) {
+                        angle *= -1f
                     }
-                    upperFingerMovingRight = deltaX < 0
+                    rotateZ(angle * rot)
+
+                    previousX1 = currentX1
+                    previousY1 = currentY1
+                    previousX2 = currentX2
+                    previousY2 = currentY2
                 }
             }
-
-            val angle = 1f
-            if (upperFingerMovingRight) {
-                rotateZ(angle)
-            } else {
-                rotateZ(-angle)
-            }
-        } else if (!scaleDetector.isInProgress) {
+        } else if (!isScaling) {
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
                     previousX = event.x
@@ -192,15 +202,35 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
 
                     val deltaX = currentX - previousX
                     val deltaY = currentY - previousY
+                    val maxDelta = 40f
+                    val clampedDeltaX = deltaX.coerceIn(-maxDelta, maxDelta)
+                    val clampedDeltaY = deltaY.coerceIn(-maxDelta, maxDelta)
                     if (!scaleDetector.isInProgress) {
-                        rotateCube(deltaX, deltaY)
+                        rotateCube(clampedDeltaX, clampedDeltaY)
                         previousX = currentX
                         previousY = currentY
                     }
                 }
             }
         }
+
         return true
+    }
+    private fun calculateRotationAngle(
+        prevX1: Float, prevY1: Float, currX1: Float, currY1: Float,
+        prevX2: Float, prevY2: Float, currX2: Float, currY2: Float
+    ): Float {
+        val angle1 = Math.atan2((currY1 - prevY1).toDouble(), (currX1 - prevX1).toDouble())
+        val angle2 = Math.atan2((currY2 - prevY2).toDouble(), (currX2 - prevX2).toDouble())
+        var angle = Math.toDegrees(angle1 - angle2).toFloat()
+        angle = angle.coerceIn(-maxRotationAngle, maxRotationAngle)
+        val distance1 = Math.hypot((currX1 - prevX1).toDouble(), (currY1 - prevY1).toDouble()).toFloat()
+        val distance2 = Math.hypot((currX2 - prevX2).toDouble(), (currY2 - prevY2).toDouble()).toFloat()
+
+        val averageDistance = (distance1 + distance2) / 2
+        val rotationSpeed = averageDistance * 0.001f  // Adjust the scaling factor as needed
+
+        return angle * rotationSpeed
     }
     private fun rotateCube(deltaX: Float, deltaY: Float) {
         val sensitivity = 0.1f
@@ -219,10 +249,7 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
         val cameraDirection = Vertex(0f, 0f, 1f)
         val centerX = width / 2f
         val centerY = height / 2f
-        val canvasCenterX = width / 2f
-        val canvasCenterY = height / 2f
         faceVisibility.fill(false)
-        // Рисование линий между вершинами с учетом масштаба
         for (i in connections.indices) {
             val connection = connections[i]
             val vertex1 = vertexes[connection[0]]
@@ -244,7 +271,6 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
             val dotProduct = dotProduct(cameraDirection, normal)
 
             if (dotProduct > 0) {
-                // Грань видима, рисуем ее
 //                val zFactor1 = cameraDistance / (cameraDistance - vertex1.z)
 //                val zFactor2 = cameraDistance / (cameraDistance - vertex2.z)
 //                val zFactor3 = cameraDistance / (cameraDistance - vertex3.z)
@@ -303,45 +329,7 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
         }
         //invalidate()
     }
-    private fun fillPolygon(canvas: Canvas, x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float, color: Int) {
-        val paint = Paint()
-        paint.style = Paint.Style.FILL
-        paint.color = color
-        paint.alpha = 255
 
-        val minX = minOf(x1, x2, x3).toInt()
-        val maxX = maxOf(x1, x2, x3).toInt()
-        val minY = minOf(y1, y2, y3).toInt()
-        val maxY = maxOf(y1, y2, y3).toInt()
-
-        for (x in minX..maxX) {
-            for (y in minY..maxY) {
-                if (isPointInTriangle(x1, y1, x2, y2, x3, y3, x.toFloat(), y.toFloat())) {
-                    canvas.drawCircle(x.toFloat(), y.toFloat(), 1f, paint)
-                    Log.d("fillPolygon", "Drawing point at ($x, $y)")
-                }
-                continue;
-            }
-        }
-    }
-
-    private fun isPointInTriangle(ax: Float, ay: Float, bx: Float, by: Float, cx: Float, cy: Float, px: Float, py: Float): Boolean {
-        val bX = bx - ax
-        val bY = by - ay
-        val cX = cx - ax
-        val cY = cy - ay
-        val pX = px - ax
-        val pY = py - ay
-
-        val m = (pX * bY - bX * pY) / (cX * bY - bX * cY)
-        if (m >= 0 && m <= 1) {
-            val l = (pX - m * cX) / bX
-            if (l >= 0 && (m + l) <= 1) {
-                return true
-            }
-        }
-        return false
-    }
     fun dotProduct(a: Vertex, b: Vertex): Float {
         return a.x * b.x + a.y * b.y + a.z * b.z
     }
@@ -363,7 +351,15 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
             vertex.x = (x * cos - y * sin).toFloat()
             vertex.y = (y * cos + x * sin).toFloat()
         }
+        for (digit in digits) {
+            for (point in digit) {
+                val x = point.x
+                val y = point.y
 
+                point.x = (x * cos - y * sin).toFloat()
+                point.y = (y * cos + x * sin).toFloat()
+            }
+        }
         invalidate()
     }
     private fun rotate(vertex: Vertex, angleX: Float, angleY: Float, angleZ: Float): Vertex {
