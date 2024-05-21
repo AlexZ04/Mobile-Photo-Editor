@@ -25,6 +25,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.photoeditor.Affine.AffineTransformations
 import com.example.photoeditor.Filter.ColorFilters
+import com.example.photoeditor.Filter.UnsharpMask
 import com.example.photoeditor.Retouch.Retouching
 import com.example.photoeditor.neuron.FaceDetector
 
@@ -63,6 +64,7 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var retouchButton: Button
 
     private lateinit var unsharpMasking: Button
+    private lateinit var unsharpMaskingConfirmButton: Button
 
     private lateinit var mainImage: ImageView
     private lateinit var choosePickButton: Button
@@ -145,7 +147,9 @@ class EditorActivity : AppCompatActivity() {
         confirmAffineButton = findViewById(R.id.confirmAffineButton)
 
         retouchButton = findViewById(R.id.retouchButton)
+
         unsharpMasking = findViewById(R.id.unsharpMasking)
+        unsharpMaskingConfirmButton = findViewById(R.id.unsharpMaskingConfirmButton)
 
         mainImage = findViewById(R.id.mainImage)
         choosePickButton = findViewById(R.id.choosePickButton)
@@ -175,10 +179,15 @@ class EditorActivity : AppCompatActivity() {
                 mainImage,
                 faceDetectorConfirmButton
             ),
+
             arrayOf<View>(
                 mainImage
             ),
-            arrayOf<View>(),
+
+            arrayOf<View>(
+                mainImage,
+                unsharpMaskingConfirmButton
+            ),
 
             arrayOf<View>(
                 firstAffineImage,
@@ -338,9 +347,14 @@ class EditorActivity : AppCompatActivity() {
 
             secondAffineImage.setImageBitmap(AffineTransformations.transform(bitmap, firstPoints, secondPoints))
         }
-        colorFilterButton.setOnClickListener{
 
+        colorFilterButton.setOnClickListener{
             bitmap = ColorFilters.mozaik(bitmap, 20)
+            mainImage.setImageBitmap(bitmap)
+        }
+
+        unsharpMaskingConfirmButton.setOnClickListener{
+            bitmap = UnsharpMask.unsharpMaskAlg(bitmap, 1.0)
             mainImage.setImageBitmap(bitmap)
         }
 

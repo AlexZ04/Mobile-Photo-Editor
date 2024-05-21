@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools" >
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
@@ -14,13 +14,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Photoeditor"
-        tools:targetApi="31">
+        tools:targetApi="31" >
         <activity
             android:name=".Filter.VectorEditor"
             android:exported="false"
             android:label="@string/title_activity_vector_editor"
             android:theme="@style/Theme.Photoeditor"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".Filter.UnsharpMasking"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".EditorActivity"
             android:exported="false"
