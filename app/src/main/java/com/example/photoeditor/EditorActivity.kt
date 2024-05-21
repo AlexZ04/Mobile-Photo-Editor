@@ -2,13 +2,11 @@ package com.example.photoeditor
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.drawable.BitmapDrawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -16,9 +14,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.MotionEvent
-import android.util.Log
 import android.view.View
-import android.view.View.OnTouchListener
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -29,16 +25,15 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.photoeditor.Affine.AffineTransformations
 import com.example.photoeditor.Filter.ColorFilters
 import com.example.photoeditor.Retouch.Retouching
-//import com.example.photoeditor.neuron.FaceDetector
-//
-//import org.opencv.android.OpenCVLoader;
-//import org.opencv.objdetect.CascadeClassifier
-//import java.io.File
+import com.example.photoeditor.neuron.FaceDetector
+
+import org.opencv.android.OpenCVLoader
+import org.opencv.objdetect.CascadeClassifier
+import java.io.File
 
 import com.example.photoeditor.Translate.Resize
 import com.example.photoeditor.Translate.Rotate
 import kotlinx.coroutines.*
-import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 
@@ -73,7 +68,7 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var saveButton: Button
     private lateinit var colorFilterButton: Button
     private lateinit var faceDetectorConfirmButton: Button
-//    private lateinit var faceCascade: CascadeClassifier
+    private lateinit var faceCascade: CascadeClassifier
 
     private lateinit var newImageBitmap: Bitmap
 
@@ -122,7 +117,7 @@ class EditorActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-//        OpenCVLoader.initDebug()
+        OpenCVLoader.initDebug()
         setContentView(R.layout.activity_editor)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -248,8 +243,8 @@ class EditorActivity : AppCompatActivity() {
         }
 
         var affineMod = 0
-        var firstPoints = mutableListOf<Array<Float>>()
-        var secondPoints = mutableListOf<Array<Float>>()
+        val firstPoints = mutableListOf<Array<Float>>()
+        val secondPoints = mutableListOf<Array<Float>>()
 
         firstAffineChangeButton.setOnClickListener{
             affineMod = 1
@@ -348,15 +343,16 @@ class EditorActivity : AppCompatActivity() {
             mainImage.setImageBitmap(bitmap)
         }
 
-//        faceDetectorConfirmButton.setOnClickListener{
-//            val inputStream = resources.openRawResource(R.raw.haarcascade_frontalface_default)
-//            val file = File(cacheDir, "haarcascade_frontalface_default.xml")
-//            inputStream.use { input -> file.outputStream().use { output -> input.copyTo(output) } }
-//            faceCascade = CascadeClassifier(file.absolutePath)
-//            val detector = FaceDetector()
-//            newImageBitmap = detector.processImage(faceCascade, newImageBitmap)
-//            mainImage.setImageBitmap(newImageBitmap)
-//        }
+        faceDetectorConfirmButton.setOnClickListener{
+            val inputStream = resources.openRawResource(R.raw.haarcascade_frontalface_default)
+            val file = File(cacheDir, "haarcascade_frontalface_default.xml")
+            inputStream.use { input -> file.outputStream().use { output -> input.copyTo(output) } }
+            faceCascade = CascadeClassifier(file.absolutePath)
+            val detector = FaceDetector()
+            newImageBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+            newImageBitmap = detector.processImage(faceCascade, newImageBitmap)
+            mainImage.setImageBitmap(newImageBitmap)
+        }
 
         mainImage.setOnTouchListener { v, event ->
             if (currAlg == 4 && (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN)) {
