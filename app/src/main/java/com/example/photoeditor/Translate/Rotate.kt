@@ -11,34 +11,29 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class Rotate() {
     companion object{
-
-        suspend fun rotate(bitmap: Bitmap, angle: Double) : Bitmap {
-
-            fun getNewPos(x: Int, y: Int, angle: Double): IntArray {
-
-                val newX = (x * cos(angle) + y * sin(angle)).toInt()
-                val newY = (y * cos(angle) - x * sin(angle)).toInt()
-
-                return intArrayOf(newX, newY)
-            }
+        suspend fun rotate(bitmap: Bitmap, angle: Double): Bitmap = withContext(Dispatchers.Default) {
+            val cosAngle = cos(PI * angle / 180)
+            val sinAngle = sin(PI * angle / 180)
 
             var minX = Int.MAX_VALUE
             var minY = Int.MAX_VALUE
             var maxX = Int.MIN_VALUE
             var maxY = Int.MIN_VALUE
 
-            val angleRad = PI * angle / 180
+            // Calculate the new bounds
+            for (i in 0 until bitmap.width) {
+                for (j in 0 until bitmap.height) {
+                    val newX = (i * cosAngle - j * sinAngle).toInt()
+                    val newY = (i * sinAngle + j * cosAngle).toInt()
 
-            for(i in 0..<bitmap.width * 2 step bitmap.width){
-                for(j in 0..<bitmap.height * 2 step bitmap.height){
-
-                    val newX = (i * cos(angleRad) - j * sin(angleRad)).toInt()
-                    val newY = (i * sin(angleRad) + j * cos(angleRad)).toInt()
                     minX = min(minX, newX)
                     minY = min(minY, newY)
                     maxX = max(maxX, newX)
@@ -46,26 +41,31 @@ class Rotate() {
                 }
             }
 
-            val newBitmap = Bitmap.createBitmap(maxX - minX, maxY - minY, Bitmap.Config.ARGB_8888)
+            val newWidth = maxX - minX + 1
+            val newHeight = maxY - minY + 1
+            val newBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888)
 
             coroutineScope {
 
-                for (x in 0..<newBitmap.getWidth()) {
-                    launch{
-                        for (y in 0..<newBitmap.getHeight()) {
-                            val (newX, newY) = getNewPos(x + minX, y + minY, angleRad)
+                val jobs = List(newBitmap.width) { x ->
 
-                            val newColor = if (newX >= 0 && newX < bitmap.width
-                                && newY >= 0 && newY < bitmap.height
-                            ) bitmap.getColor(newX, newY) else Color.BLACK.toColor()
+                    async(Dispatchers.Default) {
 
-                            newBitmap.setPixel(x, y, newColor.toArgb())
+                        for (y in 0 until newBitmap.height) {
+                            val newX = ((x + minX) * cosAngle + (y + minY) * sinAngle).toInt()
+                            val newY = ((y + minY) * cosAngle - (x + minX) * sinAngle).toInt()
+
+                            if (newX in 0 until bitmap.width && newY in 0 until bitmap.height) {
+                                val color = bitmap.getPixel(newX, newY)
+                                newBitmap.setPixel(x, y, color)
+                            }
                         }
                     }
                 }
+                jobs.awaitAll()
             }
 
-            return newBitmap
+            return@withContext newBitmap
         }
     }
 }

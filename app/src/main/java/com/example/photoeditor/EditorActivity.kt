@@ -22,6 +22,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.photoeditor.Affine.AffineTransformations
 import com.example.photoeditor.Filter.ColorFilters
 import com.example.photoeditor.Retouch.Retouching
@@ -210,7 +211,7 @@ class EditorActivity : AppCompatActivity() {
         val orientation: Int =
             exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
 
-        GlobalScope.launch{
+        lifecycleScope.launch{
             when (orientation) {
 
                 ExifInterface.ORIENTATION_ROTATE_90 -> bitmap = Rotate.rotate(bitmap,90.0)
@@ -230,7 +231,7 @@ class EditorActivity : AppCompatActivity() {
 
         rotationConfirmButton.setOnClickListener{
 
-            GlobalScope.launch(Dispatchers.Main) {
+            lifecycleScope.launch(Dispatchers.Main) {
 
                 bitmap = Rotate.rotate(bitmap, -rotationAngleValueText.text.toString().toDouble())
                 mainImage.setImageBitmap(bitmap)
