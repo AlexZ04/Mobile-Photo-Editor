@@ -190,8 +190,7 @@ class EditorActivity : AppCompatActivity() {
             ),
 
             arrayOf<View>(
-                firstAffineImage,
-                secondAffineImage,
+                mainImage,
                 firstAffineChangeButton,
                 secondAffineChangeButton,
                 confirmAffineButton
@@ -265,87 +264,10 @@ class EditorActivity : AppCompatActivity() {
             secondPoints.clear()
         }
 
-        firstAffineImage.setOnTouchListener { v, event ->
-
-            if (affineMod == 1 && event.action == MotionEvent.ACTION_DOWN) {
-
-                val drawable = firstAffineImage.drawable
-                val intrinsicWidth = drawable.intrinsicWidth
-                val intrinsicHeight = drawable.intrinsicHeight
-
-                val imageWidth = firstAffineImage.width
-                val imageHeight = firstAffineImage.height
-
-                val x = (event.x / imageWidth * intrinsicWidth)
-                val y = (event.y / imageHeight * intrinsicHeight)
-
-                val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-
-                val canvas = Canvas(mutableBitmap)
-
-                val paint = Paint().apply {
-                    color = Color.RED
-                    style = Paint.Style.FILL
-                }
-                canvas.drawCircle(x, y, 15f, paint)
-
-                firstAffineImage.setImageBitmap(mutableBitmap)
-                firstAffineImage.invalidate()
-
-                firstPoints.add(arrayOf(x, y))
-                if(firstPoints.size == 3){
-                    affineMod = 0
-                }
-
-                true
-
-            } else {
-                false
-            }
-        }
-
-        secondAffineImage.setOnTouchListener { v, event ->
-
-            if (affineMod == 2 && event.action == MotionEvent.ACTION_DOWN) {
-
-                val drawable = secondAffineImage.drawable
-                val intrinsicWidth = drawable.intrinsicWidth
-                val intrinsicHeight = drawable.intrinsicHeight
-
-                val imageWidth = secondAffineImage.width
-                val imageHeight = secondAffineImage.height
-
-                val x = (event.x / imageWidth * intrinsicWidth)
-                val y = (event.y / imageHeight * intrinsicHeight)
-
-                val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-
-                val canvas = Canvas(mutableBitmap)
-
-                val paint = Paint().apply {
-                    color = Color.RED
-                    style = Paint.Style.FILL
-                }
-                canvas.drawCircle(x, y, 15f, paint)
-
-                secondAffineImage.setImageBitmap(mutableBitmap)
-                secondAffineImage.invalidate()
-
-                secondPoints.add(arrayOf(x, y))
-                if(secondPoints.size == 3){
-                    affineMod = 0
-                }
-
-                true
-
-            } else {
-                false
-            }
-        }
-
         confirmAffineButton.setOnClickListener{
 
-            secondAffineImage.setImageBitmap(AffineTransformations.transform(bitmap, firstPoints, secondPoints))
+            bitmap = AffineTransformations.transform(bitmap, firstPoints, secondPoints)
+            mainImage.setImageBitmap(bitmap)
         }
 
         colorFilterButton.setOnClickListener{
@@ -370,7 +292,7 @@ class EditorActivity : AppCompatActivity() {
         }
 
         mainImage.setOnTouchListener { v, event ->
-            if (currAlg == 4 && (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN)) {
+            if ((currAlg == 4 || currAlg == 6) && (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN)) {
                 val imageView = v as ImageView
                 val drawable = imageView.drawable
                 val intrinsicWidth = drawable.intrinsicWidth
@@ -380,10 +302,50 @@ class EditorActivity : AppCompatActivity() {
                 val imageHeight = imageView.height
                 val x = (event.x / imageWidth * intrinsicWidth).toInt()
                 val y = (event.y / imageHeight * intrinsicHeight).toInt()
-                val retouching = Retouching(bitmap)
-                bitmap = retouching.startRetouching(x, y, 50, 100)
-                mainImage.setImageBitmap(bitmap)
+
+                if(currAlg == 4){
+                    val retouching = Retouching(bitmap)
+                    bitmap = retouching.startRetouching(x, y, 50, 100)
+                    mainImage.setImageBitmap(bitmap)
+                }
+
+                else{
+
+                    if ((affineMod == 1 || affineMod == 2) && event.action == MotionEvent.ACTION_DOWN) {
+
+                        val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+                        val canvas = Canvas(mutableBitmap)
+
+                        val paint = Paint().apply {
+                            color = Color.RED
+                            style = Paint.Style.FILL
+                        }
+                        canvas.drawCircle(x.toFloat(), y.toFloat(), 15f, paint)
+
+                        mainImage.setImageBitmap(mutableBitmap)
+                        mainImage.invalidate()
+
+                        if(affineMod == 1){
+
+                            firstPoints.add(arrayOf(x.toFloat(), y.toFloat()))
+
+                            if(firstPoints.size == 3){
+                                affineMod = 0
+                            }
+                        }
+                        if(affineMod == 2){
+
+                            secondPoints.add(arrayOf(x.toFloat(), y.toFloat()))
+
+                            if(secondPoints.size == 3){
+                                affineMod = 0
+                            }
+                        }
+                    }
+                }
             }
+
             true
         }
 
