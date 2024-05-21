@@ -300,12 +300,21 @@ class EditorActivity : AppCompatActivity() {
 
                 val imageWidth = imageView.width
                 val imageHeight = imageView.height
-                val x = (event.x / imageWidth * intrinsicWidth).toInt()
-                val y = (event.y / imageHeight * intrinsicHeight).toInt()
+                val scaleX = intrinsicWidth.toFloat() / imageWidth
+                val scaleY = intrinsicHeight.toFloat() / imageHeight
+
+                val scaledTouchX = event.x * scaleX
+                val scaledTouchY = event.y * scaleY
+
+                val paddingLeft = (imageWidth - intrinsicWidth / scaleX) / 2
+                val paddingTop = (imageHeight - intrinsicHeight / scaleY) / 2
+
+                val centerX = (scaledTouchX - paddingLeft).toInt()
+                val centerY = (scaledTouchY - paddingTop).toInt()
 
                 if(currAlg == 4){
                     val retouching = Retouching(bitmap)
-                    bitmap = retouching.startRetouching(x, y, 50, 100)
+                    bitmap = retouching.startRetouching(centerX, centerY, 150, 100)
                     mainImage.setImageBitmap(bitmap)
                 }
 
@@ -321,14 +330,14 @@ class EditorActivity : AppCompatActivity() {
                             color = Color.RED
                             style = Paint.Style.FILL
                         }
-                        canvas.drawCircle(x.toFloat(), y.toFloat(), 15f, paint)
+                        canvas.drawCircle(centerX.toFloat(), centerY.toFloat(), 15f, paint)
 
                         mainImage.setImageBitmap(mutableBitmap)
                         mainImage.invalidate()
 
                         if(affineMod == 1){
 
-                            firstPoints.add(arrayOf(x.toFloat(), y.toFloat()))
+                            firstPoints.add(arrayOf(centerX.toFloat(), centerY.toFloat()))
 
                             if(firstPoints.size == 3){
                                 affineMod = 0
@@ -336,7 +345,7 @@ class EditorActivity : AppCompatActivity() {
                         }
                         if(affineMod == 2){
 
-                            secondPoints.add(arrayOf(x.toFloat(), y.toFloat()))
+                            secondPoints.add(arrayOf(centerX.toFloat(), centerY.toFloat()))
 
                             if(secondPoints.size == 3){
                                 affineMod = 0
