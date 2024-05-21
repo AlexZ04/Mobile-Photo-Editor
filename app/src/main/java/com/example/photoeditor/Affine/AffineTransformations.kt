@@ -41,10 +41,13 @@ class AffineTransformations {
 
                     val newX = ((d * x - b * y + b * f - e * d) / (a * d - b * c)).toInt()
                     val newY = ((y - c * newX - f) / d).toInt()
-                    val newColor = if(newX >= 0 && newX < bitmap.width
-                        && newY >= 0 && newY < bitmap.height) bitmap.getColor(newX, newY) else Color.BLACK.toColor()
 
-                    newBitmap.setPixel(x, y, newColor.toArgb())
+                    if(newX >= 0 && newX < bitmap.width
+                        && newY >= 0 && newY < bitmap.height){
+
+                        val newColor =  bitmap.getColor(newX, newY)
+                        newBitmap.setPixel(x, y, newColor.toArgb())
+                    }
                 }
             }
 

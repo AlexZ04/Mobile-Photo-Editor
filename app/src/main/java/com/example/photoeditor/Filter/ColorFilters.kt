@@ -2,18 +2,17 @@ package com.example.photoeditor.Filter
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import androidx.core.graphics.green
-import androidx.core.graphics.red
-import kotlin.math.abs
 
 class ColorFilters() {
     companion object{
-        fun negativeFilter(bitmap: Bitmap) : Bitmap {
+        fun negativeFilter(bitmap: Bitmap, fromX : Int = 0, fromY : Int = 0,
+                           toX : Int = bitmap.width, toY: Int = bitmap.height) : Bitmap {
 
-            val newBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+//            val newBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+            val newBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
-            for (x in 0 until bitmap.getWidth()) {
-                for (y in 0 until bitmap.getHeight()) {
+            for (x in fromX until toX) {
+                for (y in fromY until toY) {
                     val color = bitmap.getPixel(x, y)
 
                     val r = Color.red(color)
@@ -27,12 +26,13 @@ class ColorFilters() {
             return newBitmap
         }
 
-        fun blackWhiteFilter(bitmap: Bitmap) : Bitmap{
+        fun blackWhiteFilter(bitmap: Bitmap, fromX : Int = 0, fromY : Int = 0,
+                             toX : Int = bitmap.width, toY: Int = bitmap.height) : Bitmap{
 
-            val newBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+            val newBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
-            for (x in 0 until bitmap.getWidth()) {
-                for (y in 0 until bitmap.getHeight()) {
+            for (x in fromX until toX) {
+                for (y in fromY until toY) {
                     val color = bitmap.getPixel(x, y)
 
                     val r = Color.red(color)
@@ -48,9 +48,10 @@ class ColorFilters() {
             return newBitmap
         }
 
-        fun mozaik(bitmap: Bitmap, pixels: Int) : Bitmap{
+        fun mozaik(bitmap: Bitmap, pixels: Int, fromX : Int = 0, fromY : Int = 0,
+                   toX : Int = bitmap.width, toY: Int = bitmap.height) : Bitmap{
 
-            val newBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+            val newBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
             var color : Int
 
@@ -66,9 +67,9 @@ class ColorFilters() {
             var currentX = 0
             var currentY = 0
 
-            while (x < bitmap.width) {
+            while (x < toX) {
                 y = 0
-                while (y < bitmap.height) {
+                while (y < toY) {
                     midR = 0F
                     midG = 0F
                     midB = 0F
@@ -76,10 +77,10 @@ class ColorFilters() {
                     pixelsUsed = 0
 
                     currentX = x
-                    while (currentX < Math.min(x + pixels, bitmap.width)) {
+                    while (currentX < Math.min(x + pixels, toX)) {
                         currentY = y
 
-                        while (currentY < Math.min(y + pixels, bitmap.height)) {
+                        while (currentY < Math.min(y + pixels, toY)) {
                             color = bitmap.getPixel(currentX, currentY)
 
                             pixelsUsed++
@@ -99,10 +100,10 @@ class ColorFilters() {
                     midB /= (pixelsUsed)
 
                     currentX = x
-                    while (currentX < Math.min(x + pixels, bitmap.width)) {
+                    while (currentX < Math.min(x + pixels, toX)) {
                         currentY = y
 
-                        while (currentY < Math.min(y + pixels, bitmap.height)) {
+                        while (currentY < Math.min(y + pixels, toY)) {
                             newBitmap.setPixel(currentX, currentY, Color.rgb(midR.toInt(),
                                 midG.toInt(), midB.toInt()))
 
@@ -120,11 +121,13 @@ class ColorFilters() {
 
             return newBitmap
         }
-        fun contrast(bitmap: Bitmap, correction: Int) : Bitmap {
+        fun contrast(
+            bitmap: Bitmap, correction: Int, fromX: Int = 0, fromY: Int = 0,
+            toX: Int = bitmap.width, toY: Int = bitmap.height) : Bitmap {
 
-            val newBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+            val newBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
-            var colors = getColorsList(newBitmap, correction)
+            val colors = getColorsList(newBitmap, correction, fromX, fromY, toX, toY)
 
             var currentColor : Int
 
@@ -136,8 +139,8 @@ class ColorFilters() {
             var newG : Int
             var newB : Int
 
-            for (x in 0 until bitmap.width) {
-                for (y in 0 until bitmap.height) {
+            for (x in fromX until toX) {
+                for (y in fromY until toY) {
                     currentColor = bitmap.getPixel(x, y)
 
                     curR = Color.red(currentColor)
@@ -155,7 +158,8 @@ class ColorFilters() {
             return newBitmap
         }
 
-        fun getLAB(bitmap: Bitmap): Float {
+        fun getLAB(bitmap: Bitmap, fromX : Int = 0, fromY : Int = 0,
+                   toX : Int = bitmap.width, toY: Int = bitmap.height): Float {
             var color: Int
 
             var valueR = 0
@@ -164,8 +168,8 @@ class ColorFilters() {
 
             var lAB = 0F
 
-            for (x in 0 until bitmap.width) {
-                for (y in 0 until bitmap.height) {
+            for (x in fromX until toX) {
+                for (y in fromY until toY) {
                     color = bitmap.getPixel(x, y)
 
                     valueR = Color.red(color)
@@ -181,8 +185,9 @@ class ColorFilters() {
             return lAB;
         }
 
-        fun getColorsList(bitmap: Bitmap, correction: Int): MutableList<Int> {
-            val lAB = getLAB(bitmap).toInt()
+        fun getColorsList(bitmap: Bitmap, correction: Int, fromX : Int = 0, fromY : Int = 0,
+                          toX : Int = bitmap.width, toY: Int = bitmap.height): MutableList<Int> {
+            val lAB = getLAB(bitmap, fromX, fromY, toX, toY).toInt()
 
             val k = 1.0 + correction / 100.0
 
