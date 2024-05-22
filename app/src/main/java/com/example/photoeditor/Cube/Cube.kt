@@ -245,7 +245,7 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
     }
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawColor(Color.WHITE)
+        canvas.drawColor(Color.BLACK)
         val cameraDirection = Vertex(0f, 0f, 1f)
         val centerX = width / 2f
         val centerY = height / 2f

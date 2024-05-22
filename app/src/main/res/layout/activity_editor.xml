@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.25"
-        tools:srcCompat="@tools:sample/avatars"/>
+        tools:srcCompat="@tools:sample/avatars" />
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
@@ -39,44 +39,44 @@
             <Button
                 android:id="@+id/rotationButton"
                 android:layout_width="50dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="20dp" />
 
             <Button
                 android:id="@+id/filtersButton"
                 android:layout_width="50dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="20dp" />
 
             <Button
                 android:id="@+id/resizingButton"
                 android:layout_width="50dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="20dp" />
 
             <Button
                 android:id="@+id/faceDetectorButton"
                 android:layout_width="50dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="20dp" />
 
             <Button
                 android:id="@+id/retouchButton"
                 android:layout_width="50dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="20dp" />
 
             <Button
                 android:id="@+id/unsharpMasking"
                 android:layout_width="50dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="20dp" />
 
             <Button
                 android:id="@+id/affineButton"
                 android:layout_width="50dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="20dp" />
 
         </LinearLayout>
     </HorizontalScrollView>
@@ -172,9 +172,11 @@
 
     <Button
         android:id="@+id/choosePickButton"
+        style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="Назад"
+        app:icon="@drawable/back_arrow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.05"
@@ -184,15 +186,16 @@
 
     <Button
         android:id="@+id/saveButton"
+        style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:text="Сохранить"
+        app:icon="@drawable/download"
+        app:layout_constraintBottom_toTopOf="@+id/affineSecond"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.95"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023" />
+        app:layout_constraintVertical_bias="0.41" />
 
     <EditText
         android:id="@+id/rotationAngleInput"
@@ -252,12 +255,123 @@
         android:id="@+id/faceDetectorConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Face"
+        android:text="Наложить фильтр"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainImage"
+        app:layout_constraintVertical_bias="0.345" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.125"/>
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.875"/>
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/strengthOfBrushSlider"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:stepSize="1.0"
+        android:value="100.0"
+        android:valueFrom="0.0"
+        android:valueTo="100.0"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@+id/mainImage" />
+
+    <TextView
+        android:id="@+id/textSize"
+        android:layout_width="60dp"
+        android:layout_height="20dp"
+        android:text="Размер"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/firstAffineChangeButton"
+        app:layout_constraintEnd_toStartOf="@+id/faceDetectorConfirmButton" />
+
+    <TextView
+        android:id="@+id/textStrength"
+        android:layout_width="60dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="530dp"
+        android:visibility="invisible"
+        android:text="Сила"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.835"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@+id/choosePickButton"
+        app:layout_constraintVertical_bias="0.008" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/sizeOfBrushSlider"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:stepSize="1.0"
+        android:value="100.0"
+        android:valueFrom="1.0"
+        android:valueTo="500.0"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/strengthOfBrushSlider"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@+id/mainImage" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/horizontalScrollView"
+        app:layout_constraintEnd_toEndOf="@+id/rotationConfirmButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.828"
-        android:visibility="invisible"/>
+        app:layout_constraintTop_toBottomOf="@+id/mainImage"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/firstGroupButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:icon="@drawable/check"
+            android:text="Негатив"
+            app:iconGravity="textStart" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/secondGroupButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:icon="@drawable/check"
+            android:text="Ч/Б"
+            app:iconGravity="textStart" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/thirdGroupButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:icon="@drawable/check"
+            android:text="Мозайка"
+            app:iconGravity="textStart" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>

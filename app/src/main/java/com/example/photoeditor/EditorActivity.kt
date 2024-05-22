@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.telephony.CellSignalStrength
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
@@ -27,15 +28,17 @@ import com.example.photoeditor.Affine.AffineTransformations
 import com.example.photoeditor.Filter.ColorFilters
 import com.example.photoeditor.Filter.UnsharpMask
 import com.example.photoeditor.Retouch.Retouching
+import com.example.photoeditor.Translate.Resize
+import com.example.photoeditor.Translate.Rotate
 import com.example.photoeditor.neuron.FaceDetector
-
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.android.material.slider.Slider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
 import org.opencv.objdetect.CascadeClassifier
 import java.io.File
-
-import com.example.photoeditor.Translate.Resize
-import com.example.photoeditor.Translate.Rotate
-import kotlinx.coroutines.*
 import java.io.FileOutputStream
 import java.io.OutputStream
 
@@ -49,8 +52,14 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var resizingButton: Button
     private lateinit var resizingConfirmButton: Button
     private lateinit var resizingAngleValueText: EditText
+    private lateinit var strengthText: EditText
+    private lateinit var sizeText: EditText
 
     private lateinit var faceDetectorButton: Button
+    private lateinit var toggleGroup: MaterialButtonToggleGroup
+    private lateinit var firstGroupButton: MaterialButton
+    private lateinit var secondGroupButton: MaterialButton
+    private lateinit var thirdGroupButton: MaterialButton
 
     private lateinit var filtersButton: Button
 
@@ -60,6 +69,8 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var firstAffineChangeButton: Button
     private lateinit var secondAffineChangeButton: Button
     private lateinit var confirmAffineButton: Button
+    private lateinit var strengthOfBrushSlider: Slider
+    private lateinit var sizeOfBrushSlider: Slider
 
     private lateinit var retouchButton: Button
 
@@ -76,6 +87,9 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var newImageBitmap: Bitmap
 
     private var currAlg: Int = 0
+    private var strengthOfBrush: Int = 100
+    private var sizeOfBrush: Int = 0
+    private var stateOfDetector: Int = 0
 
     private fun saveMediaToStorage(bitmap: Bitmap) {
         val filename = "${System.currentTimeMillis()}.jpg"
@@ -138,13 +152,18 @@ class EditorActivity : AppCompatActivity() {
 
         faceDetectorButton = findViewById(R.id.faceDetectorButton)
         filtersButton = findViewById(R.id.filtersButton)
-
+        strengthOfBrushSlider = findViewById(R.id.strengthOfBrushSlider)
+        sizeOfBrushSlider = findViewById(R.id.sizeOfBrushSlider)
         affineButton = findViewById(R.id.affineButton)
         firstAffineImage = findViewById(R.id.affineFirst)
         secondAffineImage = findViewById(R.id.affineSecond)
         firstAffineChangeButton = findViewById(R.id.firstAffineChangeButton)
         secondAffineChangeButton = findViewById(R.id.secondAffineChangeButton)
         confirmAffineButton = findViewById(R.id.confirmAffineButton)
+        toggleGroup = findViewById(R.id.toggleButton)
+        firstGroupButton = findViewById(R.id.firstGroupButton)
+        secondGroupButton = findViewById(R.id.secondGroupButton)
+        thirdGroupButton = findViewById(R.id.thirdGroupButton)
 
         retouchButton = findViewById(R.id.retouchButton)
 
@@ -177,11 +196,17 @@ class EditorActivity : AppCompatActivity() {
 
             arrayOf<View>(
                 mainImage,
-                faceDetectorConfirmButton
+                faceDetectorConfirmButton,
+                toggleGroup,
+                firstGroupButton,
+                secondGroupButton,
+                thirdGroupButton
             ),
 
             arrayOf<View>(
-                mainImage
+                mainImage,
+                strengthOfBrushSlider,
+                sizeOfBrushSlider
             ),
 
             arrayOf<View>(
@@ -287,10 +312,15 @@ class EditorActivity : AppCompatActivity() {
             faceCascade = CascadeClassifier(file.absolutePath)
             val detector = FaceDetector()
             newImageBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-            newImageBitmap = detector.processImage(faceCascade, newImageBitmap)
+            newImageBitmap = detector.processImage(faceCascade, newImageBitmap, stateOfDetector)
             mainImage.setImageBitmap(newImageBitmap)
         }
-
+        strengthOfBrushSlider.addOnChangeListener { slider, value, fromUser ->
+            strengthOfBrush = value.toInt()
+        }
+        sizeOfBrushSlider.addOnChangeListener { slider, value, fromUser ->
+            sizeOfBrush = value.toInt()
+        }
         mainImage.setOnTouchListener { v, event ->
             if ((currAlg == 4 || currAlg == 6) && (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN)) {
                 val imageView = v as ImageView
@@ -313,9 +343,9 @@ class EditorActivity : AppCompatActivity() {
                 val centerY = (scaledTouchY - paddingTop).toInt()
 
                 if(currAlg == 4){
-                    val retouching = Retouching(bitmap)
-                    bitmap = retouching.startRetouching(centerX, centerY, 150, 100)
-                    mainImage.setImageBitmap(bitmap)
+                        val retouching = Retouching(bitmap)
+                        bitmap = retouching.startRetouching(centerX, centerY, sizeOfBrush, strengthOfBrush)
+                        mainImage.setImageBitmap(bitmap)
                 }
 
                 else{
@@ -354,8 +384,25 @@ class EditorActivity : AppCompatActivity() {
                     }
                 }
             }
-
             true
+        }
+
+        toggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (isChecked) {
+                when (checkedId) {
+                    R.id.firstGroupButton -> {
+                        stateOfDetector = 1
+                    }
+
+                    R.id.secondGroupButton -> {
+                        stateOfDetector = 2
+                    }
+
+                    R.id.thirdGroupButton -> {
+                        stateOfDetector = 3
+                    }
+                }
+            }
         }
 
         saveButton.setOnClickListener{

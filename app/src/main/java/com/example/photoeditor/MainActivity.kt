@@ -19,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.photoeditor.Filter.VectorEditor
 import com.example.photoeditor.Cube.Cube
 import com.example.photoeditor.R.id.cubeButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.net.URI
 //
 //import org.opencv.android.OpenCVLoader;
@@ -32,8 +33,8 @@ class MainActivity : AppCompatActivity() {
 
     val REQUEST_CODE = 1
     private lateinit var button: Button
-    private lateinit var vectorEdit: Button
-    private lateinit var cubeButton: Button
+    private lateinit var vectorEdit: FloatingActionButton
+    private lateinit var cubeButton: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
