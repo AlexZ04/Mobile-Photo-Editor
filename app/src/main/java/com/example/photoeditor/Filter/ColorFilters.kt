@@ -61,14 +61,14 @@ class ColorFilters() {
 
             var pixelsUsed = 0
 
-            var x = 0
+            var x = fromX
             var y = 0
 
             var currentX = 0
             var currentY = 0
 
             while (x < toX) {
-                y = 0
+                y = fromY
                 while (y < toY) {
                     midR = 0F
                     midG = 0F

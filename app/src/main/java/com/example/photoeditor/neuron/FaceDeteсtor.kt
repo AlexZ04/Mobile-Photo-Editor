@@ -32,7 +32,7 @@ class FaceDetector () {
                 mutableBitmap = ColorFilters.blackWhiteFilter(mutableBitmap, face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())
             }
             if (stateOfDetector == 3){
-                mutableBitmap = ColorFilters.mozaik(mutableBitmap, face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())
+                mutableBitmap = ColorFilters.mozaik(mutableBitmap, 8,  face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())
             }
 
         }
