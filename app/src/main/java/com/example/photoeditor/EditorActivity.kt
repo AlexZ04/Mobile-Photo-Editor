@@ -244,7 +244,7 @@ class EditorActivity : AppCompatActivity() {
         val orientation: Int =
             exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
 
-        lifecycleScope.launch{
+        lifecycleScope.launch(Dispatchers.Main){
             when (orientation) {
 
                 ExifInterface.ORIENTATION_ROTATE_90 -> bitmap = Rotate.rotate(bitmap,90.0)
