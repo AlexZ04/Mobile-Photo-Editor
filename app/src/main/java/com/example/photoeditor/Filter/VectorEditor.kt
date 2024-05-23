@@ -138,6 +138,7 @@ internal class DrawView(context: Context?) : View(context) {
 
         fontPaint.textSize = 40F
         fontPaint.setColor(Color.BLACK)
+        fontPaint.textAlign = Paint.Align.CENTER
 
         canvas.drawColor(Color.BLACK)
         paint.setColor(Color.WHITE)
@@ -153,10 +154,10 @@ internal class DrawView(context: Context?) : View(context) {
 
         canvas.drawRect(Rect(0, (screenHeight * 0.9).toInt(), screenWidth, screenHeight), paint)
 
-        canvas.drawText("Build spline", 0F, (screenHeight * 9.5 / 10).toFloat(), fontPaint)
-        canvas.drawText("Add points", (screenWidth / 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
-        canvas.drawText("Edit spline", (screenWidth * 2 / 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
-        canvas.drawText("Delete points", (screenWidth * 3/ 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
+        canvas.drawText("Build spline", (screenWidth * 0.5 / 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
+        canvas.drawText("Add points", (screenWidth * 1.5 / 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
+        canvas.drawText("Edit spline", (screenWidth * 2.5 / 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
+        canvas.drawText("Delete points", (screenWidth * 3.5 / 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
 
         paint.setColor(Color.BLACK)
         canvas.drawLine((screenWidth / 4).toFloat(), (screenHeight * 0.9).toFloat(),
