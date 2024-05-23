@@ -136,7 +136,8 @@ internal class DrawView(context: Context?) : View(context) {
 
     override fun onDraw(canvas: Canvas) {
 
-        fontPaint.textSize = 20F
+        fontPaint.textSize = 40F
+        fontPaint.setColor(Color.BLACK)
 
         canvas.drawColor(Color.BLACK)
         paint.setColor(Color.WHITE)
@@ -150,9 +151,12 @@ internal class DrawView(context: Context?) : View(context) {
             (screenWidth * 4 / 25).toFloat(), (screenHeight / 20 + screenHeight / 20 / 2).toFloat(), paint)
 
 
-        canvas.drawText("aaa", 0F, (screenHeight * 0.9).toFloat(), fontPaint)
-
         canvas.drawRect(Rect(0, (screenHeight * 0.9).toInt(), screenWidth, screenHeight), paint)
+
+        canvas.drawText("Build spline", 0F, (screenHeight * 9.5 / 10).toFloat(), fontPaint)
+        canvas.drawText("Add points", (screenWidth / 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
+        canvas.drawText("Edit spline", (screenWidth * 2 / 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
+        canvas.drawText("Delete points", (screenWidth * 3/ 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
 
         paint.setColor(Color.BLACK)
         canvas.drawLine((screenWidth / 4).toFloat(), (screenHeight * 0.9).toFloat(),
