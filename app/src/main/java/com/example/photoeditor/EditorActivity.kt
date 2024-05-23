@@ -273,7 +273,8 @@ class EditorActivity : AppCompatActivity() {
 
         resizingConfirmButton.setOnClickListener{
 
-            mainImage.setImageBitmap(Resize.resize(bitmap, resizingAngleValueText.text.toString().toDouble()))
+            bitmap = Resize.resize(bitmap, resizingAngleValueText.text.toString().toDouble())
+            mainImage.setImageBitmap(bitmap)
         }
 
         var affineMod = 0
