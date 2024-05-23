@@ -11,7 +11,6 @@ import org.opencv.objdetect.CascadeClassifier
 
 class FaceDetector () {
     fun processImage(faceCascade: CascadeClassifier, newImageBitmap: Bitmap, stateOfDetector: Int) : Bitmap {
-//        val filter = ColorFilters()
         var mutableBitmap = newImageBitmap.copy(Bitmap.Config.ARGB_8888, true)
         val mat = Mat()
         Utils.bitmapToMat(mutableBitmap, mat)
@@ -22,17 +21,19 @@ class FaceDetector () {
 
         val faceArray = faces.toArray()
         for (face in faceArray) {
-            if (stateOfDetector == 0){
-                Imgproc.rectangle(mat, face.tl(), face.br(), Scalar(255.0, 0.0, 0.0), 5)
-            }
-            if (stateOfDetector == 1) {
-                mutableBitmap = ColorFilters.negativeFilter(mutableBitmap, face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())
-            }
-            if (stateOfDetector == 2) {
-                mutableBitmap = ColorFilters.blackWhiteFilter(mutableBitmap, face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())
-            }
-            if (stateOfDetector == 3){
-                mutableBitmap = ColorFilters.mozaik(mutableBitmap, 8,  face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())
+            when (stateOfDetector) {
+                0 -> {
+                    Imgproc.rectangle(mat, face.tl(), face.br(), Scalar(255.0, 0.0, 0.0), 5)
+                }
+                1 -> {
+                    mutableBitmap = ColorFilters.negativeFilter(mutableBitmap, face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())
+                }
+                2 -> {
+                    mutableBitmap = ColorFilters.blackWhiteFilter(mutableBitmap, face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())
+                }
+                3 -> {
+                    mutableBitmap = ColorFilters.mozaik(mutableBitmap, 8, face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())
+                }
             }
 
         }

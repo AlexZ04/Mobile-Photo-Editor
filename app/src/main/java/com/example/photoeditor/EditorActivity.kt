@@ -247,6 +247,11 @@ class EditorActivity : AppCompatActivity() {
 
         var bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
 
+        val maxDimension = bitmap.width.coerceAtLeast(bitmap.height).toFloat()
+        val maxSliderValue = maxDimension.coerceAtMost(500.0f)
+        sizeOfBrushSlider.valueTo = maxSliderValue
+        sizeOfBrushSlider.value = maxSliderValue / 10
+
         val exif = ExifInterface(contentResolver.openInputStream(uri)!!)
         val orientation: Int =
             exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
@@ -327,9 +332,8 @@ class EditorActivity : AppCompatActivity() {
             inputStream.use { input -> file.outputStream().use { output -> input.copyTo(output) } }
             faceCascade = CascadeClassifier(file.absolutePath)
             val detector = FaceDetector()
-            newImageBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-            newImageBitmap = detector.processImage(faceCascade, newImageBitmap, stateOfDetector)
-            mainImage.setImageBitmap(newImageBitmap)
+            bitmap = detector.processImage(faceCascade, bitmap, stateOfDetector)
+            mainImage.setImageBitmap(bitmap)
         }
         strengthOfBrushSlider.addOnChangeListener { slider, value, fromUser ->
             strengthOfBrush = value.toInt()
