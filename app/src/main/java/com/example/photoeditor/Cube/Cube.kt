@@ -15,15 +15,18 @@ import android.graphics.PointF
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.Display
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import kotlinx.coroutines.processNextEventInCurrentThread
 import java.lang.Math.toRadians
 import kotlin.io.path.Path
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
+import kotlin.properties.Delegates
 
 class Cube : AppCompatActivity() {
     private lateinit var choosePickButton: Button
@@ -31,6 +34,8 @@ class Cube : AppCompatActivity() {
 
     private lateinit var canvas: DrawView
     private val paint = Paint()
+
+    private lateinit var display: Display
 
     private fun initVertexes() {
         vertexes = arrayOf(
@@ -51,6 +56,8 @@ class Cube : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_cube)
 
+        display = windowManager.getDefaultDisplay()
+
         choosePickButton = findViewById(R.id.choosePickButton)
         choosePickButton.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
@@ -58,6 +65,10 @@ class Cube : AppCompatActivity() {
         }
         initVertexes()
         canvas = DrawView(this, vertexes)
+
+        canvas.screenHeight = display.height
+        canvas.screenWidth = display.width
+
         setContentView(canvas)
     }
     private fun drawVertex(canvas: Canvas) {
@@ -69,6 +80,28 @@ class Cube : AppCompatActivity() {
         }
     }
 
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        var currentPoint = 0F to 0F
+        var checkPoint = 0F to 0F
+
+
+        if (event != null) {
+
+            currentPoint = event.x to event.y
+
+            if (event.x <= display.width / 5 && event.y <= display.height / 10) {
+                returnToStart()
+            }
+        }
+
+        return super.onTouchEvent(event)
+    }
+
+    fun returnToStart() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
 
 }
 class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(context) {
@@ -94,6 +127,9 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
     private val paint = Paint()
     private var scale = 1f
     private val pointPath = android.graphics.Path()
+
+    var screenHeight by Delegates.notNull<Int>()
+    var screenWidth by Delegates.notNull<Int>()
     init {
         paint.color = Color.BLACK
         paint.style = Paint.Style.FILL
@@ -245,6 +281,7 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
     }
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
         canvas.drawColor(Color.BLACK)
         val cameraDirection = Vertex(0f, 0f, 1f)
         val centerX = width / 2f
@@ -327,6 +364,13 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
                 Log.d("FaceVisibility", "Face $i is ${if (faceVisibility[i]) "visible" else "invisible"}")
             }
         }
+
+        paint.setColor(Color.WHITE)
+        paint.strokeWidth = 10F
+        canvas.drawLine((screenWidth * 2 / 25).toFloat(), (screenHeight / 20).toFloat(),
+            (screenWidth * 4 / 25).toFloat(), (screenHeight / 20 / 2).toFloat(), paint)
+        canvas.drawLine((screenWidth * 2 / 25).toFloat(), (screenHeight / 20).toFloat(),
+            (screenWidth * 4 / 25).toFloat(), (screenHeight / 20 + screenHeight / 20 / 2).toFloat(), paint)
         //invalidate()
     }
 
