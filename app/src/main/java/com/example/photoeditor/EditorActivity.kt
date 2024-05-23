@@ -41,6 +41,7 @@ import org.opencv.objdetect.CascadeClassifier
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.util.Queue
 
 
 class EditorActivity : AppCompatActivity() {
@@ -76,6 +77,10 @@ class EditorActivity : AppCompatActivity() {
 
     private lateinit var unsharpMasking: Button
     private lateinit var unsharpMaskingConfirmButton: Button
+
+    private lateinit var undoButton : Button
+    private var backActions = mutableListOf <String>()
+    private var frontActions = mutableListOf <String>()
 
     private lateinit var mainImage: ImageView
     private lateinit var choosePickButton: Button
@@ -170,6 +175,8 @@ class EditorActivity : AppCompatActivity() {
         unsharpMasking = findViewById(R.id.unsharpMasking)
         unsharpMaskingConfirmButton = findViewById(R.id.unsharpMaskingConfirmButton)
 
+        undoButton = findViewById(R.id.undoButton)
+
         mainImage = findViewById(R.id.mainImage)
         choosePickButton = findViewById(R.id.choosePickButton)
         saveButton = findViewById(R.id.saveButton)
@@ -244,6 +251,10 @@ class EditorActivity : AppCompatActivity() {
         val orientation: Int =
             exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
 
+        undoButton.setOnClickListener {
+            println(backActions)
+        }
+
         lifecycleScope.launch(Dispatchers.Main){
             when (orientation) {
 
@@ -263,6 +274,7 @@ class EditorActivity : AppCompatActivity() {
         }
 
         rotationConfirmButton.setOnClickListener{
+            backActions.add("rotate ${-rotationAngleValueText.text.toString().toDouble()}")
 
             lifecycleScope.launch(Dispatchers.Main) {
 
@@ -291,17 +303,20 @@ class EditorActivity : AppCompatActivity() {
         }
 
         confirmAffineButton.setOnClickListener{
-
             bitmap = AffineTransformations.transform(bitmap, firstPoints, secondPoints)
             mainImage.setImageBitmap(bitmap)
         }
 
         colorFilterButton.setOnClickListener{
+            backActions.add("mozaik 20")
+
             bitmap = ColorFilters.mozaik(bitmap, 20)
             mainImage.setImageBitmap(bitmap)
         }
 
         unsharpMaskingConfirmButton.setOnClickListener{
+            backActions.add("unsharpMask 1.0")
+
             bitmap = UnsharpMask.unsharpMaskAlg(bitmap, 1.0)
             mainImage.setImageBitmap(bitmap)
         }

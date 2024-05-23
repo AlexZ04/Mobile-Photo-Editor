@@ -64,8 +64,20 @@ class VectorEditor : AppCompatActivity() {
             if (event.x <= display.width / 5 && event.y <= display.height / 10) {
                 returnToStart()
             }
-            else if (event.y >= display.height * 0.9 && event.action == 0) {
+            else if (event.y >= display.height * 0.9 && display.width / 4 > event.x && event.action == 0) {
                 canvas.goAlg()
+            }
+            else if (event.y >= display.height * 0.9 && display.width * 2 / 4 > event.x && event.action == 0) {
+                canvas.mode = 0
+                canvas.invalidate()
+            }
+            else if (event.y >= display.height * 0.9 && display.width * 3 / 4 > event.x && event.action == 0) {
+                canvas.mode = 1
+                canvas.invalidate()
+            }
+            else if (event.y >= display.height * 0.9 && event.action == 0) {
+                canvas.mode = 2
+                canvas.invalidate()
             }
             else if (canvas.mode == 1) {
                 if (event.action == 0) {
@@ -78,10 +90,6 @@ class VectorEditor : AppCompatActivity() {
                     }
                 }
                 else if (event.action == 2 && canvas.foundPoint) {
-//                    if (canvas.hasPoint(currentPoint)) {
-//                        canvas.movePoint(currentPoint)
-//                        canvas.addNewPointFromEdit(currentPoint)
-//                    }
                     canvas.movePoint(currentPoint)
                     canvas.addNewPointFromEdit(currentPoint)
                 }
@@ -106,6 +114,7 @@ class VectorEditor : AppCompatActivity() {
 internal class DrawView(context: Context?) : View(context) {
 
     private val paint = Paint()
+    private val fontPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private lateinit var rect : Rect
     private var listOfPoints = mutableListOf <Pair<Float, Float>>()
     private var splinePoints = mutableListOf <Pair<Float, Float>>()
@@ -127,14 +136,34 @@ internal class DrawView(context: Context?) : View(context) {
 
     override fun onDraw(canvas: Canvas) {
 
+        fontPaint.textSize = 20F
+
         canvas.drawColor(Color.BLACK)
         paint.setColor(Color.WHITE)
         paint.strokeWidth = 10F
 
-        rect = Rect(0, 0, screenWidth / 5, screenHeight / 10)
+        paint.setColor(Color.WHITE)
 
-        canvas.drawRect(rect, paint)
+        canvas.drawLine((screenWidth * 2 / 25).toFloat(), (screenHeight / 20).toFloat(),
+            (screenWidth * 4 / 25).toFloat(), (screenHeight / 20 / 2).toFloat(), paint)
+        canvas.drawLine((screenWidth * 2 / 25).toFloat(), (screenHeight / 20).toFloat(),
+            (screenWidth * 4 / 25).toFloat(), (screenHeight / 20 + screenHeight / 20 / 2).toFloat(), paint)
+
+
+        canvas.drawText("aaa", 0F, (screenHeight * 0.9).toFloat(), fontPaint)
+
         canvas.drawRect(Rect(0, (screenHeight * 0.9).toInt(), screenWidth, screenHeight), paint)
+
+        paint.setColor(Color.BLACK)
+        canvas.drawLine((screenWidth / 4).toFloat(), (screenHeight * 0.9).toFloat(),
+            (screenWidth / 4).toFloat(), screenHeight.toFloat(), paint)
+
+        canvas.drawLine((screenWidth * 2 / 4).toFloat(), (screenHeight * 0.9).toFloat(),
+            (screenWidth * 2 / 4).toFloat(), screenHeight.toFloat(), paint)
+
+        canvas.drawLine((screenWidth * 3 / 4).toFloat(), (screenHeight * 0.9).toFloat(),
+            (screenWidth * 3 / 4).toFloat(), screenHeight.toFloat(), paint)
+
 
         paint.setColor(Color.GRAY)
         for (i in 1 until listOfPoints.size) {
@@ -194,8 +223,6 @@ internal class DrawView(context: Context?) : View(context) {
 
     fun goAlg() { // Алгоритм «де Кастельжо»
         var stepValue = 0F
-
-        mode = 1
 
         if (listOfPoints.size < 2) {
             splinePoints = mutableListOf <Pair<Float, Float>>()
@@ -307,6 +334,10 @@ internal class DrawView(context: Context?) : View(context) {
     }
 
     fun hasPoint(point: Pair<Float, Float>): Boolean {
+        if (splinePoints.size == 0) {
+            return false
+        }
+
         var amountOfPoints = 3
 
         val tempSplinePoints = mutableListOf <Pair<Float, Float>>()
