@@ -105,7 +105,7 @@ class VectorEditor : AppCompatActivity() {
         return super.onTouchEvent(event)
     }
 
-    fun returnToStart() {
+    private fun returnToStart() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }

@@ -69,6 +69,8 @@ class Cube : AppCompatActivity() {
         canvas.screenHeight = display.height
         canvas.screenWidth = display.width
 
+        canvas.fromCube = this
+
         setContentView(canvas)
     }
     private fun drawVertex(canvas: Canvas) {
@@ -78,24 +80,6 @@ class Cube : AppCompatActivity() {
             paint.style = Paint.Style.FILL
             canvas.drawCircle(vertex.x, vertex.y, VERTEX_RADIUS, paint)
         }
-    }
-
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        var currentPoint = 0F to 0F
-        var checkPoint = 0F to 0F
-
-
-        if (event != null) {
-
-            currentPoint = event.x to event.y
-
-            if (event.x <= display.width / 5 && event.y <= display.height / 10) {
-                returnToStart()
-            }
-        }
-
-        return super.onTouchEvent(event)
     }
 
     fun returnToStart() {
@@ -130,6 +114,8 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
 
     var screenHeight by Delegates.notNull<Int>()
     var screenWidth by Delegates.notNull<Int>()
+
+    var fromCube by Delegates.notNull<Cube>()
     init {
         paint.color = Color.BLACK
         paint.style = Paint.Style.FILL
@@ -181,6 +167,10 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
     val centerY = height / 2f
     override fun onTouchEvent(event: MotionEvent): Boolean {
         scaleDetector.onTouchEvent(event)
+
+        if (event.x <= screenWidth / 5 && event.y <= screenHeight / 10) {
+            fromCube.returnToStart()
+        }
 
         if (event.pointerCount == 2) {
             var rot = 1f;
