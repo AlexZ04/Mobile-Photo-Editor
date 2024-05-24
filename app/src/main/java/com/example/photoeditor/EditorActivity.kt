@@ -402,7 +402,6 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
-
         blackWhiteConfirmButton.setOnClickListener{
             if (canStart) {
                 bitmap = ColorFilters.blackWhiteFilter(bitmap)
