@@ -312,7 +312,7 @@ class EditorActivity : AppCompatActivity() {
 
         var bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
 
-        val maxDimension = bitmap.width.coerceAtLeast(bitmap.height).toFloat()
+        val maxDimension = bitmap.width.coerceAtLeast(bitmap.height).toFloat() / 2
         val maxSliderValue = maxDimension.coerceAtMost(500.0f)
         sizeOfBrushSlider.valueTo = maxSliderValue
         sizeOfBrushSlider.value = maxSliderValue / 5
