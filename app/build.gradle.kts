@@ -63,6 +63,7 @@ dependencies {
     implementation(project(":openCV"))
     testImplementation(libs.junit)
     implementation ("com.google.android.material:material:1.5.0")
+    implementation ("com.airbnb.android:lottie:6.4.0")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

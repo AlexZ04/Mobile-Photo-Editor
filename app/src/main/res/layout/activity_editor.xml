@@ -7,6 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".EditorActivity">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animationView"
+        android:layout_width="112dp"
+        android:layout_height="95dp"
+
+        app:layout_constraintEnd_toEndOf="@+id/saveButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="clock-waiting.json"
+        tools:layout_editor_absoluteY="-1dp" />
+
     <ImageView
         android:id="@+id/mainImage"
         android:layout_width="377dp"

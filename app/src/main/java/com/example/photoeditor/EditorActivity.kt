@@ -21,6 +21,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.LottieDrawable
 import com.example.photoeditor.Affine.AffineTransformations
 import com.example.photoeditor.Filter.ColorFilters
 import com.example.photoeditor.Filter.UnsharpMask
@@ -104,6 +106,10 @@ class EditorActivity : AppCompatActivity() {
     private var mozaikUserValue = 8
     private var contrastUserValue = 0
 
+    private lateinit var animationView : LottieAnimationView
+
+    private var canStart = false
+
     private fun changeVisibility(elems: Array<View>, isActive: Boolean){
 
         if(isActive){
@@ -176,6 +182,12 @@ class EditorActivity : AppCompatActivity() {
         saveButton = findViewById(R.id.saveButton)
         colorFilterButton = findViewById(R.id.colorFilterButton)
         faceDetectorConfirmButton = findViewById(R.id.faceDetectorConfirmButton)
+
+        animationView = findViewById(R.id.animationView)
+        animationView.repeatMode = LottieDrawable.RESTART
+        animationView.repeatCount = LottieDrawable.INFINITE
+
+        animationView.playAnimation()
 
         val views = arrayOf<Array<View>>(
 
@@ -255,8 +267,6 @@ class EditorActivity : AppCompatActivity() {
             )
         )
 
-        println(stateOfColorDetector)
-
         for(i in changeAlgorithmButtons.indices){
             changeAlgorithmButtons[i].setOnClickListener(){
 
@@ -323,6 +333,9 @@ class EditorActivity : AppCompatActivity() {
             }
 
             mainImage.setImageBitmap(bitmap)
+            canStart = true
+            animationView.pauseAnimation()
+            animationView.visibility = View.INVISIBLE
         }
 
 //        mainImage.setImageBitmap(bitmap)
@@ -338,14 +351,21 @@ class EditorActivity : AppCompatActivity() {
 
             lifecycleScope.launch(Dispatchers.Main) {
 
-                bitmap = Rotate.rotate(bitmap, -rotationAngleValueText.text.toString().toDouble())
-                mainImage.setImageBitmap(bitmap)
+                if (canStart) {
+                    bitmap = Rotate.rotate(bitmap, -rotationAngleValueText.text.toString().toDouble())
+                    mainImage.setImageBitmap(bitmap)
+                }
+
             }
         }
 
         resizingConfirmButton.setOnClickListener{
-            bitmap = Resize.resize(bitmap, resizingAngleValueText.text.toString().toDouble())
-            mainImage.setImageBitmap(bitmap)
+
+            if (canStart) {
+                bitmap = Resize.resize(bitmap, resizingAngleValueText.text.toString().toDouble())
+                mainImage.setImageBitmap(bitmap)
+            }
+
         }
 
         var affineMod = 0
@@ -353,54 +373,77 @@ class EditorActivity : AppCompatActivity() {
         val secondPoints = mutableListOf<Array<Float>>()
 
         firstAffineChangeButton.setOnClickListener{
-            affineMod = 1
-            firstPoints.clear()
+
+            if (canStart) {
+                affineMod = 1
+                firstPoints.clear()
+            }
+
         }
         secondAffineChangeButton.setOnClickListener{
-            affineMod = 2
-            secondPoints.clear()
+            if (canStart) {
+                affineMod = 2
+                secondPoints.clear()
+            }
+
         }
 
         confirmAffineButton.setOnClickListener{
-            bitmap = AffineTransformations.transform(bitmap, firstPoints, secondPoints)
-            mainImage.setImageBitmap(bitmap)
+            if (canStart) {
+                bitmap = AffineTransformations.transform(bitmap, firstPoints, secondPoints)
+                mainImage.setImageBitmap(bitmap)
+            }
         }
 
         colorFilterButton.setOnClickListener{
-            bitmap = ColorFilters.mozaik(bitmap, 20)
-            mainImage.setImageBitmap(bitmap)
+            if (canStart) {
+                bitmap = ColorFilters.mozaik(bitmap, 20)
+                mainImage.setImageBitmap(bitmap)
+            }
         }
 
 
         blackWhiteConfirmButton.setOnClickListener{
-            bitmap = ColorFilters.blackWhiteFilter(bitmap)
-            mainImage.setImageBitmap(bitmap)
+            if (canStart) {
+                bitmap = ColorFilters.blackWhiteFilter(bitmap)
+                mainImage.setImageBitmap(bitmap)
+            }
+
         }
 
         mozaikConfirmButton.setOnClickListener{
-            bitmap = ColorFilters.mozaik(bitmap, mozaikUserValue)
-            mainImage.setImageBitmap(bitmap)
+            if (canStart) {
+                bitmap = ColorFilters.mozaik(bitmap, mozaikUserValue)
+                mainImage.setImageBitmap(bitmap)
+            }
+
         }
 
         contrastConfirmButton.setOnClickListener{
-            bitmap = ColorFilters.contrast(bitmap, contrastUserValue)
-            mainImage.setImageBitmap(bitmap)
+            if (canStart) {
+                bitmap = ColorFilters.contrast(bitmap, contrastUserValue)
+                mainImage.setImageBitmap(bitmap)
+            }
         }
 
         unsharpMaskingConfirmButton.setOnClickListener{
-            Toast.makeText(this, "Данный фильтр работает очень долго...", Toast.LENGTH_SHORT).show()
-            bitmap = UnsharpMask.unsharpMaskAlg(bitmap, 1.0)
-            mainImage.setImageBitmap(bitmap)
+            if (canStart) {
+                Toast.makeText(this, "Данный фильтр работает очень долго...", Toast.LENGTH_SHORT).show()
+                bitmap = UnsharpMask.unsharpMaskAlg(bitmap, 1.0)
+                mainImage.setImageBitmap(bitmap)
+            }
         }
 
         faceDetectorConfirmButton.setOnClickListener{
-            val inputStream = resources.openRawResource(R.raw.haarcascade_frontalface_default)
-            val file = File(cacheDir, "haarcascade_frontalface_default.xml")
-            inputStream.use { input -> file.outputStream().use { output -> input.copyTo(output) } }
-            faceCascade = CascadeClassifier(file.absolutePath)
-            val detector = FaceDetector()
-            bitmap = detector.processImage(faceCascade, bitmap, stateOfDetector)
-            mainImage.setImageBitmap(bitmap)
+            if (canStart) {
+                val inputStream = resources.openRawResource(R.raw.haarcascade_frontalface_default)
+                val file = File(cacheDir, "haarcascade_frontalface_default.xml")
+                inputStream.use { input -> file.outputStream().use { output -> input.copyTo(output) } }
+                faceCascade = CascadeClassifier(file.absolutePath)
+                val detector = FaceDetector()
+                bitmap = detector.processImage(faceCascade, bitmap, stateOfDetector)
+                mainImage.setImageBitmap(bitmap)
+            }
         }
         strengthOfBrushSlider.addOnChangeListener { slider, value, fromUser ->
             strengthOfBrush = value.toInt()
@@ -409,7 +452,7 @@ class EditorActivity : AppCompatActivity() {
             sizeOfBrush = value.toInt()
         }
         mainImage.setOnTouchListener { v, event ->
-            if ((currAlg == 4 || currAlg == 6) && (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN)) {
+            if (canStart && (currAlg == 4 || currAlg == 6) && (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN)) {
                 val imageView = v as ImageView
                 val drawable = imageView.drawable
                 val intrinsicWidth = drawable.intrinsicWidth
@@ -475,7 +518,7 @@ class EditorActivity : AppCompatActivity() {
         }
 
         toggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
-            if (isChecked) {
+            if (canStart && isChecked) {
                 when (checkedId) {
                     R.id.firstGroupButton -> {
                         stateOfDetector = 1
@@ -500,7 +543,7 @@ class EditorActivity : AppCompatActivity() {
         }
 
         toggleColorGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
-            if (isChecked) {
+            if (canStart && isChecked) {
                 when (checkedId) {
                     R.id.firstGroupColorButton -> {
                         stateOfColorDetector = 1
@@ -527,12 +570,14 @@ class EditorActivity : AppCompatActivity() {
         }
 
         saveButton.setOnClickListener{
-
-            val uri: Uri? = Saving.createImageUri(this)
-            if (uri != null) {
-                Saving.saveBitmapToUri(this, bitmap, uri)
+            if (canStart) {
+                val uri: Uri? = Saving.createImageUri(this)
+                if (uri != null) {
+                    Saving.saveBitmapToUri(this, bitmap, uri)
+                }
+                Toast.makeText(this, "Сохранено", Toast.LENGTH_SHORT).show()
             }
-            Toast.makeText(this, "Сохранено", Toast.LENGTH_SHORT).show()
+
         }
     }
 }
