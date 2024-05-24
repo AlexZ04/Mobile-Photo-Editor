@@ -19,6 +19,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -328,20 +329,22 @@ class EditorActivity : AppCompatActivity() {
         }
 
         colorConfirmButton.setOnClickListener{
-            if (stateOfColorDetector == 0) {
-
-            }
-            else if (stateOfColorDetector == 1) {
-                bitmap = ColorFilters.blackWhiteFilter(bitmap)
-                mainImage.setImageBitmap(bitmap)
-            }
-            else if (stateOfColorDetector == 2) {
-                bitmap = ColorFilters.mozaik(bitmap, 20)
-                mainImage.setImageBitmap(bitmap)
-            }
-            else if (stateOfColorDetector == 3) {
-                bitmap = ColorFilters.contrast(bitmap, 50)
-                mainImage.setImageBitmap(bitmap)
+            when (stateOfColorDetector) {
+                0 -> {
+                    Toast.makeText(this, "Выберите фильтр!", Toast.LENGTH_SHORT).show()
+                }
+                1 -> {
+                    bitmap = ColorFilters.blackWhiteFilter(bitmap)
+                    mainImage.setImageBitmap(bitmap)
+                }
+                2 -> {
+                    bitmap = ColorFilters.mozaik(bitmap, 20)
+                    mainImage.setImageBitmap(bitmap)
+                }
+                3 -> {
+                    bitmap = ColorFilters.contrast(bitmap, 50)
+                    mainImage.setImageBitmap(bitmap)
+                }
             }
         }
 
