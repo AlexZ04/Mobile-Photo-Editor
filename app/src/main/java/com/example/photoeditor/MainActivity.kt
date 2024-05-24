@@ -30,8 +30,8 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var galleryButton: FloatingActionButton
-    private lateinit var cameraButton: FloatingActionButton
+    private lateinit var galleryButton: Button
+    private lateinit var cameraButton: Button
     private lateinit var vectorEdit: FloatingActionButton
     private lateinit var cubeButton: FloatingActionButton
     private lateinit var photoUri: Uri
