@@ -9,14 +9,14 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animationView"
-        android:layout_width="112dp"
+        android:layout_width="match_parent"
         android:layout_height="95dp"
 
         app:layout_constraintEnd_toEndOf="@+id/saveButton"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
-        app:lottie_fileName="clock-waiting.json"
-        tools:layout_editor_absoluteY="-1dp" />
+        app:lottie_fileName="clock-waiting.json" />
 
     <ImageView
         android:id="@+id/mainImage"
@@ -103,7 +103,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.25"
         tools:srcCompat="@tools:sample/avatars"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/affineSecond"
@@ -116,7 +116,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.25"
         tools:srcCompat="@tools:sample/avatars"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/firstAffineChangeButton"
@@ -129,7 +129,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.7"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/secondAffineChangeButton"
@@ -142,7 +142,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.7"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/confirmAffineButton"
@@ -155,7 +155,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.8"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/colorFilterButton"
@@ -167,14 +167,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.829"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/unsharpMaskingConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Unsharp Masking"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -188,12 +188,8 @@
         android:layout_height="wrap_content"
         android:text="Назад"
         app:icon="@drawable/back_arrow"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/saveButton"
@@ -203,10 +199,8 @@
 
         android:text="Сохранить"
         app:icon="@drawable/download"
-        app:layout_constraintBottom_toTopOf="@+id/affineSecond"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.41" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/rotationAngleInput"
@@ -232,7 +226,7 @@
         app:layout_constraintHorizontal_bias="0.944"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.793"/>
+        app:layout_constraintVertical_bias="0.793" />
 
     <EditText
         android:id="@+id/resizingAngleInput"
@@ -247,7 +241,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.144"
         app:layout_constraintStart_toStartOf="parent"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/resizingConfirmButton"
@@ -260,14 +254,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.793"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/faceDetectorConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Наложить фильтр"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -298,7 +292,7 @@
         android:value="100.0"
         android:valueFrom="0.0"
         android:valueTo="100.0"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline_end"
         app:layout_constraintHorizontal_bias="1.0"
@@ -310,7 +304,7 @@
         android:layout_width="60dp"
         android:layout_height="20dp"
         android:text="Размер"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/firstAffineChangeButton"
         app:layout_constraintEnd_toStartOf="@+id/faceDetectorConfirmButton" />
 
@@ -319,7 +313,7 @@
         android:layout_width="60dp"
         android:layout_height="20dp"
         android:layout_marginTop="530dp"
-        android:visibility="invisible"
+        android:visibility="gone"
         android:text="Сила"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -336,7 +330,7 @@
         android:value="100.0"
         android:valueFrom="1.0"
         android:valueTo="500.0"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/strengthOfBrushSlider"
         app:layout_constraintEnd_toStartOf="@+id/guideline_end"
         app:layout_constraintHorizontal_bias="0.0"
@@ -347,7 +341,7 @@
         android:id="@+id/toggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/horizontalScrollView"
         app:layout_constraintEnd_toEndOf="@+id/rotationConfirmButton"
         app:layout_constraintStart_toStartOf="parent"
@@ -391,7 +385,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Наложить фильтр"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -407,7 +401,7 @@
         android:value="8.0"
         android:valueFrom="2.0"
         android:valueTo="50.0"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/strengthOfBrushSlider"
         app:layout_constraintEnd_toStartOf="@+id/guideline_end"
         app:layout_constraintHorizontal_bias="1.0"
@@ -420,7 +414,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Наложить"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.119"
@@ -436,7 +430,7 @@
         android:value="0.0"
         android:valueFrom="-100.0"
         android:valueTo="100.0"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/strengthOfBrushSlider"
         app:layout_constraintEnd_toStartOf="@+id/guideline_end"
         app:layout_constraintHorizontal_bias="1.0"
@@ -449,7 +443,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Наложить"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.119"
@@ -461,7 +455,7 @@
         android:id="@+id/toggleColorButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/horizontalScrollView"
         app:layout_constraintEnd_toEndOf="@+id/rotationConfirmButton"
         app:layout_constraintStart_toStartOf="parent"
