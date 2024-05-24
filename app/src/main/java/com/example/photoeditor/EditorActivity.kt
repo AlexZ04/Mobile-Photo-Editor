@@ -596,4 +596,9 @@ class EditorActivity : AppCompatActivity() {
         animationView.visibility = View.INVISIBLE
         canStart = true
     }
+
+    override fun onDestroy() {
+        stopAnimation()
+        super.onDestroy()
+    }
 }
