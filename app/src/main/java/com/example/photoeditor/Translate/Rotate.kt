@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.core.graphics.get
 import androidx.core.graphics.toColor
+import kotlinx.coroutines.Deferred
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
@@ -45,24 +46,35 @@ class Rotate() {
             val newHeight = maxY - minY + 1
             val newBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888)
 
+            val numCores = Runtime.getRuntime().availableProcessors().coerceAtLeast(1)
+            val chunkSize = bitmap.height / numCores
+
             coroutineScope {
 
-                val jobs = List(newBitmap.width) { x ->
+                val tasks = mutableListOf<Deferred<Unit>>()
 
-                    async(Dispatchers.Default) {
+                for (startY in 0 until newHeight step chunkSize) {
 
-                        for (y in 0 until newBitmap.height) {
-                            val newX = ((x + minX) * cosAngle + (y + minY) * sinAngle).toInt()
-                            val newY = ((y + minY) * cosAngle - (x + minX) * sinAngle).toInt()
+                    val endY = (startY + chunkSize).coerceAtMost(newHeight)
+                    val task = async {
 
-                            if (newX in 0 until bitmap.width && newY in 0 until bitmap.height) {
-                                val color = bitmap.getPixel(newX, newY)
-                                newBitmap.setPixel(x, y, color)
+                        for (x in 0 until newWidth) {
+                            for (y in startY until endY) {
+
+                                val newX = ((x + minX) * cosAngle + (y + minY) * sinAngle).toInt()
+                                val newY = ((y + minY) * cosAngle - (x + minX) * sinAngle).toInt()
+
+                                if (newX in 0 until bitmap.width && newY in 0 until bitmap.height) {
+                                    val color = bitmap.getPixel(newX, newY)
+                                    newBitmap.setPixel(x, y, color)
+                                }
                             }
                         }
                     }
+                    tasks.add(task)
                 }
-                jobs.awaitAll()
+
+                tasks.awaitAll()
             }
 
             return@withContext newBitmap

@@ -2,6 +2,12 @@ package com.example.photoeditor.Filter
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 
 class ColorFilters() {
     companion object{
@@ -26,30 +32,45 @@ class ColorFilters() {
             return newBitmap
         }
 
-        fun blackWhiteFilter(bitmap: Bitmap, fromX : Int = 0, fromY : Int = 0,
-                             toX : Int = bitmap.width, toY: Int = bitmap.height) : Bitmap{
+        suspend fun blackWhiteFilter(bitmap: Bitmap, fromX: Int = 0, fromY: Int = 0,
+                                     toX: Int = bitmap.width, toY: Int = bitmap.height): Bitmap = withContext(Dispatchers.Default) {
 
             val newBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+            val numCores = Runtime.getRuntime().availableProcessors().coerceAtLeast(1)
+            val chunkSize = (toY - fromY) / numCores
 
-            for (x in fromX until toX) {
-                for (y in fromY until toY) {
-                    val color = bitmap.getPixel(x, y)
+            coroutineScope {
 
-                    val r = Color.red(color)
-                    val g = Color.green(color)
-                    val b = Color.blue(color)
+                val tasks = mutableListOf<Deferred<Unit>>()
 
-                    val newColor = (r + g + b) / 3
+                for (startY in fromY until toY step chunkSize) {
 
-                    newBitmap.setPixel(x, y, Color.rgb(newColor, newColor, newColor))
+                    val endY = (startY + chunkSize).coerceAtMost(toY)
+                    val task = async {
+
+                        for (x in fromX until toX) {
+                            for (y in startY until endY) {
+
+                                val color = bitmap.getPixel(x, y)
+                                val r = Color.red(color)
+                                val g = Color.green(color)
+                                val b = Color.blue(color)
+                                val newColor = (r + g + b) / 3
+                                newBitmap.setPixel(x, y, Color.rgb(newColor, newColor, newColor))
+                            }
+                        }
+                    }
+                    tasks.add(task)
                 }
+
+                tasks.awaitAll()
             }
 
-            return newBitmap
+            newBitmap
         }
 
-        fun mozaik(bitmap: Bitmap, pixels: Int, fromX : Int = 0, fromY : Int = 0,
-                   toX : Int = bitmap.width, toY: Int = bitmap.height) : Bitmap{
+        suspend fun mozaik(bitmap: Bitmap, pixels: Int, fromX : Int = 0, fromY : Int = 0,
+                   toX : Int = bitmap.width, toY: Int = bitmap.height) : Bitmap = withContext(Dispatchers.Default) {
 
             val newBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
@@ -67,95 +88,114 @@ class ColorFilters() {
             var currentX = 0
             var currentY = 0
 
-            while (x < toX) {
-                y = fromY
-                while (y < toY) {
-                    midR = 0F
-                    midG = 0F
-                    midB = 0F
+            coroutineScope {
 
-                    pixelsUsed = 0
+                val task = async {
+                    while (x < toX) {
+                        y = fromY
+                        while (y < toY) {
+                            midR = 0F
+                            midG = 0F
+                            midB = 0F
 
-                    currentX = x
-                    while (currentX < Math.min(x + pixels, toX)) {
-                        currentY = y
+                            pixelsUsed = 0
 
-                        while (currentY < Math.min(y + pixels, toY)) {
-                            color = bitmap.getPixel(currentX, currentY)
+                            currentX = x
+                            while (currentX < Math.min(x + pixels, toX)) {
+                                currentY = y
 
-                            pixelsUsed++
+                                while (currentY < Math.min(y + pixels, toY)) {
+                                    color = bitmap.getPixel(currentX, currentY)
 
-                            midR += Color.red(color)
-                            midG += Color.green(color)
-                            midB += Color.blue(color)
+                                    pixelsUsed++
 
-                            currentY++
+                                    midR += Color.red(color)
+                                    midG += Color.green(color)
+                                    midB += Color.blue(color)
+
+                                    currentY++
+                                }
+
+                                currentX++
+                            }
+
+                            midR /= (pixelsUsed)
+                            midG /= (pixelsUsed)
+                            midB /= (pixelsUsed)
+
+                            currentX = x
+                            while (currentX < Math.min(x + pixels, toX)) {
+                                currentY = y
+
+                                while (currentY < Math.min(y + pixels, toY)) {
+                                    newBitmap.setPixel(
+                                        currentX, currentY, Color.rgb(
+                                            midR.toInt(),
+                                            midG.toInt(), midB.toInt()
+                                        )
+                                    )
+
+                                    currentY++
+                                }
+
+                                currentX++
+                            }
+
+                            y += pixels
                         }
 
-                        currentX++
+                        x += pixels
                     }
-
-                    midR /= (pixelsUsed)
-                    midG /= (pixelsUsed)
-                    midB /= (pixelsUsed)
-
-                    currentX = x
-                    while (currentX < Math.min(x + pixels, toX)) {
-                        currentY = y
-
-                        while (currentY < Math.min(y + pixels, toY)) {
-                            newBitmap.setPixel(currentX, currentY, Color.rgb(midR.toInt(),
-                                midG.toInt(), midB.toInt()))
-
-                            currentY++
-                        }
-
-                        currentX++
-                    }
-
-                    y += pixels
                 }
 
-                x += pixels
+                task.await()
             }
 
-            return newBitmap
+            newBitmap
         }
-        fun contrast(
+        suspend fun contrast(
             bitmap: Bitmap, correction: Int, fromX: Int = 0, fromY: Int = 0,
-            toX: Int = bitmap.width, toY: Int = bitmap.height) : Bitmap {
+            toX: Int = bitmap.width, toY: Int = bitmap.height) : Bitmap  = withContext(Dispatchers.Default) {
 
             val newBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
             val colors = getColorsList(newBitmap, correction, fromX, fromY, toX, toY)
 
-            var currentColor : Int
+            val numCores = Runtime.getRuntime().availableProcessors().coerceAtLeast(1)
+            val chunkSize = (toY - fromY) / numCores
 
-            var curR : Int
-            var curG : Int
-            var curB : Int
+            coroutineScope {
 
-            var newR : Int
-            var newG : Int
-            var newB : Int
+                val tasks = mutableListOf<Deferred<Unit>>()
 
-            for (x in fromX until toX) {
-                for (y in fromY until toY) {
-                    currentColor = bitmap.getPixel(x, y)
+                for (startY in fromY until toY step chunkSize) {
 
-                    curR = Color.red(currentColor)
-                    curG = Color.green(currentColor)
-                    curB = Color.blue(currentColor)
+                    val endY = (startY + chunkSize).coerceAtMost(toY)
+                    val task = async {
 
-                    newR = colors[curR]
-                    newG = colors[curG]
-                    newB = colors[curB]
+                        for (x in fromX until toX) {
+                            for (y in startY until endY) {
+                                val currentColor = bitmap.getPixel(x, y)
 
-                    newBitmap.setPixel(x, y, Color.rgb(newR, newG, newB))
+                                val curR = Color.red(currentColor)
+                                val curG = Color.green(currentColor)
+                                val curB = Color.blue(currentColor)
+
+                                val newR = colors[curR]
+                                val newG = colors[curG]
+                                val newB = colors[curB]
+
+                                newBitmap.setPixel(x, y, Color.rgb(newR, newG, newB))
+                            }
+                        }
+                    }
+                    tasks.add(task)
                 }
+
+                tasks.awaitAll()
             }
 
-            return newBitmap
+            newBitmap
         }
 
         fun getLAB(bitmap: Bitmap, fromX : Int = 0, fromY : Int = 0,

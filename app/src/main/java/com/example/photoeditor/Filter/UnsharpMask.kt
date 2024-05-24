@@ -2,6 +2,12 @@ package com.example.photoeditor.Filter
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.exp
@@ -95,40 +101,51 @@ class UnsharpMask() {
             //applyGaussianFilterRGB(image, 2400, 2400, generateGaussianFilter(29, 7.2))
             return gaussianBitmap
         }
-        fun unsharpMaskAlg(bitmap: Bitmap, coef: Double) : Bitmap {
+        suspend fun unsharpMaskAlg(bitmap: Bitmap, coef: Double) : Bitmap = withContext(Dispatchers.Default) {
 
             val newBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
 //        var gaussianBitmap = generateGaussianFilter(29, 7.2)
             val gaussianBitmap = getGaussianBitmap(bitmap)
 
-            var color: Int
-            var gaussianColor = 0
+            val numCores = Runtime.getRuntime().availableProcessors().coerceAtLeast(1)
+            val chunkSize = bitmap.height / numCores
 
-            var newR : Double
-            var newG : Double
-            var newB : Double
+            coroutineScope {
 
-            for (x in 0 until bitmap.width) {
+                val tasks = mutableListOf<Deferred<Unit>>()
 
-                for (y in 0 until bitmap.height) {
-                    color = bitmap.getPixel(x, y)
-                    if (gaussianBitmap != null) {
-                        gaussianColor = gaussianBitmap.getPixel(x, y)
+                for (startY in 0 until bitmap.height step chunkSize) {
+
+                    val endY = (startY + chunkSize).coerceAtMost(bitmap.height)
+                    val task = async {
+
+                        for (x in 0 until bitmap.width) {
+                            for (y in startY until endY) {
+
+                                val color = bitmap.getPixel(x, y)
+                                var gaussianColor = 0
+                                if (gaussianBitmap != null) {
+                                    gaussianColor = gaussianBitmap.getPixel(x, y)
+                                }
+
+                                var newR = Color.red(color) + coef * (Color.red(color) - Color.red(gaussianColor))
+                                var newG = Color.green(color) + coef * (Color.green(color) - Color.green(gaussianColor))
+                                var newB = Color.blue(color) + coef * (Color.blue(color) - Color.blue(gaussianColor))
+
+                                newR = Math.min(255.0, Math.max(0.0, newR))
+                                newG = Math.min(255.0, Math.max(0.0, newG))
+                                newB = Math.min(255.0, Math.max(0.0, newB))
+
+                                newBitmap.setPixel(x, y, Color.rgb(newR.toInt(), newG.toInt(), newB.toInt()))
+                            }
+                        }
                     }
-
-                    newR = Color.red(color) + coef * (Color.red(color) - Color.red(gaussianColor))
-                    newG = Color.green(color) + coef * (Color.green(color) - Color.green(gaussianColor))
-                    newB = Color.blue(color) + coef * (Color.blue(color) - Color.blue(gaussianColor))
-
-                    newR = Math.min(255.0, Math.max(0.0, newR))
-                    newG = Math.min(255.0, Math.max(0.0, newG))
-                    newB = Math.min(255.0, Math.max(0.0, newB))
-
-                    newBitmap.setPixel(x, y, Color.rgb(newR.toInt(), newG.toInt(), newB.toInt()))
+                    tasks.add(task)
                 }
-            }
 
-            return newBitmap
+                tasks.awaitAll()
+            }
+            newBitmap
         }
     }
 }

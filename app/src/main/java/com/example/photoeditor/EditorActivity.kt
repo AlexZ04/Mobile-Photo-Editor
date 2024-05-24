@@ -98,7 +98,7 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var faceDetectorConfirmButton: Button
     private lateinit var faceCascade: CascadeClassifier
 
-    private lateinit var newImageBitmap: Bitmap
+    private lateinit var mutableBitmap: Bitmap
 
     private var currAlg: Int = 0
     private var strengthOfBrush: Int = 100
@@ -270,6 +270,35 @@ class EditorActivity : AppCompatActivity() {
             )
         )
 
+        val uri: Uri = intent.data!!
+
+        var bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+        val maxDimension = bitmap.width.coerceAtLeast(bitmap.height).toFloat() / 2
+        val maxSliderValue = maxDimension.coerceAtMost(500.0f)
+        sizeOfBrushSlider.valueTo = maxSliderValue
+        sizeOfBrushSlider.value = maxSliderValue / 5
+        sizeOfBrush = (maxSliderValue / 5).toInt()
+
+        val exif = ExifInterface(contentResolver.openInputStream(uri)!!)
+        val orientation: Int =
+            exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+
+        lifecycleScope.launch(Dispatchers.Main){
+            when (orientation) {
+
+                ExifInterface.ORIENTATION_ROTATE_90 -> bitmap = Rotate.rotate(bitmap,90.0)
+                ExifInterface.ORIENTATION_ROTATE_180 -> bitmap = Rotate.rotate(bitmap,180.0)
+                ExifInterface.ORIENTATION_ROTATE_270 -> bitmap = Rotate.rotate(bitmap,270.0)
+            }
+
+            mainImage.setImageBitmap(bitmap)
+            stopAnimation()
+        }
+
+//        mainImage.setImageBitmap(bitmap)
+        firstAffineImage.setImageBitmap(bitmap)
+        secondAffineImage.setImageBitmap(bitmap)
+
         for(i in changeAlgorithmButtons.indices){
             changeAlgorithmButtons[i].setOnClickListener(){
 
@@ -313,36 +342,6 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
-        val uri: Uri = intent.data!!
-
-        var bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
-
-        val maxDimension = bitmap.width.coerceAtLeast(bitmap.height).toFloat() / 2
-        val maxSliderValue = maxDimension.coerceAtMost(500.0f)
-        sizeOfBrushSlider.valueTo = maxSliderValue
-        sizeOfBrushSlider.value = maxSliderValue / 5
-        sizeOfBrush = (maxSliderValue / 5).toInt()
-
-        val exif = ExifInterface(contentResolver.openInputStream(uri)!!)
-        val orientation: Int =
-            exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-
-        lifecycleScope.launch(Dispatchers.Main){
-            when (orientation) {
-
-                ExifInterface.ORIENTATION_ROTATE_90 -> bitmap = Rotate.rotate(bitmap,90.0)
-                ExifInterface.ORIENTATION_ROTATE_180 -> bitmap = Rotate.rotate(bitmap,180.0)
-                ExifInterface.ORIENTATION_ROTATE_270 -> bitmap = Rotate.rotate(bitmap,270.0)
-            }
-
-            mainImage.setImageBitmap(bitmap)
-            stopAnimation()
-        }
-
-//        mainImage.setImageBitmap(bitmap)
-        firstAffineImage.setImageBitmap(bitmap)
-        secondAffineImage.setImageBitmap(bitmap)
-
         choosePickButton.setOnClickListener{
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -365,10 +364,17 @@ class EditorActivity : AppCompatActivity() {
         resizingConfirmButton.setOnClickListener{
 
             if (canStart) {
-                bitmap = Resize.resize(bitmap, resizingAngleValueText.text.toString().toDouble())
-                mainImage.setImageBitmap(bitmap)
-            }
 
+                lifecycleScope.launch(Dispatchers.Main) {
+                    startAnimation()
+                    bitmap =
+                        Resize.resize(bitmap, resizingAngleValueText.text.toString().toDouble())
+                    mainImage.setImageBitmap(bitmap)
+
+                    Toast.makeText(this@EditorActivity, "Масштаб изменён", Toast.LENGTH_SHORT).show()
+                    stopAnimation()
+                }
+            }
         }
 
         var affineMod = 0
@@ -380,71 +386,124 @@ class EditorActivity : AppCompatActivity() {
             if (canStart) {
                 affineMod = 1
                 firstPoints.clear()
+                mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
             }
-
         }
         secondAffineChangeButton.setOnClickListener{
+
             if (canStart) {
                 affineMod = 2
                 secondPoints.clear()
+                mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
             }
-
         }
 
         confirmAffineButton.setOnClickListener{
             if (canStart) {
-                bitmap = AffineTransformations.transform(bitmap, firstPoints, secondPoints)
-                mainImage.setImageBitmap(bitmap)
+
+                if(firstPoints.size < 3){
+                    Toast.makeText(this, "Недостаточно точек на изначальном изображении", Toast.LENGTH_SHORT).show()
+                }
+                else if(secondPoints.size < 3){
+                    Toast.makeText(this, "Недостаточно точек для итогового изображения", Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        startAnimation()
+
+                        bitmap = AffineTransformations.transform(bitmap, firstPoints, secondPoints)
+                        mainImage.setImageBitmap(bitmap)
+
+                        firstPoints.clear()
+                        secondPoints.clear()
+
+                        stopAnimation()
+                    }
+                }
             }
         }
 
         colorFilterButton.setOnClickListener{
             if (canStart) {
-                bitmap = ColorFilters.mozaik(bitmap, 20)
-                mainImage.setImageBitmap(bitmap)
+                lifecycleScope.launch(Dispatchers.Main) {
+                    startAnimation()
+                    bitmap = ColorFilters.mozaik(bitmap, 20)
+                    mainImage.setImageBitmap(bitmap)
+                    stopAnimation()
+                }
             }
         }
 
         blackWhiteConfirmButton.setOnClickListener{
-            if (canStart) {
-                bitmap = ColorFilters.blackWhiteFilter(bitmap)
-                mainImage.setImageBitmap(bitmap)
+            lifecycleScope.launch(Dispatchers.Main) {
+                if (canStart) {
+                    startAnimation()
+                    bitmap = ColorFilters.blackWhiteFilter(bitmap)
+                    mainImage.setImageBitmap(bitmap)
+                    stopAnimation()
+                }
             }
-
         }
 
         mozaikConfirmButton.setOnClickListener{
             if (canStart) {
-                bitmap = ColorFilters.mozaik(bitmap, mozaikUserValue)
-                mainImage.setImageBitmap(bitmap)
+                lifecycleScope.launch(Dispatchers.Main) {
+                    startAnimation()
+                    bitmap = ColorFilters.mozaik(bitmap, mozaikUserValue)
+                    mainImage.setImageBitmap(bitmap)
+                    stopAnimation()
+                }
             }
-
         }
 
         contrastConfirmButton.setOnClickListener{
             if (canStart) {
-                bitmap = ColorFilters.contrast(bitmap, contrastUserValue)
-                mainImage.setImageBitmap(bitmap)
+                lifecycleScope.launch(Dispatchers.Main) {
+                    startAnimation()
+                    bitmap = ColorFilters.contrast(bitmap, contrastUserValue)
+                    mainImage.setImageBitmap(bitmap)
+                    stopAnimation()
+                }
             }
         }
 
         unsharpMaskingConfirmButton.setOnClickListener{
             if (canStart) {
-                Toast.makeText(this, "Данный фильтр работает очень долго...", Toast.LENGTH_SHORT).show()
-                bitmap = UnsharpMask.unsharpMaskAlg(bitmap, 1.0)
-                mainImage.setImageBitmap(bitmap)
+                Toast.makeText(
+                this,
+                "Данный фильтр работает очень долго...",
+                Toast.LENGTH_SHORT
+            ).show()
+
+                lifecycleScope.launch(Dispatchers.Main) {
+                    startAnimation()
+                    bitmap = UnsharpMask.unsharpMaskAlg(bitmap, 1.0)
+                    mainImage.setImageBitmap(bitmap)
+                    stopAnimation()
+                }
             }
         }
 
         faceDetectorConfirmButton.setOnClickListener{
             if (canStart) {
-                val inputStream = resources.openRawResource(R.raw.haarcascade_frontalface_default)
-                val file = File(cacheDir, "haarcascade_frontalface_default.xml")
-                inputStream.use { input -> file.outputStream().use { output -> input.copyTo(output) } }
-                faceCascade = CascadeClassifier(file.absolutePath)
-                val detector = FaceDetector()
-                bitmap = detector.processImage(faceCascade, bitmap, stateOfDetector)
-                mainImage.setImageBitmap(bitmap)
+                lifecycleScope.launch(Dispatchers.Main) {
+
+                    startAnimation()
+
+                    val inputStream =
+                        resources.openRawResource(R.raw.haarcascade_frontalface_default)
+                    val file = File(cacheDir, "haarcascade_frontalface_default.xml")
+                    inputStream.use { input ->
+                        file.outputStream().use { output -> input.copyTo(output) }
+                    }
+                    faceCascade = CascadeClassifier(file.absolutePath)
+                    val detector = FaceDetector()
+
+                    bitmap = detector.processImage(faceCascade, bitmap, stateOfDetector)
+                    mainImage.setImageBitmap(bitmap)
+
+                    stopAnimation()
+                }
             }
         }
         strengthOfBrushSlider.addOnChangeListener { slider, value, fromUser ->
@@ -486,14 +545,8 @@ class EditorActivity : AppCompatActivity() {
 
                     else {
                         if ((affineMod == 1 || affineMod == 2) && event.action == MotionEvent.ACTION_DOWN) {
-                            val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-                            val canvas = Canvas(mutableBitmap)
 
-                            val paint = Paint().apply {
-                                color = Color.RED
-                                style = Paint.Style.FILL
-                            }
-                            canvas.drawCircle(centerX.toFloat(), centerY.toFloat(), 15f, paint)
+                            val canvas = Canvas(mutableBitmap)
 
                             mainImage.setImageBitmap(mutableBitmap)
                             mainImage.invalidate()
@@ -501,12 +554,24 @@ class EditorActivity : AppCompatActivity() {
                             if (affineMod == 1) {
                                 firstPoints.add(arrayOf(centerX.toFloat(), centerY.toFloat()))
 
+                                val paint = Paint().apply {
+                                    color = Color.RED
+                                    style = Paint.Style.FILL
+                                }
+                                canvas.drawCircle(centerX.toFloat(), centerY.toFloat(), 15f, paint)
+
                                 if (firstPoints.size == 3) {
                                     affineMod = 0
                                 }
                             }
                             if (affineMod == 2) {
                                 secondPoints.add(arrayOf(centerX.toFloat(), centerY.toFloat()))
+
+                                val paint = Paint().apply {
+                                    color = Color.BLUE
+                                    style = Paint.Style.FILL
+                                }
+                                canvas.drawCircle(centerX.toFloat(), centerY.toFloat(), 15f, paint)
 
                                 if (secondPoints.size == 3) {
                                     affineMod = 0
@@ -581,7 +646,6 @@ class EditorActivity : AppCompatActivity() {
                 }
                 Toast.makeText(this, "Сохранено", Toast.LENGTH_SHORT).show()
             }
-
         }
     }
 

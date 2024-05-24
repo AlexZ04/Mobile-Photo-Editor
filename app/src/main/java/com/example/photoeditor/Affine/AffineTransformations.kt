@@ -5,6 +5,12 @@ import android.graphics.Color
 import android.util.Log
 import androidx.core.graphics.toColor
 import com.example.photoeditor.Translate.Rotate
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.log
@@ -16,7 +22,8 @@ class AffineTransformations {
 
     companion object{
 
-        fun transform(bitmap: Bitmap, firstPoints: List<Array<Float>>, secondPoints: List<Array<Float>>) : Bitmap{
+        suspend fun transform(bitmap: Bitmap, firstPoints: List<Array<Float>>, secondPoints: List<Array<Float>>) : Bitmap = withContext(
+            Dispatchers.Default){
 
             val (x1, y1) = firstPoints[0]
             val (x2, y2) = firstPoints[1]
@@ -36,22 +43,40 @@ class AffineTransformations {
             val f = newY1 - c * x1 - d * y1
 
             val newBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-            for (x in 0..<newBitmap.getWidth()) {
-                for (y in 0..<newBitmap.getHeight()) {
+            val numCores = Runtime.getRuntime().availableProcessors().coerceAtLeast(1)
+            val chunkSize = bitmap.height / numCores
 
-                    val newX = ((d * x - b * y + b * f - e * d) / (a * d - b * c)).toInt()
-                    val newY = ((y - c * newX - f) / d).toInt()
+            coroutineScope {
 
-                    if(newX >= 0 && newX < bitmap.width
-                        && newY >= 0 && newY < bitmap.height){
+                val tasks = mutableListOf<Deferred<Unit>>()
 
-                        val newColor =  bitmap.getColor(newX, newY)
-                        newBitmap.setPixel(x, y, newColor.toArgb())
+                for (startY in 0 until bitmap.height step chunkSize) {
+
+                    val endY = (startY + chunkSize).coerceAtMost(bitmap.height)
+                    val task = async {
+
+                        for (x in 0 until bitmap.width) {
+                            for (y in startY until endY) {
+
+                                val newX = ((d * x - b * y + b * f - e * d) / (a * d - b * c)).toInt()
+                                val newY = ((y - c * newX - f) / d).toInt()
+
+                                if(newX >= 0 && newX < bitmap.width
+                                    && newY >= 0 && newY < bitmap.height){
+
+                                    val newColor =  bitmap.getColor(newX, newY)
+                                    newBitmap.setPixel(x, y, newColor.toArgb())
+                                }
+                            }
+                        }
                     }
+                    tasks.add(task)
                 }
+
+                tasks.awaitAll()
             }
 
-            return newBitmap
+            newBitmap
         }
     }
 }
