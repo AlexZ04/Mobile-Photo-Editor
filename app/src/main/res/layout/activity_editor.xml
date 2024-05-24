@@ -370,9 +370,66 @@
             android:layout_height="wrap_content"
             android:checkable="true"
             android:icon="@drawable/check"
-            android:text="Мозайка"
+            android:text="Мозаика"
             app:iconGravity="textStart" />
 
     </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <Button
+        android:id="@+id/colorConfirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Наложить фильтр"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainImage"
+        app:layout_constraintVertical_bias="0.345" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggleColorButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/horizontalScrollView"
+        app:layout_constraintEnd_toEndOf="@+id/rotationConfirmButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainImage"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/firstGroupColorButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:icon="@drawable/check"
+            android:text="Ч/Б"
+            app:iconGravity="textStart" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/secondGroupColorButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:icon="@drawable/check"
+            android:text="Мозаика"
+            app:iconGravity="textStart" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/thirdGroupColorButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:icon="@drawable/check"
+            android:text="Контраст"
+            app:iconGravity="textStart" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

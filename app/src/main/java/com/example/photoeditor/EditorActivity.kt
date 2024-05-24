@@ -63,6 +63,12 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var secondGroupButton: MaterialButton
     private lateinit var thirdGroupButton: MaterialButton
 
+    private lateinit var toggleColorGroup : MaterialButtonToggleGroup
+    private lateinit var firstGroupColorButton: MaterialButton
+    private lateinit var secondGroupColorButton: MaterialButton
+    private lateinit var thirdGroupColorButton: MaterialButton
+    private lateinit var colorConfirmButton : Button
+
     private lateinit var filtersButton: Button
 
     private lateinit var affineButton: Button
@@ -92,6 +98,7 @@ class EditorActivity : AppCompatActivity() {
     private var strengthOfBrush: Int = 100
     private var sizeOfBrush: Int = 0
     private var stateOfDetector: Int = 0
+    private var stateOfColorDetector = 0
 
     private fun saveMediaToStorage(bitmap: Bitmap) {
         val filename = "${System.currentTimeMillis()}.jpg"
@@ -167,6 +174,13 @@ class EditorActivity : AppCompatActivity() {
         secondGroupButton = findViewById(R.id.secondGroupButton)
         thirdGroupButton = findViewById(R.id.thirdGroupButton)
 
+        toggleColorGroup = findViewById(R.id.toggleColorButton)
+        firstGroupColorButton = findViewById(R.id.firstGroupColorButton)
+        secondGroupColorButton = findViewById(R.id.secondGroupColorButton)
+        thirdGroupColorButton = findViewById(R.id.thirdGroupColorButton)
+
+        colorConfirmButton = findViewById(R.id.colorConfirmButton)
+
         retouchButton = findViewById(R.id.retouchButton)
 
         unsharpMasking = findViewById(R.id.unsharpMasking)
@@ -188,7 +202,12 @@ class EditorActivity : AppCompatActivity() {
 
             arrayOf<View>(
                 mainImage,
-                colorFilterButton
+                toggleColorGroup,
+                firstGroupColorButton,
+                secondGroupColorButton,
+                thirdGroupColorButton,
+                colorConfirmButton
+//                colorFilterButton
             ),
 
             arrayOf<View>(
@@ -308,6 +327,24 @@ class EditorActivity : AppCompatActivity() {
             mainImage.setImageBitmap(bitmap)
         }
 
+        colorConfirmButton.setOnClickListener{
+            if (stateOfColorDetector == 0) {
+
+            }
+            else if (stateOfColorDetector == 1) {
+                bitmap = ColorFilters.blackWhiteFilter(bitmap)
+                mainImage.setImageBitmap(bitmap)
+            }
+            else if (stateOfColorDetector == 2) {
+                bitmap = ColorFilters.mozaik(bitmap, 20)
+                mainImage.setImageBitmap(bitmap)
+            }
+            else if (stateOfColorDetector == 3) {
+                bitmap = ColorFilters.contrast(bitmap, 50)
+                mainImage.setImageBitmap(bitmap)
+            }
+        }
+
         unsharpMaskingConfirmButton.setOnClickListener{
             bitmap = UnsharpMask.unsharpMaskAlg(bitmap, 1.0)
             mainImage.setImageBitmap(bitmap)
@@ -407,6 +444,24 @@ class EditorActivity : AppCompatActivity() {
 
                     R.id.thirdGroupButton -> {
                         stateOfDetector = 3
+                    }
+                }
+            }
+        }
+
+        toggleColorGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (isChecked) {
+                when (checkedId) {
+                    R.id.firstGroupColorButton -> {
+                        stateOfColorDetector = 1
+                    }
+
+                    R.id.secondGroupColorButton -> {
+                        stateOfColorDetector = 2
+                    }
+
+                    R.id.thirdGroupColorButton -> {
+                        stateOfColorDetector = 3
                     }
                 }
             }
