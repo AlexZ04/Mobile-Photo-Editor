@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -29,8 +30,8 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var galleryButton: Button
-    private lateinit var cameraButton: Button
+    private lateinit var galleryButton: FloatingActionButton
+    private lateinit var cameraButton: FloatingActionButton
     private lateinit var vectorEdit: FloatingActionButton
     private lateinit var cubeButton: FloatingActionButton
     private lateinit var photoUri: Uri
@@ -51,6 +52,8 @@ class MainActivity : AppCompatActivity() {
         cubeButton = findViewById(R.id.cubeButton)
 
         galleryButton.setOnClickListener {
+
+            Toast.makeText(this, "Окунаемся с головой..", Toast.LENGTH_SHORT).show()
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 
