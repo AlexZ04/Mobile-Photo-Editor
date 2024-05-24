@@ -265,7 +265,8 @@ class EditorActivity : AppCompatActivity() {
         val maxDimension = bitmap.width.coerceAtLeast(bitmap.height).toFloat()
         val maxSliderValue = maxDimension.coerceAtMost(500.0f)
         sizeOfBrushSlider.valueTo = maxSliderValue
-        sizeOfBrushSlider.value = maxSliderValue / 10
+        sizeOfBrushSlider.value = maxSliderValue / 5
+        sizeOfBrush = (maxSliderValue / 5).toInt()
 
         val exif = ExifInterface(contentResolver.openInputStream(uri)!!)
         val orientation: Int =
