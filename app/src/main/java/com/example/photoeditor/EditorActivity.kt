@@ -199,6 +199,11 @@ class EditorActivity : AppCompatActivity() {
                 firstGroupColorButton,
                 secondGroupColorButton,
                 thirdGroupColorButton,
+                blackWhiteConfirmButton,
+                mozaikConfirmButton,
+                contrastConfirmButton,
+                mozaikSlider,
+                contrastSlider
 //                colorConfirmButton
 //                colorFilterButton
             ),
@@ -241,12 +246,65 @@ class EditorActivity : AppCompatActivity() {
             faceDetectorButton, retouchButton, unsharpMasking, affineButton
         )
 
+        val changeButtonsViews = arrayOf<Array<View>>(
+
+            arrayOf<View>(
+                blackWhiteConfirmButton
+            ),
+
+            arrayOf<View>(
+                mozaikConfirmButton,
+                mozaikSlider
+            ),
+
+            arrayOf<View>(
+                contrastConfirmButton,
+                contrastSlider
+            )
+        )
+
+        println(stateOfColorDetector)
+
         for(i in changeAlgorithmButtons.indices){
             changeAlgorithmButtons[i].setOnClickListener(){
 
                 changeVisibility(views[currAlg], false)
                 currAlg = i
                 changeVisibility(views[currAlg], true)
+
+                if (i != 1) {
+                    changeVisibility(changeButtonsViews[0], false)
+                    changeVisibility(changeButtonsViews[1], false)
+                    changeVisibility(changeButtonsViews[2], false)
+                }
+
+                if (i == 1) {
+
+                    if (stateOfColorDetector == 0) {
+                        changeVisibility(changeButtonsViews[0], false)
+                        changeVisibility(changeButtonsViews[1], false)
+                        changeVisibility(changeButtonsViews[2], false)
+                    }
+
+                    else if (stateOfColorDetector == 1) {
+                        changeVisibility(changeButtonsViews[0], true)
+                        changeVisibility(changeButtonsViews[1], false)
+                        changeVisibility(changeButtonsViews[2], false)
+                    }
+
+                    else if (stateOfColorDetector == 2) {
+                        changeVisibility(changeButtonsViews[1], true)
+                        changeVisibility(changeButtonsViews[0], false)
+                        changeVisibility(changeButtonsViews[2], false)
+                    }
+
+                    else if (stateOfColorDetector == 3) {
+                        changeVisibility(changeButtonsViews[2], true)
+                        changeVisibility(changeButtonsViews[0], false)
+                        changeVisibility(changeButtonsViews[1], false)
+                    }
+
+                }
             }
         }
 
@@ -441,23 +499,6 @@ class EditorActivity : AppCompatActivity() {
                 }
             }
         }
-
-        val changeButtonsViews = arrayOf<Array<View>>(
-
-            arrayOf<View>(
-                blackWhiteConfirmButton
-            ),
-
-            arrayOf<View>(
-                mozaikConfirmButton,
-                mozaikSlider
-            ),
-
-            arrayOf<View>(
-                contrastConfirmButton,
-                contrastSlider
-            )
-        )
 
         mozaikSlider.addOnChangeListener { slider, value, fromUser ->
             mozaikUserValue = value.toInt()
