@@ -11,7 +11,6 @@ import com.example.photoeditor.R
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.PointF
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -21,11 +20,8 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import kotlinx.coroutines.processNextEventInCurrentThread
 import java.lang.Math.toRadians
-import kotlin.io.path.Path
-import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.math.sqrt
 import kotlin.properties.Delegates
 
 class Cube : AppCompatActivity() {
@@ -73,14 +69,6 @@ class Cube : AppCompatActivity() {
 
         setContentView(canvas)
     }
-    private fun drawVertex(canvas: Canvas) {
-        val VERTEX_RADIUS = 15f
-        for (vertex in vertexes) {
-            paint.color = Color.BLACK
-            paint.style = Paint.Style.FILL
-            canvas.drawCircle(vertex.x, vertex.y, VERTEX_RADIUS, paint)
-        }
-    }
 
     fun returnToStart() {
         val intent = Intent(this, MainActivity::class.java)
@@ -90,7 +78,6 @@ class Cube : AppCompatActivity() {
 }
 class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(context) {
     private var scaleDetector: ScaleGestureDetector
-    private var cameraDistance = 100000f
     private val triangleColors = arrayOf(
         Color.RED, Color.RED,
         Color.GREEN, Color.GREEN,
@@ -109,7 +96,6 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
     )
     private var faceVisibility = BooleanArray(6) { false }
     private val paint = Paint()
-    private var scale = 1f
     private val pointPath = android.graphics.Path()
 
     var screenHeight by Delegates.notNull<Int>()
@@ -121,19 +107,12 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
         paint.style = Paint.Style.FILL
 
         scaleDetector = ScaleGestureDetector(context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-            override fun onScale(detector: ScaleGestureDetector): Boolean {
-                cameraDistance /= detector.scaleFactor  // Обновляем расстояние камеры вместо масштаба
-                cameraDistance = Math.max(2000f, Math.min(cameraDistance, 2000f))  // Ограничиваем расстояние камеры
-                invalidate()
-                return true
-            }
         })
     }
     private var previousX = 0f
     private var previousY = 0f
     private var currentX = 0f
     private var currentY = 0f
-    val VERTEX_RADIUS = 10f
     private val connections = arrayOf(
         intArrayOf(0, 1, 2),
         intArrayOf(0, 2, 3),
@@ -239,7 +218,6 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
                 }
             }
         }
-
         return true
     }
     private fun calculateRotationAngle(
@@ -254,7 +232,7 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
         val distance2 = Math.hypot((currX2 - prevX2).toDouble(), (currY2 - prevY2).toDouble()).toFloat()
 
         val averageDistance = (distance1 + distance2) / 2
-        val rotationSpeed = averageDistance * 0.001f  // Adjust the scaling factor as needed
+        val rotationSpeed = averageDistance * 0.001f
 
         return angle * rotationSpeed
     }
@@ -273,7 +251,7 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
         super.onDraw(canvas)
 
         canvas.drawColor(Color.BLACK)
-        val cameraDirection = Vertex(0f, 0f, 1f)
+        val cameraDirection = Vertex(0f, 0f, 100f)
         val centerX = width / 2f
         val centerY = height / 2f
         faceVisibility.fill(false)
@@ -287,30 +265,24 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
             val v2 = Vertex(vertex2.x, vertex2.y, vertex2.z)
             val v3 = Vertex(vertex3.x, vertex3.y, vertex3.z)
 
-            // Вычисляем вектора, образующие грань
             val t1 = Vertex(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z)
             val t2 = Vertex(v2.x - v3.x, v2.y - v3.y, v2.z - v3.z)
 
-            // Вычисляем нормаль к грани
             val normal = crossProduct(t2, t1).normalize()
 
-            // Вычисляем скалярное произведение вектора камеры на нормаль
             val dotProduct = dotProduct(cameraDirection, normal)
 
             if (dotProduct > 0) {
-//                val zFactor1 = cameraDistance / (cameraDistance - vertex1.z)
-//                val zFactor2 = cameraDistance / (cameraDistance - vertex2.z)
-//                val zFactor3 = cameraDistance / (cameraDistance - vertex3.z)
                 val paint = Paint()
                 paint.style = Paint.Style.FILL
                 paint.color = triangleColors[i]
                 paint.alpha = 255
-                val x1 = centerX + vertex1.x //* zFactor1
-                val y1 = centerY - vertex1.y //* zFactor1
-                val x2 = centerX + vertex2.x //* zFactor2
-                val y2 = centerY - vertex2.y //* zFactor2
-                val x3 = centerX + vertex3.x //* zFactor3
-                val y3 = centerY - vertex3.y //* zFactor3
+                val x1 = centerX + vertex1.x
+                val y1 = centerY - vertex1.y
+                val x2 = centerX + vertex2.x
+                val y2 = centerY - vertex2.y
+                val x3 = centerX + vertex3.x
+                val y3 = centerY - vertex3.y
 
                 canvas.drawLine(x1, y1, x2, y2, paint)
                 canvas.drawLine(x2, y2, x3, y3, paint)
@@ -324,7 +296,6 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
                 val digitPaint = Paint()
                 digitPaint.color = Color.BLACK
                 digitPaint.strokeWidth = 10f
-                // Проверяем, какие цифры нужно отобразить
                 for (j in faceConnections.indices) {
                     val faceConnection = faceConnections[j]
                     if (i == faceConnection[0] || i == faceConnection[1]) {
@@ -361,7 +332,6 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
             (screenWidth * 4 / 25).toFloat(), (screenHeight / 20 / 2).toFloat(), paint)
         canvas.drawLine((screenWidth * 2 / 25).toFloat(), (screenHeight / 20).toFloat(),
             (screenWidth * 4 / 25).toFloat(), (screenHeight / 20 + screenHeight / 20 / 2).toFloat(), paint)
-        //invalidate()
     }
 
     fun dotProduct(a: Vertex, b: Vertex): Float {
@@ -374,7 +344,6 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
         return Vertex(x, y, z)
     }
     fun rotateZ(angle: Float) {
-        //val angle = 1f
         val sin = sin(toRadians(angle.toDouble()))
         val cos = cos(toRadians(angle.toDouble()))
 
@@ -397,9 +366,9 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
         invalidate()
     }
     private fun rotate(vertex: Vertex, angleX: Float, angleY: Float, angleZ: Float): Vertex {
-        val radX = Math.toRadians(angleX.toDouble()).toFloat()
-        val radY = Math.toRadians(angleY.toDouble()).toFloat()
-        val radZ = Math.toRadians(angleZ.toDouble()).toFloat()
+        val radX = toRadians(angleX.toDouble()).toFloat()
+        val radY = toRadians(angleY.toDouble()).toFloat()
+        val radZ = toRadians(angleZ.toDouble()).toFloat()
 
         val newY = cos(radX) * vertex.y - sin(radX) * vertex.z
         val newZ = sin(radX) * vertex.y + cos(radX) * vertex.z

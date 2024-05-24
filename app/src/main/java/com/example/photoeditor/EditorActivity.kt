@@ -68,6 +68,7 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var contrastConfirmButton : Button
 
     private lateinit var mozaikSlider : Slider
+    private lateinit var contrastSlider : Slider
 
     private lateinit var filtersButton: Button
 
@@ -100,6 +101,8 @@ class EditorActivity : AppCompatActivity() {
     private var stateOfDetector: Int = 0
     private var stateOfColorDetector = 0
 
+    private var mozaikUserValue = 8
+    private var contrastUserValue = 0
 
     private fun changeVisibility(elems: Array<View>, isActive: Boolean){
 
@@ -161,6 +164,7 @@ class EditorActivity : AppCompatActivity() {
         contrastConfirmButton = findViewById(R.id.contrastConfirmButton)
 
         mozaikSlider = findViewById(R.id.mozaikSlider)
+        contrastSlider = findViewById(R.id.contrastSlider)
 
         retouchButton = findViewById(R.id.retouchButton)
 
@@ -187,6 +191,11 @@ class EditorActivity : AppCompatActivity() {
                 firstGroupColorButton,
                 secondGroupColorButton,
                 thirdGroupColorButton,
+                blackWhiteConfirmButton,
+                mozaikConfirmButton,
+                contrastConfirmButton,
+                mozaikSlider,
+                contrastSlider
 //                colorConfirmButton
 //                colorFilterButton
             ),
@@ -229,12 +238,65 @@ class EditorActivity : AppCompatActivity() {
             faceDetectorButton, retouchButton, unsharpMasking, affineButton
         )
 
+        val changeButtonsViews = arrayOf<Array<View>>(
+
+            arrayOf<View>(
+                blackWhiteConfirmButton
+            ),
+
+            arrayOf<View>(
+                mozaikConfirmButton,
+                mozaikSlider
+            ),
+
+            arrayOf<View>(
+                contrastConfirmButton,
+                contrastSlider
+            )
+        )
+
+        println(stateOfColorDetector)
+
         for(i in changeAlgorithmButtons.indices){
             changeAlgorithmButtons[i].setOnClickListener(){
 
                 changeVisibility(views[currAlg], false)
                 currAlg = i
                 changeVisibility(views[currAlg], true)
+
+                if (i != 1) {
+                    changeVisibility(changeButtonsViews[0], false)
+                    changeVisibility(changeButtonsViews[1], false)
+                    changeVisibility(changeButtonsViews[2], false)
+                }
+
+                if (i == 1) {
+
+                    if (stateOfColorDetector == 0) {
+                        changeVisibility(changeButtonsViews[0], false)
+                        changeVisibility(changeButtonsViews[1], false)
+                        changeVisibility(changeButtonsViews[2], false)
+                    }
+
+                    else if (stateOfColorDetector == 1) {
+                        changeVisibility(changeButtonsViews[0], true)
+                        changeVisibility(changeButtonsViews[1], false)
+                        changeVisibility(changeButtonsViews[2], false)
+                    }
+
+                    else if (stateOfColorDetector == 2) {
+                        changeVisibility(changeButtonsViews[1], true)
+                        changeVisibility(changeButtonsViews[0], false)
+                        changeVisibility(changeButtonsViews[2], false)
+                    }
+
+                    else if (stateOfColorDetector == 3) {
+                        changeVisibility(changeButtonsViews[2], true)
+                        changeVisibility(changeButtonsViews[0], false)
+                        changeVisibility(changeButtonsViews[1], false)
+                    }
+
+                }
             }
         }
 
@@ -242,7 +304,7 @@ class EditorActivity : AppCompatActivity() {
 
         var bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
 
-        val maxDimension = bitmap.width.coerceAtLeast(bitmap.height).toFloat()
+        val maxDimension = bitmap.width.coerceAtLeast(bitmap.height).toFloat() / 2
         val maxSliderValue = maxDimension.coerceAtMost(500.0f)
         sizeOfBrushSlider.valueTo = maxSliderValue
         sizeOfBrushSlider.value = maxSliderValue / 5
@@ -316,12 +378,12 @@ class EditorActivity : AppCompatActivity() {
         }
 
         mozaikConfirmButton.setOnClickListener{
-            bitmap = ColorFilters.mozaik(bitmap, 8)
+            bitmap = ColorFilters.mozaik(bitmap, mozaikUserValue)
             mainImage.setImageBitmap(bitmap)
         }
 
         contrastConfirmButton.setOnClickListener{
-            bitmap = ColorFilters.contrast(bitmap, 50)
+            bitmap = ColorFilters.contrast(bitmap, contrastUserValue)
             mainImage.setImageBitmap(bitmap)
         }
 
@@ -430,21 +492,12 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
-        val changeButtonsViews = arrayOf<Array<View>>(
-
-            arrayOf<View>(
-                blackWhiteConfirmButton
-            ),
-
-            arrayOf<View>(
-                mozaikConfirmButton,
-                mozaikSlider
-            ),
-
-            arrayOf<View>(
-                contrastConfirmButton
-            )
-        )
+        mozaikSlider.addOnChangeListener { slider, value, fromUser ->
+            mozaikUserValue = value.toInt()
+        }
+        contrastSlider.addOnChangeListener { slider, value, fromUser ->
+            contrastUserValue = value.toInt()
+        }
 
         toggleColorGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
             if (isChecked) {
