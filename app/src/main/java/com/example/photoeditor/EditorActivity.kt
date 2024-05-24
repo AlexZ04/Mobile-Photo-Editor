@@ -537,6 +537,7 @@ class EditorActivity : AppCompatActivity() {
         saveButton.setOnClickListener{
 
             Saving.saveMediaToStorage(this, bitmap)
+            Toast.makeText(this, "Сохранено", Toast.LENGTH_SHORT).show()
         }
     }
 }
