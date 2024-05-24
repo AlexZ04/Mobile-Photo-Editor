@@ -352,15 +352,15 @@
         android:value="100.0"
         android:valueFrom="0.0"
         android:valueTo="100.0"
-        android:visibility="gone"
-        app:tickColor="@color/gray"
-        app:thumbColor="@color/white"
-        app:trackColorActive="@color/gray"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline_end"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/mainImage" />
+        app:layout_constraintTop_toBottomOf="@+id/mainImage"
+        app:thumbColor="@color/white"
+        app:tickColor="@color/gray"
+        app:trackColorActive="@color/gray" />
 
     <TextView
         android:id="@+id/textSize"
@@ -393,15 +393,15 @@
         android:value="100.0"
         android:valueFrom="1.0"
         android:valueTo="500.0"
-        android:visibility="gone"
-        app:tickColor="@color/gray"
-        app:thumbColor="@color/white"
-        app:trackColorActive="@color/gray"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/strengthOfBrushSlider"
         app:layout_constraintEnd_toStartOf="@+id/guideline_end"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/mainImage" />
+        app:layout_constraintTop_toBottomOf="@+id/mainImage"
+        app:thumbColor="@color/white"
+        app:tickColor="@color/gray"
+        app:trackColorActive="@color/gray" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/toggleButton"

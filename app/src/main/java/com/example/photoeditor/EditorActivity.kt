@@ -276,7 +276,8 @@ class EditorActivity : AppCompatActivity() {
         )
 
         var listOfAlgs = arrayOf("Поворот", "Цветокоррекция", "Масштабирование", "Нейросеть",
-            "Ретушь", "Нерезкое маскирование (очень долго...)", "Аффиные преобразования")
+            "Ретушь (верхний ползунок - радиус, нижний - сила)", "Нерезкое маскирование (очень долго...)",
+            "Аффиные преобразования")
 
         for(i in changeAlgorithmButtons.indices){
             changeAlgorithmButtons[i].setOnClickListener(){
