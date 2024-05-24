@@ -122,8 +122,8 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
 
         scaleDetector = ScaleGestureDetector(context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScale(detector: ScaleGestureDetector): Boolean {
-                cameraDistance /= detector.scaleFactor  // Обновляем расстояние камеры вместо масштаба
-                cameraDistance = Math.max(2000f, Math.min(cameraDistance, 2000f))  // Ограничиваем расстояние камеры
+                cameraDistance /= detector.scaleFactor
+                cameraDistance = Math.max(2000f, Math.min(cameraDistance, 2000f))
                 invalidate()
                 return true
             }
@@ -239,7 +239,6 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
                 }
             }
         }
-
         return true
     }
     private fun calculateRotationAngle(
@@ -254,7 +253,7 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
         val distance2 = Math.hypot((currX2 - prevX2).toDouble(), (currY2 - prevY2).toDouble()).toFloat()
 
         val averageDistance = (distance1 + distance2) / 2
-        val rotationSpeed = averageDistance * 0.001f  // Adjust the scaling factor as needed
+        val rotationSpeed = averageDistance * 0.001f
 
         return angle * rotationSpeed
     }
@@ -273,7 +272,7 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
         super.onDraw(canvas)
 
         canvas.drawColor(Color.BLACK)
-        val cameraDirection = Vertex(0f, 0f, 1f)
+        val cameraDirection = Vertex(0f, 0f, 100f)
         val centerX = width / 2f
         val centerY = height / 2f
         faceVisibility.fill(false)
@@ -287,14 +286,11 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
             val v2 = Vertex(vertex2.x, vertex2.y, vertex2.z)
             val v3 = Vertex(vertex3.x, vertex3.y, vertex3.z)
 
-            // Вычисляем вектора, образующие грань
             val t1 = Vertex(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z)
             val t2 = Vertex(v2.x - v3.x, v2.y - v3.y, v2.z - v3.z)
 
-            // Вычисляем нормаль к грани
             val normal = crossProduct(t2, t1).normalize()
 
-            // Вычисляем скалярное произведение вектора камеры на нормаль
             val dotProduct = dotProduct(cameraDirection, normal)
 
             if (dotProduct > 0) {
@@ -324,7 +320,6 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
                 val digitPaint = Paint()
                 digitPaint.color = Color.BLACK
                 digitPaint.strokeWidth = 10f
-                // Проверяем, какие цифры нужно отобразить
                 for (j in faceConnections.indices) {
                     val faceConnection = faceConnections[j]
                     if (i == faceConnection[0] || i == faceConnection[1]) {
@@ -361,7 +356,6 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
             (screenWidth * 4 / 25).toFloat(), (screenHeight / 20 / 2).toFloat(), paint)
         canvas.drawLine((screenWidth * 2 / 25).toFloat(), (screenHeight / 20).toFloat(),
             (screenWidth * 4 / 25).toFloat(), (screenHeight / 20 + screenHeight / 20 / 2).toFloat(), paint)
-        //invalidate()
     }
 
     fun dotProduct(a: Vertex, b: Vertex): Float {
@@ -374,7 +368,6 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
         return Vertex(x, y, z)
     }
     fun rotateZ(angle: Float) {
-        //val angle = 1f
         val sin = sin(toRadians(angle.toDouble()))
         val cos = cos(toRadians(angle.toDouble()))
 
@@ -397,9 +390,9 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
         invalidate()
     }
     private fun rotate(vertex: Vertex, angleX: Float, angleY: Float, angleZ: Float): Vertex {
-        val radX = Math.toRadians(angleX.toDouble()).toFloat()
-        val radY = Math.toRadians(angleY.toDouble()).toFloat()
-        val radZ = Math.toRadians(angleZ.toDouble()).toFloat()
+        val radX = toRadians(angleX.toDouble()).toFloat()
+        val radY = toRadians(angleY.toDouble()).toFloat()
+        val radZ = toRadians(angleZ.toDouble()).toFloat()
 
         val newY = cos(radX) * vertex.y - sin(radX) * vertex.z
         val newZ = sin(radX) * vertex.y + cos(radX) * vertex.z
