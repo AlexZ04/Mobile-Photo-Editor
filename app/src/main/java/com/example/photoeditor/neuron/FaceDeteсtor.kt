@@ -26,7 +26,7 @@ class FaceDetector () {
                     Imgproc.rectangle(mat, face.tl(), face.br(), Scalar(255.0, 0.0, 0.0), 5)
                 }
                 1 -> {
-                    mutableBitmap = ColorFilters.negativeFilter(mutableBitmap, face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())
+                    mutableBitmap = ColorFilters.contrast(mutableBitmap, 50, face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())
                 }
                 2 -> {
                     mutableBitmap = ColorFilters.blackWhiteFilter(mutableBitmap, face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())

@@ -350,7 +350,7 @@
             android:layout_height="wrap_content"
             android:checkable="true"
             android:icon="@drawable/check"
-            android:text="Негатив"
+            android:text="Контраст (+50)"
             app:iconGravity="textStart" />
 
         <com.google.android.material.button.MaterialButton
