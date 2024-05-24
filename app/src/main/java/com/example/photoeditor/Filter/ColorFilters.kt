@@ -10,9 +10,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 
 class ColorFilters() {
-    companion object{
-        fun negativeFilter(bitmap: Bitmap, fromX : Int = 0, fromY : Int = 0,
-                           toX : Int = bitmap.width, toY: Int = bitmap.height) : Bitmap {
+    companion object {
+        fun negativeFilter(
+            bitmap: Bitmap, fromX: Int = 0, fromY: Int = 0,
+            toX: Int = bitmap.width, toY: Int = bitmap.height
+        ): Bitmap {
 
 //            val newBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
             val newBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
@@ -32,8 +34,10 @@ class ColorFilters() {
             return newBitmap
         }
 
-        suspend fun blackWhiteFilter(bitmap: Bitmap, fromX: Int = 0, fromY: Int = 0,
-                                     toX: Int = bitmap.width, toY: Int = bitmap.height): Bitmap = withContext(Dispatchers.Default) {
+        suspend fun blackWhiteFilter(
+            bitmap: Bitmap, fromX: Int = 0, fromY: Int = 0,
+            toX: Int = bitmap.width, toY: Int = bitmap.height
+        ): Bitmap = withContext(Dispatchers.Default) {
 
             val newBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
             val numCores = Runtime.getRuntime().availableProcessors().coerceAtLeast(1)
@@ -69,16 +73,18 @@ class ColorFilters() {
             newBitmap
         }
 
-        suspend fun mozaik(bitmap: Bitmap, pixels: Int, fromX : Int = 0, fromY : Int = 0,
-                   toX : Int = bitmap.width, toY: Int = bitmap.height) : Bitmap = withContext(Dispatchers.Default) {
+        suspend fun mozaik(
+            bitmap: Bitmap, pixels: Int, fromX: Int = 0, fromY: Int = 0,
+            toX: Int = bitmap.width, toY: Int = bitmap.height
+        ): Bitmap = withContext(Dispatchers.Default) {
 
             val newBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
-            var color : Int
+            var color: Int
 
-            var midR : Float
-            var midG : Float
-            var midB : Float
+            var midR: Float
+            var midG: Float
+            var midB: Float
 
             var pixelsUsed = 0
 
@@ -153,9 +159,11 @@ class ColorFilters() {
 
             newBitmap
         }
+
         suspend fun contrast(
             bitmap: Bitmap, correction: Int, fromX: Int = 0, fromY: Int = 0,
-            toX: Int = bitmap.width, toY: Int = bitmap.height) : Bitmap  = withContext(Dispatchers.Default) {
+            toX: Int = bitmap.width, toY: Int = bitmap.height
+        ): Bitmap = withContext(Dispatchers.Default) {
 
             val newBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
@@ -198,8 +206,10 @@ class ColorFilters() {
             newBitmap
         }
 
-        fun getLAB(bitmap: Bitmap, fromX : Int = 0, fromY : Int = 0,
-                   toX : Int = bitmap.width, toY: Int = bitmap.height): Float {
+        fun getLAB(
+            bitmap: Bitmap, fromX: Int = 0, fromY: Int = 0,
+            toX: Int = bitmap.width, toY: Int = bitmap.height
+        ): Float {
             var color: Int
 
             var valueR = 0
@@ -225,16 +235,18 @@ class ColorFilters() {
             return lAB;
         }
 
-        fun getColorsList(bitmap: Bitmap, correction: Int, fromX : Int = 0, fromY : Int = 0,
-                          toX : Int = bitmap.width, toY: Int = bitmap.height): MutableList<Int> {
+        fun getColorsList(
+            bitmap: Bitmap, correction: Int, fromX: Int = 0, fromY: Int = 0,
+            toX: Int = bitmap.width, toY: Int = bitmap.height
+        ): MutableList<Int> {
             val lAB = getLAB(bitmap, fromX, fromY, toX, toY).toInt()
 
             val k = 1.0 + correction / 100.0
 
-            var delta : Int
-            var newVal : Int
+            var delta: Int
+            var newVal: Int
 
-            val colors = mutableListOf <Int>()
+            val colors = mutableListOf<Int>()
 
             for (i in 0 until 256) {
                 delta = i - lAB

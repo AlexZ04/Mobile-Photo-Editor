@@ -13,8 +13,12 @@ import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.CascadeClassifier
 
-class FaceDetector () {
-    suspend fun processImage(faceCascade: CascadeClassifier, newImageBitmap: Bitmap, stateOfDetector: Int) : Bitmap {
+class FaceDetector() {
+    suspend fun processImage(
+        faceCascade: CascadeClassifier,
+        newImageBitmap: Bitmap,
+        stateOfDetector: Int
+    ): Bitmap {
         var mutableBitmap = newImageBitmap.copy(Bitmap.Config.ARGB_8888, true)
         val mat = Mat()
         Utils.bitmapToMat(mutableBitmap, mat)
@@ -29,16 +33,32 @@ class FaceDetector () {
                 0 -> {
                     Imgproc.rectangle(mat, face.tl(), face.br(), Scalar(255.0, 0.0, 0.0), 5)
                 }
+
                 1 -> {
-                    coroutineScope{
-                        mutableBitmap = ColorFilters.contrast(mutableBitmap, 50, face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())
+                    coroutineScope {
+                        mutableBitmap = ColorFilters.contrast(
+                            mutableBitmap,
+                            50,
+                            face.tl().x.toInt(),
+                            face.tl().y.toInt(),
+                            face.br().x.toInt(),
+                            face.br().y.toInt()
+                        )
                     }
                 }
+
                 2 -> {
                     coroutineScope {
-                        mutableBitmap = ColorFilters.blackWhiteFilter(mutableBitmap, face.tl().x.toInt(), face.tl().y.toInt(), face.br().x.toInt(), face.br().y.toInt())
+                        mutableBitmap = ColorFilters.blackWhiteFilter(
+                            mutableBitmap,
+                            face.tl().x.toInt(),
+                            face.tl().y.toInt(),
+                            face.br().x.toInt(),
+                            face.br().y.toInt()
+                        )
                     }
                 }
+
                 3 -> {
                     coroutineScope {
                         mutableBitmap = ColorFilters.mozaik(
@@ -54,7 +74,7 @@ class FaceDetector () {
             }
 
         }
-        if (stateOfDetector == 0){
+        if (stateOfDetector == 0) {
             Utils.matToBitmap(mat, mutableBitmap)
         }
 

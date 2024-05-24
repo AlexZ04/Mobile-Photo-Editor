@@ -1,9 +1,11 @@
 package com.example.photoeditor
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -58,34 +60,41 @@ class MainActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
-                    != PackageManager.PERMISSION_GRANTED) {
+                    != PackageManager.PERMISSION_GRANTED
+                ) {
                     ActivityCompat.requestPermissions(
                         this,
                         arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
                         1
                     )
                 } else {
-                    val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    val intent =
+                        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                     startActivityForResult(intent, 1)
                 }
             } else {
                 // For versions below Android 13, request READ_EXTERNAL_STORAGE permission
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    )
+                    != PackageManager.PERMISSION_GRANTED
+                ) {
                     ActivityCompat.requestPermissions(
                         this,
                         arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                         1
                     )
                 } else {
-                    val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    val intent =
+                        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                     startActivityForResult(intent, 1)
                 }
             }
         }
 
         cameraButton.setOnClickListener {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 
                 if (ContextCompat.checkSelfPermission(
                         this,
@@ -103,11 +112,13 @@ class MainActivity : AppCompatActivity() {
 
                     startActivityForResult(intent, 2)
                 } else {
-                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES), 2)
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES),
+                        2
+                    )
                 }
-            }
-
-            else {
+            } else {
                 if (ContextCompat.checkSelfPermission(
                         this,
                         Manifest.permission.CAMERA
@@ -123,10 +134,15 @@ class MainActivity : AppCompatActivity() {
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
 
                     startActivityForResult(intent, 2)
-                }
-
-                else{
-                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE), 2)
+                } else {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ),
+                        2
+                    )
                 }
             }
         }
@@ -155,12 +171,34 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == 2 && resultCode == RESULT_OK) {
             val imageBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, photoUri)
-            Saving.saveBitmapToUri(this, imageBitmap, photoUri)
+            val rotatedBitmap = rotateImageIfRequired(this, imageBitmap, photoUri)
+            Saving.saveBitmapToUri(this, rotatedBitmap, photoUri)
 
             val intent = Intent(this, EditorActivity::class.java).apply {
                 setData(photoUri)
             }
             startActivity(intent)
         }
+    }
+
+    private fun rotateImageIfRequired(context: Context, img: Bitmap, selectedImage: Uri): Bitmap {
+        val input = context.contentResolver.openInputStream(selectedImage) ?: return img
+        val exif = ExifInterface(input)
+        val orientation =
+            exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+        input.close()
+
+        return when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(img, 90)
+            ExifInterface.ORIENTATION_ROTATE_180 -> rotateImage(img, 180)
+            ExifInterface.ORIENTATION_ROTATE_270 -> rotateImage(img, 270)
+            else -> img
+        }
+    }
+
+    private fun rotateImage(img: Bitmap, degree: Int): Bitmap {
+        val matrix = android.graphics.Matrix()
+        matrix.postRotate(degree.toFloat())
+        return Bitmap.createBitmap(img, 0, 0, img.width, img.height, matrix, true)
     }
 }

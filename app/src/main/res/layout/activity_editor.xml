@@ -132,93 +132,93 @@
         android:id="@+id/affineFirst"
         android:layout_width="162dp"
         android:layout_height="383dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.25"
-        tools:srcCompat="@tools:sample/avatars"
-        android:visibility="gone" />
+        tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
         android:id="@+id/affineSecond"
         android:layout_width="162dp"
         android:layout_height="383dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.25"
-        tools:srcCompat="@tools:sample/avatars"
-        android:visibility="gone" />
+        tools:srcCompat="@tools:sample/avatars" />
 
     <Button
         android:id="@+id/firstAffineChangeButton"
         android:layout_width="162dp"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
         android:text="Исходная картинка"
         android:textColor="@color/black"
-        android:backgroundTint="@color/white"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.7"
-        android:visibility="gone" />
+        app:layout_constraintVertical_bias="0.7" />
 
     <Button
         android:id="@+id/secondAffineChangeButton"
         android:layout_width="162dp"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
         android:text="Итоговая картинка"
         android:textColor="@color/black"
-        android:backgroundTint="@color/white"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.7"
-        android:visibility="gone" />
+        app:layout_constraintVertical_bias="0.7" />
 
     <Button
         android:id="@+id/confirmAffineButton"
         android:layout_width="162dp"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
         android:text="Запуск"
         android:textColor="@color/black"
-        android:backgroundTint="@color/white"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.8"
-        android:visibility="gone" />
+        app:layout_constraintVertical_bias="0.8" />
 
     <Button
         android:id="@+id/colorFilterButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
         android:text="Color Filter"
         android:textColor="@color/black"
-        android:backgroundTint="@color/white"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.829"
-        android:visibility="gone"/>
+        app:layout_constraintVertical_bias="0.829" />
 
     <Button
         android:id="@+id/unsharpMaskingConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Unsharp Masking"
         android:backgroundTint="@color/white"
+        android:text="Unsharp Masking"
         android:textColor="@color/black"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -246,8 +246,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Сохранить"
-        app:icon="@drawable/download"
         android:textColor="@color/white"
+        app:icon="@drawable/download"
         app:iconTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -259,22 +259,22 @@
         android:layout_marginBottom="144dp"
         android:ems="10"
         android:hint="@string/angle_advise"
-        android:textColorHint="@color/gray"
-        android:textColor="@color/white"
         android:inputType="numberSigned"
         android:singleLine="true"
+        android:textColor="@color/white"
+        android:textColorHint="@color/gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.144"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/rotationConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
         android:text="@string/confirm_button_text"
         android:textColor="@color/black"
-        android:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.944"
@@ -289,39 +289,39 @@
         android:layout_marginBottom="144dp"
         android:ems="10"
         android:hint="@string/resize_advise"
-        android:textColorHint="@color/gray"
-        android:textColor="@color/white"
         android:inputType="numberDecimal"
         android:singleLine="true"
+        android:textColor="@color/white"
+        android:textColorHint="@color/gray"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.144"
-        app:layout_constraintStart_toStartOf="parent"
-        android:visibility="gone"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/resizingConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
         android:text="@string/confirm_button_text"
         android:textColor="@color/black"
-        android:backgroundTint="@color/white"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.944"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.793"
-        android:visibility="gone"/>
+        app:layout_constraintVertical_bias="0.793" />
 
     <Button
         android:id="@+id/faceDetectorConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
         android:text="Наложить фильтр"
         android:textColor="@color/black"
         android:visibility="gone"
-        android:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -334,7 +334,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.125"/>
+        app:layout_constraintGuide_percent="0.125" />
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -342,7 +342,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.875"/>
+        app:layout_constraintGuide_percent="0.875" />
 
     <com.google.android.material.slider.Slider
         android:id="@+id/strengthOfBrushSlider"
@@ -376,8 +376,8 @@
         android:layout_width="60dp"
         android:layout_height="20dp"
         android:layout_marginTop="530dp"
-        android:visibility="gone"
         android:text="Сила"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -453,8 +453,8 @@
         android:id="@+id/blackWhiteConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Наложить фильтр"
         android:backgroundTint="@color/white"
+        android:text="Наложить фильтр"
         android:textColor="@color/black"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
@@ -487,9 +487,8 @@
         android:id="@+id/mozaikConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Наложить"
-        app:tickColor="@color/gray"
         android:backgroundTint="@color/white"
+        android:text="Наложить"
         android:textColor="@color/black"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
@@ -497,7 +496,8 @@
         app:layout_constraintHorizontal_bias="0.119"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainImage"
-        app:layout_constraintVertical_bias="0.345" />
+        app:layout_constraintVertical_bias="0.345"
+        app:tickColor="@color/gray" />
 
     <com.google.android.material.slider.Slider
         android:id="@+id/contrastSlider"
@@ -508,23 +508,22 @@
         android:valueFrom="-100.0"
         android:valueTo="100.0"
         android:visibility="invisible"
-        app:tickColor="@color/gray"
-        app:thumbColor="@color/white"
-        app:trackColorActive="@color/gray"
         app:layout_constraintBottom_toBottomOf="@+id/strengthOfBrushSlider"
         app:layout_constraintEnd_toStartOf="@+id/guideline_end"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline_start"
         app:layout_constraintTop_toBottomOf="@+id/mainImage"
-        app:layout_constraintVertical_bias="0.345" />
+        app:layout_constraintVertical_bias="0.345"
+        app:thumbColor="@color/white"
+        app:tickColor="@color/gray"
+        app:trackColorActive="@color/gray" />
 
     <Button
         android:id="@+id/contrastConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Наложить"
-        app:tickColor="@color/gray"
         android:backgroundTint="@color/white"
+        android:text="Наложить"
         android:textColor="@color/black"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
@@ -532,7 +531,8 @@
         app:layout_constraintHorizontal_bias="0.119"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainImage"
-        app:layout_constraintVertical_bias="0.345" />
+        app:layout_constraintVertical_bias="0.345"
+        app:tickColor="@color/gray" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/toggleColorButton"

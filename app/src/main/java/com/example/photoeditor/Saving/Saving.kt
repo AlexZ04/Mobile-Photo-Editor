@@ -33,7 +33,10 @@ class Saving {
                 put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
             }
 
-            return context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            return context.contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                contentValues
+            )
         }
     }
 }

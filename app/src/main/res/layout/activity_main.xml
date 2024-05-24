@@ -44,13 +44,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        app:backgroundTint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/upload"
         app:layout_constraintEnd_toStartOf="@+id/cubeButton"
         app:layout_constraintHorizontal_bias="0.062"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.106"
-        app:backgroundTint="@color/white"
         app:srcCompat="@drawable/vectors" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -59,13 +59,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        app:backgroundTint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/upload"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.921"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.106"
-        app:backgroundTint="@color/white"
         app:srcCompat="@drawable/cube" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

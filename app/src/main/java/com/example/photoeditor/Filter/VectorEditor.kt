@@ -27,10 +27,10 @@ import kotlin.properties.Delegates
 
 class VectorEditor : AppCompatActivity() {
 
-//    private lateinit var canvas : ImageView
+    //    private lateinit var canvas : ImageView
     private lateinit var display: Display
 
-    private lateinit var canvas : DrawView
+    private lateinit var canvas: DrawView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,37 +63,29 @@ class VectorEditor : AppCompatActivity() {
 
             if (event.x <= display.width / 5 && event.y <= display.height / 10) {
                 returnToStart()
-            }
-            else if (event.y >= display.height * 0.9 && display.width / 4 > event.x && event.action == 0) {
+            } else if (event.y >= display.height * 0.9 && display.width / 4 > event.x && event.action == 0) {
                 canvas.goAlg()
-            }
-            else if (event.y >= display.height * 0.9 && display.width * 2 / 4 > event.x && event.action == 0) {
+            } else if (event.y >= display.height * 0.9 && display.width * 2 / 4 > event.x && event.action == 0) {
                 canvas.mode = 0
                 canvas.invalidate()
-            }
-            else if (event.y >= display.height * 0.9 && display.width * 3 / 4 > event.x && event.action == 0) {
+            } else if (event.y >= display.height * 0.9 && display.width * 3 / 4 > event.x && event.action == 0) {
                 canvas.mode = 1
                 canvas.invalidate()
-            }
-            else if (event.y >= display.height * 0.9 && event.action == 0) {
+            } else if (event.y >= display.height * 0.9 && event.action == 0) {
                 canvas.mode = 2
                 canvas.invalidate()
-            }
-            else if (canvas.mode == 1) {
+            } else if (canvas.mode == 1) {
                 if (event.action == 0) {
                     if (canvas.hasPoint(currentPoint)) {
                         canvas.movePoint(currentPoint)
                         canvas.foundPoint = true
-                    }
-                    else {
+                    } else {
                         canvas.foundPoint = false
                     }
-                }
-                else if (event.action == 2 && canvas.foundPoint) {
+                } else if (event.action == 2 && canvas.foundPoint) {
                     canvas.movePoint(currentPoint)
                     canvas.addNewPointFromEdit(currentPoint)
-                }
-                else if (canvas.foundPoint){
+                } else if (canvas.foundPoint) {
                     canvas.movePoint(0F to 0F)
                     canvas.foundPoint = false
                     canvas.isCurrentPoint = false
@@ -115,11 +107,11 @@ internal class DrawView(context: Context?) : View(context) {
 
     private val paint = Paint()
     private val fontPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private lateinit var rect : Rect
-    private var listOfPoints = mutableListOf <Pair<Float, Float>>()
-    private var splinePoints = mutableListOf <Pair<Float, Float>>()
+    private lateinit var rect: Rect
+    private var listOfPoints = mutableListOf<Pair<Float, Float>>()
+    private var splinePoints = mutableListOf<Pair<Float, Float>>()
 
-    private var listOfRealPoints = mutableListOf <Pair<Float, Float>>()
+    private var listOfRealPoints = mutableListOf<Pair<Float, Float>>()
 
     var foundPoint = false
 
@@ -132,7 +124,8 @@ internal class DrawView(context: Context?) : View(context) {
 
     private var newAddedEditPoint = 0F to 0F
 
-    var mode = 0 // 0 - добавление точек в кривую, 1 - расставление точек на сплайнах, 2 - удаление точек
+    var mode =
+        0 // 0 - добавление точек в кривую, 1 - расставление точек на сплайнах, 2 - удаление точек
 
     override fun onDraw(canvas: Canvas) {
 
@@ -146,40 +139,77 @@ internal class DrawView(context: Context?) : View(context) {
 
         paint.setColor(Color.WHITE)
 
-        canvas.drawLine((screenWidth * 2 / 25).toFloat(), (screenHeight / 20).toFloat(),
-            (screenWidth * 4 / 25).toFloat(), (screenHeight / 20 / 2).toFloat(), paint)
-        canvas.drawLine((screenWidth * 2 / 25).toFloat(), (screenHeight / 20).toFloat(),
-            (screenWidth * 4 / 25).toFloat(), (screenHeight / 20 + screenHeight / 20 / 2).toFloat(), paint)
+        canvas.drawLine(
+            (screenWidth * 2 / 25).toFloat(), (screenHeight / 20).toFloat(),
+            (screenWidth * 4 / 25).toFloat(), (screenHeight / 20 / 2).toFloat(), paint
+        )
+        canvas.drawLine(
+            (screenWidth * 2 / 25).toFloat(),
+            (screenHeight / 20).toFloat(),
+            (screenWidth * 4 / 25).toFloat(),
+            (screenHeight / 20 + screenHeight / 20 / 2).toFloat(),
+            paint
+        )
 
 
         canvas.drawRect(Rect(0, (screenHeight * 0.9).toInt(), screenWidth, screenHeight), paint)
 
-        canvas.drawText("Build spline", (screenWidth * 0.5 / 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
-        canvas.drawText("Add points", (screenWidth * 1.5 / 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
-        canvas.drawText("Edit spline", (screenWidth * 2.5 / 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
-        canvas.drawText("Delete points", (screenWidth * 3.5 / 4).toFloat(), (screenHeight * 9.5 / 10).toFloat(), fontPaint)
+        canvas.drawText(
+            "Build spline",
+            (screenWidth * 0.5 / 4).toFloat(),
+            (screenHeight * 9.5 / 10).toFloat(),
+            fontPaint
+        )
+        canvas.drawText(
+            "Add points",
+            (screenWidth * 1.5 / 4).toFloat(),
+            (screenHeight * 9.5 / 10).toFloat(),
+            fontPaint
+        )
+        canvas.drawText(
+            "Edit spline",
+            (screenWidth * 2.5 / 4).toFloat(),
+            (screenHeight * 9.5 / 10).toFloat(),
+            fontPaint
+        )
+        canvas.drawText(
+            "Delete points",
+            (screenWidth * 3.5 / 4).toFloat(),
+            (screenHeight * 9.5 / 10).toFloat(),
+            fontPaint
+        )
 
         paint.setColor(Color.BLACK)
-        canvas.drawLine((screenWidth / 4).toFloat(), (screenHeight * 0.9).toFloat(),
-            (screenWidth / 4).toFloat(), screenHeight.toFloat(), paint)
+        canvas.drawLine(
+            (screenWidth / 4).toFloat(), (screenHeight * 0.9).toFloat(),
+            (screenWidth / 4).toFloat(), screenHeight.toFloat(), paint
+        )
 
-        canvas.drawLine((screenWidth * 2 / 4).toFloat(), (screenHeight * 0.9).toFloat(),
-            (screenWidth * 2 / 4).toFloat(), screenHeight.toFloat(), paint)
+        canvas.drawLine(
+            (screenWidth * 2 / 4).toFloat(), (screenHeight * 0.9).toFloat(),
+            (screenWidth * 2 / 4).toFloat(), screenHeight.toFloat(), paint
+        )
 
-        canvas.drawLine((screenWidth * 3 / 4).toFloat(), (screenHeight * 0.9).toFloat(),
-            (screenWidth * 3 / 4).toFloat(), screenHeight.toFloat(), paint)
+        canvas.drawLine(
+            (screenWidth * 3 / 4).toFloat(), (screenHeight * 0.9).toFloat(),
+            (screenWidth * 3 / 4).toFloat(), screenHeight.toFloat(), paint
+        )
 
 
         paint.setColor(Color.GRAY)
         for (i in 1 until listOfPoints.size) {
-            canvas.drawLine(listOfPoints[i].first, listOfPoints[i].second,
-                listOfPoints[i - 1].first, listOfPoints[i - 1].second, paint)
+            canvas.drawLine(
+                listOfPoints[i].first, listOfPoints[i].second,
+                listOfPoints[i - 1].first, listOfPoints[i - 1].second, paint
+            )
         }
-        
+
         paint.setColor(Color.GREEN)
         for (i in 1..<splinePoints.size) {
-            canvas.drawLine(splinePoints[i].first, splinePoints[i].second,
-                splinePoints[i - 1].first, splinePoints[i - 1].second, paint)
+            canvas.drawLine(
+                splinePoints[i].first, splinePoints[i].second,
+                splinePoints[i - 1].first, splinePoints[i - 1].second, paint
+            )
         }
 
         paint.setColor(Color.WHITE)
@@ -203,20 +233,17 @@ internal class DrawView(context: Context?) : View(context) {
         if (event != null) {
 
             if ((event.x > screenWidth / 5 || event.y > screenHeight / 10) &&
-                event.y < screenHeight * 0.9) {
+                event.y < screenHeight * 0.9
+            ) {
 
                 if (mode == 0) {
                     listOfPoints.add(event.x to event.y)
                     listOfRealPoints.add(event.x to event.y)
-                }
-
-                else if (mode == 1) {
+                } else if (mode == 1) {
 
 //                    addSplineEditPoint(event.x to event.y)
 //                    editSplinePoints.add(event.x to event.y)
-                }
-
-                else if (mode == 2) {
+                } else if (mode == 2) {
                     deletePoint(event.x to event.y)
                 }
                 invalidate()
@@ -230,18 +257,18 @@ internal class DrawView(context: Context?) : View(context) {
         var stepValue = 0F
 
         if (listOfPoints.size < 2) {
-            splinePoints = mutableListOf <Pair<Float, Float>>()
+            splinePoints = mutableListOf<Pair<Float, Float>>()
             return
         }
 
-        splinePoints = mutableListOf <Pair<Float, Float>>()
+        splinePoints = mutableListOf<Pair<Float, Float>>()
         splinePoints.add(listOfRealPoints[0].first to listOfRealPoints[0].second)
 
         if (newAddedEditPoint != 0F to 0F) {
             putPointIn(newAddedEditPoint)
         }
 
-        val tempListOfPoints = mutableListOf <Pair<Float, Float>>()
+        val tempListOfPoints = mutableListOf<Pair<Float, Float>>()
 
         var amountOfPoints = 2
 
@@ -263,16 +290,18 @@ internal class DrawView(context: Context?) : View(context) {
 
         }
 
-        tempListOfPoints.add(listOfRealPoints[listOfRealPoints.size - 1].first to
-                listOfRealPoints[listOfRealPoints.size - 1].second)
+        tempListOfPoints.add(
+            listOfRealPoints[listOfRealPoints.size - 1].first to
+                    listOfRealPoints[listOfRealPoints.size - 1].second
+        )
 
         while (stepValue <= 1) {
 
-            var newLinesPoints = mutableListOf <Pair<Float, Float>>()
+            var newLinesPoints = mutableListOf<Pair<Float, Float>>()
 
             newLinesPoints.addAll(tempListOfPoints)
 
-            var newTempList = mutableListOf <Pair<Float, Float>>()
+            var newTempList = mutableListOf<Pair<Float, Float>>()
 
             while (newLinesPoints.size != 3) {
 
@@ -286,7 +315,7 @@ internal class DrawView(context: Context?) : View(context) {
                             as MutableList<Pair<Float, Float>>
                 }
 
-                newLinesPoints = mutableListOf <Pair<Float, Float>>()
+                newLinesPoints = mutableListOf<Pair<Float, Float>>()
                 newLinesPoints.addAll(newTempList)
 
                 newTempList.clear()
@@ -320,10 +349,11 @@ internal class DrawView(context: Context?) : View(context) {
     private fun deletePoint(point: Pair<Float, Float>) {
         for (i in 0 until listOfPoints.size) {
             if (abs(listOfPoints[i].first - point.first) < 25 &&
-                abs(listOfPoints[i].second - point.second) < 25) {
+                abs(listOfPoints[i].second - point.second) < 25
+            ) {
 
                 listOfPoints.removeAt(i)
-                listOfRealPoints = mutableListOf <Pair<Float, Float>>()
+                listOfRealPoints = mutableListOf<Pair<Float, Float>>()
                 listOfRealPoints.addAll(listOfPoints)
                 goAlg()
                 invalidate()
@@ -345,7 +375,7 @@ internal class DrawView(context: Context?) : View(context) {
 
         var amountOfPoints = 3
 
-        val tempSplinePoints = mutableListOf <Pair<Float, Float>>()
+        val tempSplinePoints = mutableListOf<Pair<Float, Float>>()
 
         for (i in 1 until splinePoints.size) {
             tempSplinePoints.add(splinePoints[i - 1])
@@ -369,7 +399,8 @@ internal class DrawView(context: Context?) : View(context) {
 
         for (i in 0 until tempSplinePoints.size) {
             if (abs(point.first - tempSplinePoints[i].first) <= 25 &&
-                abs(point.second - tempSplinePoints[i].second) <= 25) {
+                abs(point.second - tempSplinePoints[i].second) <= 25
+            ) {
                 return true
             }
         }
@@ -393,7 +424,7 @@ internal class DrawView(context: Context?) : View(context) {
     }
 
     private fun putPointIn(point: Pair<Float, Float>) {
-        val tempRealPoints = mutableListOf <Pair<Float, Float>>()
+        val tempRealPoints = mutableListOf<Pair<Float, Float>>()
         val index = findPosition(point)
 
         for (i in 0 until listOfRealPoints.size) {
@@ -404,7 +435,7 @@ internal class DrawView(context: Context?) : View(context) {
             }
         }
 
-        listOfRealPoints = mutableListOf <Pair<Float, Float>>()
+        listOfRealPoints = mutableListOf<Pair<Float, Float>>()
         listOfRealPoints.addAll(tempRealPoints)
 
     }
@@ -420,10 +451,13 @@ internal class DrawView(context: Context?) : View(context) {
 
         for (i in 1 until listOfRealPoints.size) {
 
-            currentDist = getDistFromPointToSegment(point, listOfRealPoints[i], listOfRealPoints[i - 1])
+            currentDist =
+                getDistFromPointToSegment(point, listOfRealPoints[i], listOfRealPoints[i - 1])
 
-            currentSumDist = getDist(point, listOfRealPoints[i]) + getDist(point,
-                listOfRealPoints[i - 1])
+            currentSumDist = getDist(point, listOfRealPoints[i]) + getDist(
+                point,
+                listOfRealPoints[i - 1]
+            )
 
             if (currentDist < minDist || (currentDist == minDist && currentSumDist < sumDistToPoints)) {
                 minDist = currentDist
@@ -436,28 +470,30 @@ internal class DrawView(context: Context?) : View(context) {
     }
 
     private fun getDist(firstPoint: Pair<Float, Float>, secondPoint: Pair<Float, Float>): Float {
-        return sqrt((firstPoint.first - secondPoint.first).pow(2) +
-                (firstPoint.second - secondPoint.second).pow(2))
+        return sqrt(
+            (firstPoint.first - secondPoint.first).pow(2) +
+                    (firstPoint.second - secondPoint.second).pow(2)
+        )
     }
 
     private fun getDistFromPointToSegment(
-        point: Pair<Float, Float>, firstPoint: Pair<Float, Float>, secondPoint: Pair<Float, Float>)
-    : Float {
+        point: Pair<Float, Float>, firstPoint: Pair<Float, Float>, secondPoint: Pair<Float, Float>
+    )
+            : Float {
 
         if (checkTriangle(point, firstPoint, secondPoint)) { // если можно опустить высоту -
             // - ищем высоту
             if (firstPoint.first - secondPoint.first == 0F) {
                 return getDist(point, firstPoint.second to point.second)
-            }
-            else if (firstPoint.second - secondPoint.second == 0F) {
+            } else if (firstPoint.second - secondPoint.second == 0F) {
                 return getDist(point, point.first to firstPoint.second)
-            }
-            else {
+            } else {
                 val deltaX = firstPoint.first - secondPoint.first
                 val deltaY = firstPoint.second - secondPoint.second
 
-                val newY = (deltaX * (firstPoint.second * (deltaX / deltaY) - firstPoint.first + point.first) +
-                        deltaY * point.second) / ((deltaX * deltaX / deltaY) + deltaY)
+                val newY =
+                    (deltaX * (firstPoint.second * (deltaX / deltaY) - firstPoint.first + point.first) +
+                            deltaY * point.second) / ((deltaX * deltaX / deltaY) + deltaY)
 
                 val newX = (newY - firstPoint.second) * (deltaX / deltaY) + firstPoint.first
 
@@ -469,8 +505,10 @@ internal class DrawView(context: Context?) : View(context) {
     }
 
     // проверяем, можно ли опустить высоту на отрезок
-    private fun checkTriangle(point: Pair<Float, Float>, firstPoint: Pair<Float, Float>,
-                              secondPoint: Pair<Float, Float>): Boolean {
+    private fun checkTriangle(
+        point: Pair<Float, Float>, firstPoint: Pair<Float, Float>,
+        secondPoint: Pair<Float, Float>
+    ): Boolean {
         val dist1 = getDist(point, firstPoint)
         val dist2 = getDist(point, secondPoint)
 

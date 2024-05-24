@@ -63,18 +63,18 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var secondGroupButton: MaterialButton
     private lateinit var thirdGroupButton: MaterialButton
 
-    private lateinit var toggleColorGroup : MaterialButtonToggleGroup
+    private lateinit var toggleColorGroup: MaterialButtonToggleGroup
     private lateinit var firstGroupColorButton: MaterialButton
     private lateinit var secondGroupColorButton: MaterialButton
     private lateinit var thirdGroupColorButton: MaterialButton
 
-//    private lateinit var colorConfirmButton : Button
-    private lateinit var blackWhiteConfirmButton : Button
-    private lateinit var mozaikConfirmButton : Button
-    private lateinit var contrastConfirmButton : Button
+    //    private lateinit var colorConfirmButton : Button
+    private lateinit var blackWhiteConfirmButton: Button
+    private lateinit var mozaikConfirmButton: Button
+    private lateinit var contrastConfirmButton: Button
 
-    private lateinit var mozaikSlider : Slider
-    private lateinit var contrastSlider : Slider
+    private lateinit var mozaikSlider: Slider
+    private lateinit var contrastSlider: Slider
 
     private lateinit var filtersButton: Button
 
@@ -100,6 +100,7 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var faceCascade: CascadeClassifier
 
     private lateinit var mutableBitmap: Bitmap
+    private lateinit var rotatedBitmap: Bitmap
 
     private var currAlg: Int = 0
     private var strengthOfBrush: Int = 100
@@ -110,21 +111,20 @@ class EditorActivity : AppCompatActivity() {
     private var mozaikUserValue = 8
     private var contrastUserValue = 0
 
-    private lateinit var animationView : LottieAnimationView
+    private lateinit var animationView: LottieAnimationView
 
     private var canStart = false
 
-    private lateinit var algTextView : TextView
+    private lateinit var algTextView: TextView
 
-    private fun changeVisibility(elems: Array<View>, isActive: Boolean){
+    private fun changeVisibility(elems: Array<View>, isActive: Boolean) {
 
-        if(isActive){
-            elems.forEach {elem ->
+        if (isActive) {
+            elems.forEach { elem ->
                 elem.visibility = View.VISIBLE
             }
-        }
-        else{
-            elems.forEach {elem ->
+        } else {
+            elems.forEach { elem ->
                 elem.visibility = View.INVISIBLE
             }
         }
@@ -223,7 +223,8 @@ class EditorActivity : AppCompatActivity() {
             arrayOf<View>(
                 mainImage,
                 resizingConfirmButton,
-                resizingAngleValueText),
+                resizingAngleValueText
+            ),
 
             arrayOf<View>(
                 mainImage,
@@ -275,13 +276,21 @@ class EditorActivity : AppCompatActivity() {
             )
         )
 
-        var listOfAlgs = arrayOf("Поворот", "Цветокоррекция", "Масштабирование", "Нейросеть",
-            "Ретушь (верхний ползунок - радиус, нижний - сила)", "Нерезкое маскирование (очень долго...)",
-            "Аффиные преобразования")
+        var listOfAlgs = arrayOf(
+            "Поворот",
+            "Цветокоррекция",
+            "Масштабирование",
+            "Нейросеть",
+            "Ретушь (верхний ползунок - радиус, нижний - сила)",
+            "Нерезкое маскирование (очень долго...)",
+            "Аффиные преобразования"
+        )
 
         val uri: Uri = intent.data!!
 
         var bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+        rotatedBitmap = bitmap
+
         val maxDimension = bitmap.width.coerceAtLeast(bitmap.height).toFloat() / 2
         val maxSliderValue = maxDimension.coerceAtMost(500.0f)
         sizeOfBrushSlider.valueTo = maxSliderValue
@@ -292,12 +301,12 @@ class EditorActivity : AppCompatActivity() {
         val orientation: Int =
             exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
 
-        lifecycleScope.launch(Dispatchers.Main){
+        lifecycleScope.launch(Dispatchers.Main) {
             when (orientation) {
 
-                ExifInterface.ORIENTATION_ROTATE_90 -> bitmap = Rotate.rotate(bitmap,90.0)
-                ExifInterface.ORIENTATION_ROTATE_180 -> bitmap = Rotate.rotate(bitmap,180.0)
-                ExifInterface.ORIENTATION_ROTATE_270 -> bitmap = Rotate.rotate(bitmap,270.0)
+                ExifInterface.ORIENTATION_ROTATE_90 -> bitmap = Rotate.rotate(bitmap, 90.0)
+                ExifInterface.ORIENTATION_ROTATE_180 -> bitmap = Rotate.rotate(bitmap, 180.0)
+                ExifInterface.ORIENTATION_ROTATE_270 -> bitmap = Rotate.rotate(bitmap, 270.0)
             }
 
             mainImage.setImageBitmap(bitmap)
@@ -308,8 +317,8 @@ class EditorActivity : AppCompatActivity() {
         firstAffineImage.setImageBitmap(bitmap)
         secondAffineImage.setImageBitmap(bitmap)
 
-        for(i in changeAlgorithmButtons.indices){
-            changeAlgorithmButtons[i].setOnClickListener(){
+        for (i in changeAlgorithmButtons.indices) {
+            changeAlgorithmButtons[i].setOnClickListener() {
 
                 changeVisibility(views[currAlg], false)
                 currAlg = i
@@ -328,50 +337,50 @@ class EditorActivity : AppCompatActivity() {
                         changeVisibility(changeButtonsViews[0], false)
                         changeVisibility(changeButtonsViews[1], false)
                         changeVisibility(changeButtonsViews[2], false)
-                    }
-
-                    else if (stateOfColorDetector == 1) {
+                    } else if (stateOfColorDetector == 1) {
                         changeVisibility(changeButtonsViews[0], true)
                         changeVisibility(changeButtonsViews[1], false)
                         changeVisibility(changeButtonsViews[2], false)
-                    }
-
-                    else if (stateOfColorDetector == 2) {
+                    } else if (stateOfColorDetector == 2) {
                         changeVisibility(changeButtonsViews[1], true)
                         changeVisibility(changeButtonsViews[0], false)
                         changeVisibility(changeButtonsViews[2], false)
-                    }
-
-                    else if (stateOfColorDetector == 3) {
+                    } else if (stateOfColorDetector == 3) {
                         changeVisibility(changeButtonsViews[2], true)
                         changeVisibility(changeButtonsViews[0], false)
                         changeVisibility(changeButtonsViews[1], false)
                     }
 
                 }
+
+                if (i == 0) {
+                    rotatedBitmap = bitmap
+                } else {
+                    bitmap = rotatedBitmap
+                }
             }
         }
 
-        choosePickButton.setOnClickListener{
+        choosePickButton.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
 
-        rotationConfirmButton.setOnClickListener{
+        rotationConfirmButton.setOnClickListener {
 
             lifecycleScope.launch(Dispatchers.Main) {
 
                 if (canStart) {
                     startAnimation()
-                    bitmap = Rotate.rotate(bitmap, -rotationAngleValueText.text.toString().toDouble())
-                    mainImage.setImageBitmap(bitmap)
+                    rotatedBitmap =
+                        Rotate.rotate(bitmap, -rotationAngleValueText.text.toString().toDouble())
+                    mainImage.setImageBitmap(rotatedBitmap)
                     stopAnimation()
                 }
-
             }
         }
 
-        resizingConfirmButton.setOnClickListener{
+        resizingConfirmButton.setOnClickListener {
 
             if (canStart) {
 
@@ -381,7 +390,8 @@ class EditorActivity : AppCompatActivity() {
                         Resize.resize(bitmap, resizingAngleValueText.text.toString().toDouble())
                     mainImage.setImageBitmap(bitmap)
 
-                    Toast.makeText(this@EditorActivity, "Масштаб изменён", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@EditorActivity, "Масштаб изменён", Toast.LENGTH_SHORT)
+                        .show()
                     stopAnimation()
                 }
             }
@@ -392,7 +402,7 @@ class EditorActivity : AppCompatActivity() {
         val firstPoints = mutableListOf<Array<Float>>()
         val secondPoints = mutableListOf<Array<Float>>()
 
-        firstAffineChangeButton.setOnClickListener{
+        firstAffineChangeButton.setOnClickListener {
 
             if (canStart) {
                 affineMod = 1
@@ -401,7 +411,7 @@ class EditorActivity : AppCompatActivity() {
             }
 
         }
-        secondAffineChangeButton.setOnClickListener{
+        secondAffineChangeButton.setOnClickListener {
 
             if (canStart) {
                 affineMod = 2
@@ -410,16 +420,22 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
-        confirmAffineButton.setOnClickListener{
+        confirmAffineButton.setOnClickListener {
             if (canStart) {
 
-                if(firstPoints.size < 3){
-                    Toast.makeText(this, "Недостаточно точек на изначальном изображении", Toast.LENGTH_SHORT).show()
-                }
-                else if(secondPoints.size < 3){
-                    Toast.makeText(this, "Недостаточно точек для итогового изображения", Toast.LENGTH_SHORT).show()
-                }
-                else{
+                if (firstPoints.size < 3) {
+                    Toast.makeText(
+                        this,
+                        "Недостаточно точек на изначальном изображении",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else if (secondPoints.size < 3) {
+                    Toast.makeText(
+                        this,
+                        "Недостаточно точек для итогового изображения",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
                     lifecycleScope.launch(Dispatchers.Main) {
                         startAnimation()
 
@@ -435,7 +451,7 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
-        colorFilterButton.setOnClickListener{
+        colorFilterButton.setOnClickListener {
             if (canStart) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     startAnimation()
@@ -446,7 +462,7 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
-        blackWhiteConfirmButton.setOnClickListener{
+        blackWhiteConfirmButton.setOnClickListener {
             lifecycleScope.launch(Dispatchers.Main) {
                 if (canStart) {
                     startAnimation()
@@ -457,7 +473,7 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
-        mozaikConfirmButton.setOnClickListener{
+        mozaikConfirmButton.setOnClickListener {
             if (canStart) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     startAnimation()
@@ -468,7 +484,7 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
-        contrastConfirmButton.setOnClickListener{
+        contrastConfirmButton.setOnClickListener {
             if (canStart) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     startAnimation()
@@ -479,13 +495,13 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
-        unsharpMaskingConfirmButton.setOnClickListener{
+        unsharpMaskingConfirmButton.setOnClickListener {
             if (canStart) {
                 Toast.makeText(
-                this,
-                "Данный фильтр работает очень долго...",
-                Toast.LENGTH_SHORT
-            ).show()
+                    this,
+                    "Данный фильтр работает очень долго...",
+                    Toast.LENGTH_SHORT
+                ).show()
 
                 lifecycleScope.launch(Dispatchers.Main) {
                     startAnimation()
@@ -496,7 +512,7 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
-        faceDetectorConfirmButton.setOnClickListener{
+        faceDetectorConfirmButton.setOnClickListener {
             if (canStart) {
                 lifecycleScope.launch(Dispatchers.Main) {
 
@@ -551,11 +567,14 @@ class EditorActivity : AppCompatActivity() {
 
                     if (currAlg == 4) {
                         val retouching = Retouching(bitmap)
-                        bitmap = retouching.startRetouching(centerX, centerY, sizeOfBrush, strengthOfBrush)
+                        bitmap = retouching.startRetouching(
+                            centerX,
+                            centerY,
+                            sizeOfBrush,
+                            strengthOfBrush
+                        )
                         mainImage.setImageBitmap(bitmap)
-                    }
-
-                    else {
+                    } else {
                         if ((affineMod == 1 || affineMod == 2) && event.action == MotionEvent.ACTION_DOWN) {
 
                             val canvas = Canvas(mutableBitmap)
@@ -650,8 +669,13 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
-        saveButton.setOnClickListener{
+        saveButton.setOnClickListener {
             if (canStart) {
+
+                if (currAlg == 0) {
+                    bitmap = rotatedBitmap
+                }
+
                 val uri: Uri? = Saving.createImageUri(this)
                 if (uri != null) {
                     Saving.saveBitmapToUri(this, bitmap, uri)
