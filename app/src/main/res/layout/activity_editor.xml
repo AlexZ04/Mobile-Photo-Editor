@@ -376,7 +376,7 @@
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <Button
-        android:id="@+id/colorConfirmButton"
+        android:id="@+id/blackWhiteConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Наложить фильтр"
@@ -384,6 +384,48 @@
         app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainImage"
+        app:layout_constraintVertical_bias="0.345" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/mozaikSlider"
+        android:layout_width="196dp"
+        android:layout_height="46dp"
+        android:stepSize="1.0"
+        android:value="100.0"
+        android:valueFrom="1.0"
+        android:valueTo="500.0"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/strengthOfBrushSlider"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@+id/mainImage"
+        app:layout_constraintVertical_bias="0.345" />
+
+    <Button
+        android:id="@+id/mozaikConfirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Наложить"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.119"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainImage"
+        app:layout_constraintVertical_bias="0.345" />
+
+    <Button
+        android:id="@+id/contrastConfirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Наложить"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.119"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainImage"
         app:layout_constraintVertical_bias="0.345" />

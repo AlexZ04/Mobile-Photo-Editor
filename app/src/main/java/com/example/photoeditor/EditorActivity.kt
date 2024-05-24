@@ -69,7 +69,13 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var firstGroupColorButton: MaterialButton
     private lateinit var secondGroupColorButton: MaterialButton
     private lateinit var thirdGroupColorButton: MaterialButton
-    private lateinit var colorConfirmButton : Button
+
+//    private lateinit var colorConfirmButton : Button
+    private lateinit var blackWhiteConfirmButton : Button
+    private lateinit var mozaikConfirmButton : Button
+    private lateinit var contrastConfirmButton : Button
+
+    private lateinit var mozaikSlider : Slider
 
     private lateinit var filtersButton: Button
 
@@ -157,7 +163,12 @@ class EditorActivity : AppCompatActivity() {
         secondGroupColorButton = findViewById(R.id.secondGroupColorButton)
         thirdGroupColorButton = findViewById(R.id.thirdGroupColorButton)
 
-        colorConfirmButton = findViewById(R.id.colorConfirmButton)
+//        colorConfirmButton = findViewById(R.id.colorConfirmButton)
+        blackWhiteConfirmButton = findViewById(R.id.blackWhiteConfirmButton)
+        mozaikConfirmButton = findViewById(R.id.mozaikConfirmButton)
+        contrastConfirmButton = findViewById(R.id.contrastConfirmButton)
+
+        mozaikSlider = findViewById(R.id.mozaikSlider)
 
         retouchButton = findViewById(R.id.retouchButton)
 
@@ -184,7 +195,7 @@ class EditorActivity : AppCompatActivity() {
                 firstGroupColorButton,
                 secondGroupColorButton,
                 thirdGroupColorButton,
-                colorConfirmButton
+//                colorConfirmButton
 //                colorFilterButton
             ),
 
@@ -306,24 +317,20 @@ class EditorActivity : AppCompatActivity() {
             mainImage.setImageBitmap(bitmap)
         }
 
-        colorConfirmButton.setOnClickListener{
-            when (stateOfColorDetector) {
-                0 -> {
-                    Toast.makeText(this, "Выберите фильтр!", Toast.LENGTH_SHORT).show()
-                }
-                1 -> {
-                    bitmap = ColorFilters.blackWhiteFilter(bitmap)
-                    mainImage.setImageBitmap(bitmap)
-                }
-                2 -> {
-                    bitmap = ColorFilters.mozaik(bitmap, 20)
-                    mainImage.setImageBitmap(bitmap)
-                }
-                3 -> {
-                    bitmap = ColorFilters.contrast(bitmap, 50)
-                    mainImage.setImageBitmap(bitmap)
-                }
-            }
+
+        blackWhiteConfirmButton.setOnClickListener{
+            bitmap = ColorFilters.blackWhiteFilter(bitmap)
+            mainImage.setImageBitmap(bitmap)
+        }
+
+        mozaikConfirmButton.setOnClickListener{
+            bitmap = ColorFilters.mozaik(bitmap, 8)
+            mainImage.setImageBitmap(bitmap)
+        }
+
+        contrastConfirmButton.setOnClickListener{
+            bitmap = ColorFilters.contrast(bitmap, 50)
+            mainImage.setImageBitmap(bitmap)
         }
 
         unsharpMaskingConfirmButton.setOnClickListener{
@@ -431,19 +438,44 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
+        val changeButtonsViews = arrayOf<Array<View>>(
+
+            arrayOf<View>(
+                blackWhiteConfirmButton
+            ),
+
+            arrayOf<View>(
+                mozaikConfirmButton,
+                mozaikSlider
+            ),
+
+            arrayOf<View>(
+                contrastConfirmButton
+            )
+        )
+
         toggleColorGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
             if (isChecked) {
                 when (checkedId) {
                     R.id.firstGroupColorButton -> {
                         stateOfColorDetector = 1
+                        changeVisibility(changeButtonsViews[1], false)
+                        changeVisibility(changeButtonsViews[2], false)
+                        changeVisibility(changeButtonsViews[0], true)
                     }
 
                     R.id.secondGroupColorButton -> {
                         stateOfColorDetector = 2
+                        changeVisibility(changeButtonsViews[0], false)
+                        changeVisibility(changeButtonsViews[2], false)
+                        changeVisibility(changeButtonsViews[1], true)
                     }
 
                     R.id.thirdGroupColorButton -> {
                         stateOfColorDetector = 3
+                        changeVisibility(changeButtonsViews[1], false)
+                        changeVisibility(changeButtonsViews[0], false)
+                        changeVisibility(changeButtonsViews[2], true)
                     }
                 }
             }
