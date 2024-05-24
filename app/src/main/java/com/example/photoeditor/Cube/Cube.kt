@@ -11,7 +11,6 @@ import com.example.photoeditor.R
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.PointF
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -21,11 +20,8 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import kotlinx.coroutines.processNextEventInCurrentThread
 import java.lang.Math.toRadians
-import kotlin.io.path.Path
-import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.math.sqrt
 import kotlin.properties.Delegates
 
 class Cube : AppCompatActivity() {
@@ -73,14 +69,6 @@ class Cube : AppCompatActivity() {
 
         setContentView(canvas)
     }
-    private fun drawVertex(canvas: Canvas) {
-        val VERTEX_RADIUS = 15f
-        for (vertex in vertexes) {
-            paint.color = Color.BLACK
-            paint.style = Paint.Style.FILL
-            canvas.drawCircle(vertex.x, vertex.y, VERTEX_RADIUS, paint)
-        }
-    }
 
     fun returnToStart() {
         val intent = Intent(this, MainActivity::class.java)
@@ -90,7 +78,6 @@ class Cube : AppCompatActivity() {
 }
 class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(context) {
     private var scaleDetector: ScaleGestureDetector
-    private var cameraDistance = 100000f
     private val triangleColors = arrayOf(
         Color.RED, Color.RED,
         Color.GREEN, Color.GREEN,
@@ -109,7 +96,6 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
     )
     private var faceVisibility = BooleanArray(6) { false }
     private val paint = Paint()
-    private var scale = 1f
     private val pointPath = android.graphics.Path()
 
     var screenHeight by Delegates.notNull<Int>()
@@ -121,19 +107,12 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
         paint.style = Paint.Style.FILL
 
         scaleDetector = ScaleGestureDetector(context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-            override fun onScale(detector: ScaleGestureDetector): Boolean {
-                cameraDistance /= detector.scaleFactor
-                cameraDistance = Math.max(2000f, Math.min(cameraDistance, 2000f))
-                invalidate()
-                return true
-            }
         })
     }
     private var previousX = 0f
     private var previousY = 0f
     private var currentX = 0f
     private var currentY = 0f
-    val VERTEX_RADIUS = 10f
     private val connections = arrayOf(
         intArrayOf(0, 1, 2),
         intArrayOf(0, 2, 3),
@@ -294,19 +273,16 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
             val dotProduct = dotProduct(cameraDirection, normal)
 
             if (dotProduct > 0) {
-//                val zFactor1 = cameraDistance / (cameraDistance - vertex1.z)
-//                val zFactor2 = cameraDistance / (cameraDistance - vertex2.z)
-//                val zFactor3 = cameraDistance / (cameraDistance - vertex3.z)
                 val paint = Paint()
                 paint.style = Paint.Style.FILL
                 paint.color = triangleColors[i]
                 paint.alpha = 255
-                val x1 = centerX + vertex1.x //* zFactor1
-                val y1 = centerY - vertex1.y //* zFactor1
-                val x2 = centerX + vertex2.x //* zFactor2
-                val y2 = centerY - vertex2.y //* zFactor2
-                val x3 = centerX + vertex3.x //* zFactor3
-                val y3 = centerY - vertex3.y //* zFactor3
+                val x1 = centerX + vertex1.x
+                val y1 = centerY - vertex1.y
+                val x2 = centerX + vertex2.x
+                val y2 = centerY - vertex2.y
+                val x3 = centerX + vertex3.x
+                val y3 = centerY - vertex3.y
 
                 canvas.drawLine(x1, y1, x2, y2, paint)
                 canvas.drawLine(x2, y2, x3, y3, paint)
