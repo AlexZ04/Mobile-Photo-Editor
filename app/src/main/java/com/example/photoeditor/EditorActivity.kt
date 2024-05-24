@@ -76,6 +76,7 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var contrastConfirmButton : Button
 
     private lateinit var mozaikSlider : Slider
+    private lateinit var contrastSlider : Slider
 
     private lateinit var filtersButton: Button
 
@@ -108,6 +109,8 @@ class EditorActivity : AppCompatActivity() {
     private var stateOfDetector: Int = 0
     private var stateOfColorDetector = 0
 
+    private var mozaikUserValue = 8
+    private var contrastUserValue = 0
 
     private fun changeVisibility(elems: Array<View>, isActive: Boolean){
 
@@ -169,6 +172,7 @@ class EditorActivity : AppCompatActivity() {
         contrastConfirmButton = findViewById(R.id.contrastConfirmButton)
 
         mozaikSlider = findViewById(R.id.mozaikSlider)
+        contrastSlider = findViewById(R.id.contrastSlider)
 
         retouchButton = findViewById(R.id.retouchButton)
 
@@ -324,12 +328,12 @@ class EditorActivity : AppCompatActivity() {
         }
 
         mozaikConfirmButton.setOnClickListener{
-            bitmap = ColorFilters.mozaik(bitmap, 8)
+            bitmap = ColorFilters.mozaik(bitmap, mozaikUserValue)
             mainImage.setImageBitmap(bitmap)
         }
 
         contrastConfirmButton.setOnClickListener{
-            bitmap = ColorFilters.contrast(bitmap, 50)
+            bitmap = ColorFilters.contrast(bitmap, contrastUserValue)
             mainImage.setImageBitmap(bitmap)
         }
 
@@ -450,9 +454,17 @@ class EditorActivity : AppCompatActivity() {
             ),
 
             arrayOf<View>(
-                contrastConfirmButton
+                contrastConfirmButton,
+                contrastSlider
             )
         )
+
+        mozaikSlider.addOnChangeListener { slider, value, fromUser ->
+            mozaikUserValue = value.toInt()
+        }
+        contrastSlider.addOnChangeListener { slider, value, fromUser ->
+            contrastUserValue = value.toInt()
+        }
 
         toggleColorGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
             if (isChecked) {
