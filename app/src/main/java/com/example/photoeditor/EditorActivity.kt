@@ -35,6 +35,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.slider.Slider
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
 import org.opencv.objdetect.CascadeClassifier
@@ -257,9 +258,11 @@ class EditorActivity : AppCompatActivity() {
                 ExifInterface.ORIENTATION_ROTATE_180 -> bitmap = Rotate.rotate(bitmap,180.0)
                 ExifInterface.ORIENTATION_ROTATE_270 -> bitmap = Rotate.rotate(bitmap,270.0)
             }
+
+            mainImage.setImageBitmap(bitmap)
         }
 
-        mainImage.setImageBitmap(bitmap)
+//        mainImage.setImageBitmap(bitmap)
         firstAffineImage.setImageBitmap(bitmap)
         secondAffineImage.setImageBitmap(bitmap)
 
