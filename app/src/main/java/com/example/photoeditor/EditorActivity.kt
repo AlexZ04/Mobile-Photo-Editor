@@ -349,6 +349,7 @@ class EditorActivity : AppCompatActivity() {
         }
 
         unsharpMaskingConfirmButton.setOnClickListener{
+            Toast.makeText(this, "Данный фильтр работает очень долго...", Toast.LENGTH_SHORT).show()
             bitmap = UnsharpMask.unsharpMaskAlg(bitmap, 1.0)
             mainImage.setImageBitmap(bitmap)
         }
