@@ -371,7 +371,6 @@ class EditorActivity : AppCompatActivity() {
             mainImage.setImageBitmap(bitmap)
         }
 
-
         blackWhiteConfirmButton.setOnClickListener{
             bitmap = ColorFilters.blackWhiteFilter(bitmap)
             mainImage.setImageBitmap(bitmap)
