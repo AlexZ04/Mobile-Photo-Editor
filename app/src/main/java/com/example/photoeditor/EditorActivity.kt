@@ -5,7 +5,10 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.RectF
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
@@ -452,62 +455,62 @@ class EditorActivity : AppCompatActivity() {
         }
         mainImage.setOnTouchListener { v, event ->
             if (canStart && (currAlg == 4 || currAlg == 6) && (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN)) {
+
                 val imageView = v as ImageView
                 val drawable = imageView.drawable
+
                 val intrinsicWidth = drawable.intrinsicWidth
                 val intrinsicHeight = drawable.intrinsicHeight
 
-                val imageWidth = imageView.width
-                val imageHeight = imageView.height
-                val scaleX = intrinsicWidth.toFloat() / imageWidth
-                val scaleY = intrinsicHeight.toFloat() / imageHeight
+                val imageMatrix = imageView.imageMatrix
+                val values = FloatArray(9)
+                imageMatrix.getValues(values)
 
-                val scaledTouchX = event.x * scaleX
-                val scaledTouchY = event.y * scaleY
+                val scaleXMatrix = values[Matrix.MSCALE_X]
+                val scaleYMatrix = values[Matrix.MSCALE_Y]
+                val transX = values[Matrix.MTRANS_X]
+                val transY = values[Matrix.MTRANS_Y]
 
-                val paddingLeft = (imageWidth - intrinsicWidth / scaleX) / 2
-                val paddingTop = (imageHeight - intrinsicHeight / scaleY) / 2
+                val touchX = (event.x - transX) / scaleXMatrix
+                val touchY = (event.y - transY) / scaleYMatrix
 
-                val centerX = (scaledTouchX - paddingLeft).toInt()
-                val centerY = (scaledTouchY - paddingTop).toInt()
+                if (touchX >= 0 && touchX <= intrinsicWidth && touchY >= 0 && touchY <= intrinsicHeight) {
+                    val centerX = touchX.toInt()
+                    val centerY = touchY.toInt()
 
-                if(currAlg == 4){
+                    if (currAlg == 4) {
                         val retouching = Retouching(bitmap)
                         bitmap = retouching.startRetouching(centerX, centerY, sizeOfBrush, strengthOfBrush)
                         mainImage.setImageBitmap(bitmap)
-                }
+                    }
 
-                else{
+                    else {
+                        if ((affineMod == 1 || affineMod == 2) && event.action == MotionEvent.ACTION_DOWN) {
+                            val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+                            val canvas = Canvas(mutableBitmap)
 
-                    if ((affineMod == 1 || affineMod == 2) && event.action == MotionEvent.ACTION_DOWN) {
-
-                        val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-
-                        val canvas = Canvas(mutableBitmap)
-
-                        val paint = Paint().apply {
-                            color = Color.RED
-                            style = Paint.Style.FILL
-                        }
-                        canvas.drawCircle(centerX.toFloat(), centerY.toFloat(), 15f, paint)
-
-                        mainImage.setImageBitmap(mutableBitmap)
-                        mainImage.invalidate()
-
-                        if(affineMod == 1){
-
-                            firstPoints.add(arrayOf(centerX.toFloat(), centerY.toFloat()))
-
-                            if(firstPoints.size == 3){
-                                affineMod = 0
+                            val paint = Paint().apply {
+                                color = Color.RED
+                                style = Paint.Style.FILL
                             }
-                        }
-                        if(affineMod == 2){
+                            canvas.drawCircle(centerX.toFloat(), centerY.toFloat(), 15f, paint)
 
-                            secondPoints.add(arrayOf(centerX.toFloat(), centerY.toFloat()))
+                            mainImage.setImageBitmap(mutableBitmap)
+                            mainImage.invalidate()
 
-                            if(secondPoints.size == 3){
-                                affineMod = 0
+                            if (affineMod == 1) {
+                                firstPoints.add(arrayOf(centerX.toFloat(), centerY.toFloat()))
+
+                                if (firstPoints.size == 3) {
+                                    affineMod = 0
+                                }
+                            }
+                            if (affineMod == 2) {
+                                secondPoints.add(arrayOf(centerX.toFloat(), centerY.toFloat()))
+
+                                if (secondPoints.size == 3) {
+                                    affineMod = 0
+                                }
                             }
                         }
                     }
@@ -515,6 +518,8 @@ class EditorActivity : AppCompatActivity() {
             }
             true
         }
+
+
 
         toggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
             if (canStart && isChecked) {
