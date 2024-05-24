@@ -18,6 +18,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -113,6 +114,8 @@ class EditorActivity : AppCompatActivity() {
 
     private var canStart = false
 
+    private lateinit var algTextView : TextView
+
     private fun changeVisibility(elems: Array<View>, isActive: Boolean){
 
         if(isActive){
@@ -186,6 +189,8 @@ class EditorActivity : AppCompatActivity() {
         colorFilterButton = findViewById(R.id.colorFilterButton)
         faceDetectorConfirmButton = findViewById(R.id.faceDetectorConfirmButton)
 
+        algTextView = findViewById(R.id.algTextView)
+
         animationView = findViewById(R.id.animationView)
         animationView.repeatMode = LottieDrawable.RESTART
         animationView.repeatCount = LottieDrawable.INFINITE
@@ -210,7 +215,7 @@ class EditorActivity : AppCompatActivity() {
                 mozaikConfirmButton,
                 contrastConfirmButton,
                 mozaikSlider,
-                contrastSlider
+                contrastSlider,
 //                colorConfirmButton
 //                colorFilterButton
             ),
@@ -261,14 +266,18 @@ class EditorActivity : AppCompatActivity() {
 
             arrayOf<View>(
                 mozaikConfirmButton,
-                mozaikSlider
+                mozaikSlider,
             ),
 
             arrayOf<View>(
                 contrastConfirmButton,
-                contrastSlider
+                contrastSlider,
             )
         )
+
+        var listOfAlgs = arrayOf("Поворот", "Цветокоррекция", "Масштабирование", "Нейросеть",
+            "Ретушь (верхний ползунок - радиус, нижний - сила)", "Нерезкое маскирование (очень долго...)",
+            "Аффиные преобразования")
 
         val uri: Uri = intent.data!!
 
@@ -305,6 +314,7 @@ class EditorActivity : AppCompatActivity() {
                 changeVisibility(views[currAlg], false)
                 currAlg = i
                 changeVisibility(views[currAlg], true)
+                algTextView.text = listOfAlgs[currAlg]
 
                 if (i != 1) {
                     changeVisibility(changeButtonsViews[0], false)
@@ -375,6 +385,7 @@ class EditorActivity : AppCompatActivity() {
                     stopAnimation()
                 }
             }
+
         }
 
         var affineMod = 0
@@ -388,6 +399,7 @@ class EditorActivity : AppCompatActivity() {
                 firstPoints.clear()
                 mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
             }
+
         }
         secondAffineChangeButton.setOnClickListener{
 

@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".EditorActivity">
 
     <com.airbnb.lottie.LottieAnimationView
@@ -51,43 +52,78 @@
                 android:id="@+id/rotationButton"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="20dp" />
+                android:layout_marginHorizontal="20dp"
+                app:backgroundTint="@color/white"
+                app:icon="@drawable/rotate"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/black" />
 
             <Button
                 android:id="@+id/filtersButton"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="20dp" />
+                android:layout_marginHorizontal="20dp"
+                app:backgroundTint="@color/white"
+                app:icon="@drawable/pallete"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/black" />
 
             <Button
                 android:id="@+id/resizingButton"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="20dp" />
+                android:layout_marginHorizontal="20dp"
+                app:backgroundTint="@color/white"
+                app:icon="@drawable/resize"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/black" />
 
             <Button
                 android:id="@+id/faceDetectorButton"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="20dp" />
+                android:layout_marginHorizontal="20dp"
+                app:backgroundTint="@color/white"
+                app:icon="@drawable/neuron"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/black" />
 
             <Button
                 android:id="@+id/retouchButton"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="20dp" />
+                android:layout_marginHorizontal="20dp"
+                app:backgroundTint="@color/white"
+                app:icon="@drawable/brush"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/black" />
 
             <Button
                 android:id="@+id/unsharpMasking"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="20dp" />
+                android:layout_marginHorizontal="20dp"
+                app:backgroundTint="@color/white"
+                app:icon="@drawable/masking"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/black" />
 
             <Button
                 android:id="@+id/affineButton"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="20dp" />
+                android:layout_marginHorizontal="20dp"
+                app:backgroundTint="@color/white"
+                app:icon="@drawable/affine"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/black" />
 
         </LinearLayout>
     </HorizontalScrollView>
@@ -122,7 +158,9 @@
         android:id="@+id/firstAffineChangeButton"
         android:layout_width="162dp"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="Исходная картинка"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.1"
@@ -135,7 +173,9 @@
         android:id="@+id/secondAffineChangeButton"
         android:layout_width="162dp"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="Итоговая картинка"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.9"
@@ -148,7 +188,9 @@
         android:id="@+id/confirmAffineButton"
         android:layout_width="162dp"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="Запуск"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -162,6 +204,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Color Filter"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -174,12 +218,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Unsharp Masking"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.829" />
+        app:layout_constraintVertical_bias="0.8" />
 
     <Button
         android:id="@+id/choosePickButton"
@@ -187,7 +234,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Назад"
+        android:textColor="@color/white"
         app:icon="@drawable/back_arrow"
+        app:iconTint="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -196,9 +245,10 @@
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:text="Сохранить"
         app:icon="@drawable/download"
+        android:textColor="@color/white"
+        app:iconTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -209,6 +259,8 @@
         android:layout_marginBottom="144dp"
         android:ems="10"
         android:hint="@string/angle_advise"
+        android:textColorHint="@color/gray"
+        android:textColor="@color/white"
         android:inputType="numberSigned"
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -221,6 +273,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/confirm_button_text"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.944"
@@ -235,6 +289,8 @@
         android:layout_marginBottom="144dp"
         android:ems="10"
         android:hint="@string/resize_advise"
+        android:textColorHint="@color/gray"
+        android:textColor="@color/white"
         android:inputType="numberDecimal"
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -248,6 +304,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/confirm_button_text"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.944"
@@ -261,7 +319,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Наложить фильтр"
+        android:textColor="@color/black"
         android:visibility="gone"
+        android:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -292,12 +352,15 @@
         android:value="100.0"
         android:valueFrom="0.0"
         android:valueTo="100.0"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline_end"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/mainImage" />
+        app:layout_constraintTop_toBottomOf="@+id/mainImage"
+        app:thumbColor="@color/white"
+        app:tickColor="@color/gray"
+        app:trackColorActive="@color/gray" />
 
     <TextView
         android:id="@+id/textSize"
@@ -330,12 +393,15 @@
         android:value="100.0"
         android:valueFrom="1.0"
         android:valueTo="500.0"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/strengthOfBrushSlider"
         app:layout_constraintEnd_toStartOf="@+id/guideline_end"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/mainImage" />
+        app:layout_constraintTop_toBottomOf="@+id/mainImage"
+        app:thumbColor="@color/white"
+        app:tickColor="@color/gray"
+        app:trackColorActive="@color/gray" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/toggleButton"
@@ -356,6 +422,7 @@
             android:checkable="true"
             android:icon="@drawable/check"
             android:text="Контраст (+50)"
+            android:textColor="@color/white"
             app:iconGravity="textStart" />
 
         <com.google.android.material.button.MaterialButton
@@ -366,6 +433,7 @@
             android:checkable="true"
             android:icon="@drawable/check"
             android:text="Ч/Б"
+            android:textColor="@color/white"
             app:iconGravity="textStart" />
 
         <com.google.android.material.button.MaterialButton
@@ -376,6 +444,7 @@
             android:checkable="true"
             android:icon="@drawable/check"
             android:text="Мозаика"
+            android:textColor="@color/white"
             app:iconGravity="textStart" />
 
     </com.google.android.material.button.MaterialButtonToggleGroup>
@@ -385,6 +454,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Наложить фильтр"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -407,13 +478,19 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline_start"
         app:layout_constraintTop_toBottomOf="@+id/mainImage"
-        app:layout_constraintVertical_bias="0.345" />
+        app:layout_constraintVertical_bias="0.345"
+        app:thumbColor="@color/white"
+        app:tickColor="@color/gray"
+        app:trackColorActive="@color/gray" />
 
     <Button
         android:id="@+id/mozaikConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Наложить"
+        app:tickColor="@color/gray"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -430,7 +507,10 @@
         android:value="0.0"
         android:valueFrom="-100.0"
         android:valueTo="100.0"
-        android:visibility="gone"
+        android:visibility="invisible"
+        app:tickColor="@color/gray"
+        app:thumbColor="@color/white"
+        app:trackColorActive="@color/gray"
         app:layout_constraintBottom_toBottomOf="@+id/strengthOfBrushSlider"
         app:layout_constraintEnd_toStartOf="@+id/guideline_end"
         app:layout_constraintHorizontal_bias="1.0"
@@ -443,6 +523,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Наложить"
+        app:tickColor="@color/gray"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -470,6 +553,7 @@
             android:checkable="true"
             android:icon="@drawable/check"
             android:text="Ч/Б"
+            android:textColor="@color/white"
             app:iconGravity="textStart" />
 
         <com.google.android.material.button.MaterialButton
@@ -480,6 +564,7 @@
             android:checkable="true"
             android:icon="@drawable/check"
             android:text="Мозаика"
+            android:textColor="@color/white"
             app:iconGravity="textStart" />
 
         <com.google.android.material.button.MaterialButton
@@ -490,9 +575,22 @@
             android:checkable="true"
             android:icon="@drawable/check"
             android:text="Контраст"
+            android:textColor="@color/white"
             app:iconGravity="textStart" />
 
     </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <TextView
+        android:id="@+id/algTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:text="Поворот"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
