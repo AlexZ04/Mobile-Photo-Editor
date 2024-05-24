@@ -187,7 +187,7 @@ class EditorActivity : AppCompatActivity() {
         animationView.repeatMode = LottieDrawable.RESTART
         animationView.repeatCount = LottieDrawable.INFINITE
 
-        animationView.playAnimation()
+        startAnimation()
 
         val views = arrayOf<Array<View>>(
 
@@ -333,9 +333,7 @@ class EditorActivity : AppCompatActivity() {
             }
 
             mainImage.setImageBitmap(bitmap)
-            canStart = true
-            animationView.pauseAnimation()
-            animationView.visibility = View.INVISIBLE
+            stopAnimation()
         }
 
 //        mainImage.setImageBitmap(bitmap)
@@ -352,8 +350,10 @@ class EditorActivity : AppCompatActivity() {
             lifecycleScope.launch(Dispatchers.Main) {
 
                 if (canStart) {
+                    startAnimation()
                     bitmap = Rotate.rotate(bitmap, -rotationAngleValueText.text.toString().toDouble())
                     mainImage.setImageBitmap(bitmap)
+                    stopAnimation()
                 }
 
             }
@@ -578,5 +578,17 @@ class EditorActivity : AppCompatActivity() {
             }
 
         }
+    }
+
+    private fun startAnimation() {
+        animationView.playAnimation()
+        animationView.visibility = View.VISIBLE
+        canStart = false
+    }
+
+    private fun stopAnimation() {
+        animationView.pauseAnimation()
+        animationView.visibility = View.INVISIBLE
+        canStart = true
     }
 }
