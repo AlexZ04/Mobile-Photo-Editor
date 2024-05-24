@@ -136,7 +136,7 @@ internal class DrawView(context: Context?) : View(context) {
 
     override fun onDraw(canvas: Canvas) {
 
-        fontPaint.textSize = 40F
+        fontPaint.textSize = (screenWidth / 27).toFloat()
         fontPaint.setColor(Color.BLACK)
         fontPaint.textAlign = Paint.Align.CENTER
 
