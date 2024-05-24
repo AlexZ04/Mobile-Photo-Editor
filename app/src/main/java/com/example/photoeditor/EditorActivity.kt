@@ -1,7 +1,6 @@
 package com.example.photoeditor
 
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -9,11 +8,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.media.ExifInterface
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
-import android.telephony.CellSignalStrength
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
@@ -36,14 +32,10 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.slider.Slider
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
 import org.opencv.objdetect.CascadeClassifier
 import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
-import java.util.Queue
 import com.example.photoeditor.Saving.Saving
 
 
@@ -483,7 +475,10 @@ class EditorActivity : AppCompatActivity() {
 
         saveButton.setOnClickListener{
 
-            Saving.saveMediaToStorage(this, bitmap)
+            val uri: Uri? = Saving.createImageUri(this)
+            if (uri != null) {
+                Saving.saveBitmapToUri(this, bitmap, uri)
+            }
         }
     }
 }
