@@ -11,17 +11,17 @@ class Resize() {
 
         fun resize(bitmap: Bitmap, coef: Double) : Bitmap{
 
-            if(coef < 1){
-                return trilinearFiltering(bitmap, coef)
+            if(coef < 1 && bitmap.width > 32 && bitmap.height > 32){
+                return trilinearFiltering(bitmap, coef.coerceIn(0.1, 10.0))
             }
-            else if(coef > 1){
-                return bilinearFiltering(bitmap, coef)
+            else if(coef > 1 && bitmap.width < 4096 && bitmap.height < 4096){
+                return bilinearFiltering(bitmap, coef.coerceIn(0.1, 10.0))
             }
 
             return bitmap
         }
 
-         private fun bilinearFiltering(bitmap: Bitmap, coef: Double) : Bitmap {
+        private fun bilinearFiltering(bitmap: Bitmap, coef: Double) : Bitmap {
 
             val newWidth = (bitmap.width * coef).toInt()
             val newHeight = (bitmap.height * coef).toInt()
@@ -34,10 +34,10 @@ class Resize() {
             for(i in 0..<newWidth){
                 for(j in 0..<newHeight){
 
-                    val leftX = floor(ratioX * i).toInt()
-                    val rightX = ceil(ratioX * i).toInt()
-                    val lowY = floor(ratioY * j).toInt()
-                    val highY = ceil(ratioY * j).toInt()
+                    val leftX = floor(ratioX * i).toInt().coerceIn(0, bitmap.width - 1)
+                    val rightX = ceil(ratioX * i).toInt().coerceIn(0, bitmap.width - 1)
+                    val lowY = floor(ratioY * j).toInt().coerceIn(0, bitmap.height - 1)
+                    val highY = ceil(ratioY * j).toInt().coerceIn(0, bitmap.height - 1)
 
                     val weightX = ratioX * i - leftX
                     val weightY = ratioY * j - lowY
@@ -99,11 +99,11 @@ class Resize() {
             for(i in 0..<newWidth){
                 for(j in 0..<newHeight){
 
-                    val firstMipMapX = ((i / coef).toInt() * firstMipMapScale).toInt()
-                    val firstMipMapY = ((j / coef).toInt() * firstMipMapScale).toInt()
+                    val firstMipMapX = ((i / coef).toInt() * firstMipMapScale).toInt().coerceIn(0, firstMM.width - 1)
+                    val firstMipMapY = ((j / coef).toInt() * firstMipMapScale).toInt().coerceIn(0, firstMM.height - 1)
 
-                    val secondMipMapX = ((i / coef).toInt() * secondMipMapScale).toInt()
-                    val secondMipMapY = ((j / coef).toInt() * secondMipMapScale).toInt()
+                    val secondMipMapX = ((i / coef).toInt() * secondMipMapScale).toInt().coerceIn(0, secondMM.width - 1)
+                    val secondMipMapY = ((j / coef).toInt() * secondMipMapScale).toInt().coerceIn(0, secondMM.height - 1)
 
                     val firstMMColor = firstMM.getColor(firstMipMapX, firstMipMapY)
                     val secondMMColor = secondMM.getColor(secondMipMapX, secondMipMapY)
