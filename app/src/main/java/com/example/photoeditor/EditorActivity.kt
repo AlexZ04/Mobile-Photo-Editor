@@ -321,7 +321,16 @@ class EditorActivity : AppCompatActivity() {
             changeAlgorithmButtons[i].setOnClickListener() {
 
                 changeVisibility(views[currAlg], false)
+
+                if(currAlg == 0){
+                    bitmap = rotatedBitmap
+                }
+                if(i == 0) {
+                    rotatedBitmap = bitmap
+                }
+
                 currAlg = i
+
                 changeVisibility(views[currAlg], true)
                 algTextView.text = listOfAlgs[currAlg]
 
@@ -351,12 +360,6 @@ class EditorActivity : AppCompatActivity() {
                         changeVisibility(changeButtonsViews[1], false)
                     }
 
-                }
-
-                if (i == 0) {
-                    rotatedBitmap = bitmap
-                } else {
-                    bitmap = rotatedBitmap
                 }
             }
         }
