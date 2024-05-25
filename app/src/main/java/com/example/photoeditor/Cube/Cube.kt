@@ -13,12 +13,10 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.Display
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import kotlinx.coroutines.processNextEventInCurrentThread
 import java.lang.Math.toRadians
 import kotlin.math.cos
 import kotlin.math.sin
@@ -370,14 +368,6 @@ class DrawView(context: Context, private val vertexes: Array<Vertex>) : View(con
                     }
 
                 }
-            }
-            val digitPaint = Paint()
-            digitPaint.color = Color.BLACK
-            for (i in faceVisibility.indices) {
-                Log.d(
-                    "FaceVisibility",
-                    "Face $i is ${if (faceVisibility[i]) "visible" else "invisible"}"
-                )
             }
         }
 

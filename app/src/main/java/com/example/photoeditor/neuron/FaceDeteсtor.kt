@@ -1,11 +1,8 @@
 package com.example.photoeditor.neuron
 
 import android.graphics.Bitmap
-import androidx.lifecycle.lifecycleScope
 import com.example.photoeditor.Filter.ColorFilters
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.opencv.android.Utils
 import org.opencv.core.Mat
 import org.opencv.core.MatOfRect
