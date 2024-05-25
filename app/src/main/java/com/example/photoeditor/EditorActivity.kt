@@ -7,8 +7,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
-import android.graphics.Rect
-import android.graphics.RectF
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
@@ -54,8 +52,6 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var resizingButton: Button
     private lateinit var resizingConfirmButton: Button
     private lateinit var resizingAngleValueText: EditText
-    private lateinit var strengthText: EditText
-    private lateinit var sizeText: EditText
 
     private lateinit var faceDetectorButton: Button
     private lateinit var toggleGroup: MaterialButtonToggleGroup
@@ -68,7 +64,6 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var secondGroupColorButton: MaterialButton
     private lateinit var thirdGroupColorButton: MaterialButton
 
-    //    private lateinit var colorConfirmButton : Button
     private lateinit var blackWhiteConfirmButton: Button
     private lateinit var mozaikConfirmButton: Button
     private lateinit var contrastConfirmButton: Button
@@ -79,8 +74,6 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var filtersButton: Button
 
     private lateinit var affineButton: Button
-    private lateinit var firstAffineImage: ImageView
-    private lateinit var secondAffineImage: ImageView
     private lateinit var firstAffineChangeButton: Button
     private lateinit var secondAffineChangeButton: Button
     private lateinit var confirmAffineButton: Button
@@ -155,8 +148,6 @@ class EditorActivity : AppCompatActivity() {
         strengthOfBrushSlider = findViewById(R.id.strengthOfBrushSlider)
         sizeOfBrushSlider = findViewById(R.id.sizeOfBrushSlider)
         affineButton = findViewById(R.id.affineButton)
-        firstAffineImage = findViewById(R.id.affineFirst)
-        secondAffineImage = findViewById(R.id.affineSecond)
         firstAffineChangeButton = findViewById(R.id.firstAffineChangeButton)
         secondAffineChangeButton = findViewById(R.id.secondAffineChangeButton)
         confirmAffineButton = findViewById(R.id.confirmAffineButton)
@@ -170,7 +161,6 @@ class EditorActivity : AppCompatActivity() {
         secondGroupColorButton = findViewById(R.id.secondGroupColorButton)
         thirdGroupColorButton = findViewById(R.id.thirdGroupColorButton)
 
-//        colorConfirmButton = findViewById(R.id.colorConfirmButton)
         blackWhiteConfirmButton = findViewById(R.id.blackWhiteConfirmButton)
         mozaikConfirmButton = findViewById(R.id.mozaikConfirmButton)
         contrastConfirmButton = findViewById(R.id.contrastConfirmButton)
@@ -216,8 +206,6 @@ class EditorActivity : AppCompatActivity() {
                 contrastConfirmButton,
                 mozaikSlider,
                 contrastSlider,
-//                colorConfirmButton
-//                colorFilterButton
             ),
 
             arrayOf<View>(
@@ -276,7 +264,7 @@ class EditorActivity : AppCompatActivity() {
             )
         )
 
-        var listOfAlgs = arrayOf(
+        val listOfAlgs = arrayOf(
             "Поворот",
             "Цветокоррекция",
             "Масштабирование",
@@ -312,10 +300,6 @@ class EditorActivity : AppCompatActivity() {
             mainImage.setImageBitmap(bitmap)
             stopAnimation()
         }
-
-//        mainImage.setImageBitmap(bitmap)
-        firstAffineImage.setImageBitmap(bitmap)
-        secondAffineImage.setImageBitmap(bitmap)
 
         for (i in changeAlgorithmButtons.indices) {
             changeAlgorithmButtons[i].setOnClickListener() {
